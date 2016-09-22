@@ -72,20 +72,22 @@ public class YanivGameLogic extends CardGameLogic {
     }
 
     public void dealCards(int numberOfPlayers) {
-        CardsDeck deck = generateDeck();
+        CardsDeck hiddenDeck = generateDeck();
         LinkedList<CardsDeck> playerDecks = generateEmptyDecks(numberOfPlayers);
 
         // Divide cards to players
         for (int i = 0; i < INITIAL_CARD_COUNT; i++) {
             for (int j = 0; j < numberOfPlayers; j++) {
                 // Remove card from cashier deck
-                GameCard card = deck.pop();
+                GameCard card = hiddenDeck.pop();
 
                 // Add card to player
                 playerDecks.get(j).addCard(card);
             }
         }
 
-
+        CardsDeck exposedDeck = new CardsDeck();
+        GameCard exposed = hiddenDeck.pop();
+        exposedDeck.addCard(exposed);
     }
 }

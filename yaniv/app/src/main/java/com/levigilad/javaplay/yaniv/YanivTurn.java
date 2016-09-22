@@ -13,9 +13,8 @@ import java.util.HashMap;
  * Created by User on 21/09/2016.
  */
 public class YanivTurn extends BaseTurn {
-    private HashMap<String, CardsDeck> _playerDecks = new HashMap<>();
-    private CardsDeck _cashierDeck = new CardsDeck();
-    private CardsDeck _playedDeck = new CardsDeck();
+    private CardsDeck _hiddenDeck = new CardsDeck();
+    private CardsDeck _exposedDeck = new CardsDeck();
 
     @Override
     protected JSONObject dataToJson() throws JSONException {
@@ -23,17 +22,9 @@ public class YanivTurn extends BaseTurn {
 
         JSONArray playersArray = new JSONArray();
 
-        for (String playerId : this._playerDecks.keySet()) {
-            JSONObject player = new JSONObject();
-            player.put("id", playerId);
-
-            player.put("cards", this._playerDecks.get(playerId).toJson());
-            playersArray.put(player)
-        }
-
         gameData.put("playersDecks", playersArray);
-        gameData.put("cashierDeck", this._cashierDeck.toJson());
-        gameData.put("playedDeck", this._playedDeck.toJson());
+        gameData.put("hiddenDeck", this._hiddenDeck.toJson());
+        gameData.put("exposedDeck", this._exposedDeck.toJson());
 
         return gameData;
     }
