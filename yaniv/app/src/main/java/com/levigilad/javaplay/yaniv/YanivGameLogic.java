@@ -1,6 +1,6 @@
 package com.levigilad.javaplay.yaniv;
 
-import com.levigilad.javaplay.infra.BaseTurn;
+import com.levigilad.javaplay.infra.Turn;
 import com.levigilad.javaplay.infra.CardGameLogic;
 import com.levigilad.javaplay.infra.entities.CardsDeck;
 import com.levigilad.javaplay.infra.entities.GameCard;
@@ -16,7 +16,7 @@ public class YanivGameLogic extends CardGameLogic {
     private final int INITIAL_CARD_COUNT = 5;
 
     @Override
-    public BaseTurn playTurn(BaseTurn currentTurnData) {
+    public Turn playTurn(Turn currentTurnData) {
         return null;
     }
 
@@ -71,6 +71,7 @@ public class YanivGameLogic extends CardGameLogic {
         }
     }
 
+    // TODO: delete?
     public void dealCards(int numberOfPlayers) {
         CardsDeck hiddenDeck = generateDeck();
         LinkedList<CardsDeck> playerDecks = generateEmptyDecks(numberOfPlayers);
@@ -90,4 +91,6 @@ public class YanivGameLogic extends CardGameLogic {
         GameCard exposed = hiddenDeck.pop();
         exposedDeck.addCard(exposed);
     }
+
+
 }
