@@ -10,12 +10,12 @@ import org.json.JSONObject;
 import java.util.LinkedList;
 
 /**
- * Created by User on 21/09/2016.
+ * This class represents Yaniv game turn data
  */
 public class YanivTurn extends Turn {
     private CardsDeck _hiddenDeck = new CardsDeck();
     private CardsDeck _discardedDeck = new CardsDeck();
-    private LinkedList<int> _availableDiscardedCards = new LinkedList<>();
+    private LinkedList<Integer> _availableDiscardedCards = new LinkedList<>();
     private boolean _initializeDone = false;
 
     /**
@@ -33,7 +33,7 @@ public class YanivTurn extends Turn {
 
         JSONArray availableArray = new JSONArray();
 
-        for (int location : this._availableDiscardedCards) {
+        for (Integer location : this._availableDiscardedCards) {
             availableArray.put(availableArray);
         }
 

@@ -6,10 +6,11 @@ import com.levigilad.javaplay.infra.entities.CardsDeck;
 import com.levigilad.javaplay.infra.entities.GameCard;
 import com.levigilad.javaplay.infra.enums.GameCardValues;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * Created by User on 22/09/2016.
+ * This class represents Yaniv game logic
  */
 public class YanivGameLogic extends CardGameLogic {
     private final int INITIAL_CARD_COUNT = 5;
@@ -17,11 +18,6 @@ public class YanivGameLogic extends CardGameLogic {
     private final int MIN_DISCARDED_CARDS = 1;
     private final int MIN_DUPLICATES_LENGTH = 2;
     private final int MAX_YANIV_CARD_SCORE = 7;
-
-    @Override
-    public Turn playTurn(Turn currentTurnData) {
-        return null;
-    }
 
     /**
      * Checks if player's deck is available for Yaniv
@@ -32,6 +28,11 @@ public class YanivGameLogic extends CardGameLogic {
         return isYaniv(calculateDeckScore(deck));
     }
 
+    /**
+     * Checks if player's score is available for Yaniv
+     * @param playerScore Score
+     * @return True or False
+     */
     private boolean isYaniv(int playerScore) {
         return playerScore <= MAX_YANIV_CARD_SCORE;
     }
@@ -56,7 +57,10 @@ public class YanivGameLogic extends CardGameLogic {
     public int calculateDeckScore(CardsDeck deck) {
         int cardsTotalValue = 0;
 
-        for (GameCard card : deck) {
+        Iterator<GameCard> iterator = deck.iterator();
+
+        while (iterator.hasNext()) {
+            GameCard card = iterator.next();
             cardsTotalValue += getCardValue(card);
         }
 

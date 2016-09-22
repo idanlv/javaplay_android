@@ -3,7 +3,7 @@ package com.levigilad.javaplay.infra.enums;
 import java.io.Serializable;
 
 /**
- * Created by User on 21/09/2016.
+ * This enum provides value options for game card
  */
 public enum GameCardValues implements Serializable {
     ACE,
@@ -52,5 +52,7 @@ public enum GameCardValues implements Serializable {
             case JOKER:
                 return 0;
         }
+
+        return 0;
     }
 }

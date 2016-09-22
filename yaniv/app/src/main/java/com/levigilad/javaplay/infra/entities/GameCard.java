@@ -8,22 +8,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by User on 21/09/2016.
+ * This class represents a game card
  */
 public class GameCard implements IJsonSerializable, Comparable {
     private GameCardValues _value;
     private GameCardSymbols _symbol;
 
     /**
-     * Constructor
+     * Empty Constructor
      */
     public GameCard() {
     }
 
     /**
      * Constructor
-     * @param value
-     * @param symbol
+     * @param value Value of card
+     * @param symbol Symbol of card
      */
     public GameCard(GameCardValues value, GameCardSymbols symbol) {
         this._value = value;
@@ -31,16 +31,24 @@ public class GameCard implements IJsonSerializable, Comparable {
         validate(value, symbol);
     }
 
+    /**
+     * Getter
+     * @return Card's value
+     */
     public GameCardValues getValue() {
         return this._value;
     }
 
+    /**
+     * Getter
+     * @return Card's symbol
+     */
     public GameCardSymbols getSymbol() {
         return this._symbol;
     }
 
     /**
-     * Validates card properties
+     * Validates card was initialized properly
      * @param value Card numeric value
      * @param symbol Card symbol
      */
@@ -51,6 +59,11 @@ public class GameCard implements IJsonSerializable, Comparable {
         }
     }
 
+    /**
+     * * Generate a json representation of the card
+     * @return
+     * @throws JSONException
+     */
     @Override
     public JSONObject toJson() throws JSONException {
         JSONObject cardObject = new JSONObject();
@@ -60,12 +73,22 @@ public class GameCard implements IJsonSerializable, Comparable {
         return cardObject;
     }
 
+    /**
+     * Load card from given json format
+     * @param object Card in json format
+     * @throws JSONException
+     */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
         this._value = (GameCardValues)object.get("value");
         this._symbol = (GameCardSymbols)object.get("symbol");
     }
 
+    /**
+     * This method compares between two given cards
+     * @param another compared to card
+     * @return
+     */
     @Override
     public int compareTo(Object another) {
         if (another instanceof GameCard) {
@@ -75,7 +98,7 @@ public class GameCard implements IJsonSerializable, Comparable {
         }
 
         throw new ClassCastException(
-                String.format("Comparing type {0} to GameCard is not supported",
-                        another.getClass().getName());
+                String.format("Comparing type (0) to GameCard is not supported",
+                        another.getClass().getName()));
     }
 }

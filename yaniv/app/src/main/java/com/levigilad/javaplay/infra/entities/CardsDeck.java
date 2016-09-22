@@ -7,25 +7,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * Created by User on 21/09/2016.
+ * This class represents a deck of cards
  */
 public class CardsDeck implements IJsonSerializable {
     private LinkedList<GameCard> _cards;
 
     /**
-     * Consructor
-     * Creates an empty deck
+     * Constructor: Creates an empty deck
      */
     public CardsDeck() {
         _cards = new LinkedList<>();
     }
 
     /**
-     * Constructor
-     * Creates a deck with cards
+     * Constructor: Creates a deck with cards
      * @param cards initial deck cards
      */
     public CardsDeck(LinkedList<GameCard> cards) {
@@ -66,6 +65,11 @@ public class CardsDeck implements IJsonSerializable {
         return _cards.pop();
     }
 
+    /**
+     * Generate a json representation of the deck
+     * @return Deck in Json format
+     * @throws JSONException
+     */
     @Override
     public JSONObject toJson() throws JSONException {
         JSONObject object = new JSONObject();
@@ -81,6 +85,11 @@ public class CardsDeck implements IJsonSerializable {
         return object;
     }
 
+    /**
+     * Load deck from given json
+     * @param object Deck in Json format
+     * @throws JSONException
+     */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
         JSONArray cardsArray = object.getJSONArray("deck");
@@ -95,7 +104,18 @@ public class CardsDeck implements IJsonSerializable {
         }
     }
 
+    /**
+     * Shuffles cards in deck
+     */
     public void shuffle() {
         Collections.shuffle(this._cards);
+    }
+
+    /**
+     * Retrieve cards iterator
+     * @return Iterator
+     */
+    public Iterator<GameCard> iterator() {
+        return this._cards.iterator();
     }
 }

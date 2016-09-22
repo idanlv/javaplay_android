@@ -8,9 +8,9 @@ import com.levigilad.javaplay.infra.enums.GameCardValues;
 import java.util.LinkedList;
 
 /**
- * Created by User on 22/09/2016.
+ * This class represents basic card game logic
  */
-public abstract class CardGameLogic extends GameLogic {
+public abstract class CardGameLogic implements IGameLogic {
     /**
      * Generates a new shuffled deck of cards
      * @return New deck of cards

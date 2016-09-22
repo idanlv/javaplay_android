@@ -3,7 +3,7 @@ package com.levigilad.javaplay.infra.enums;
 import java.io.Serializable;
 
 /**
- * Created by User on 21/09/2016.
+ * This enum provides symbol options for game card
  */
 public enum GameCardSymbols implements Serializable {
     NONE,
@@ -11,8 +11,4 @@ public enum GameCardSymbols implements Serializable {
     DIAMONDS,
     CLUBS,
     SPADES;
-
-    public String getSymbol() {
-        return this.name();
-    }
 }

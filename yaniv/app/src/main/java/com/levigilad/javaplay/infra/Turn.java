@@ -1,14 +1,12 @@
 package com.levigilad.javaplay.infra;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
 
 /**
- * Created by User on 21/09/2016.
+ * This class represents a basic turn
  */
 public abstract class Turn implements IJsonSerializable {
     private static final String TAG = "Turn";
@@ -39,7 +37,7 @@ public abstract class Turn implements IJsonSerializable {
         this._turnCounter = object.getInt("turnCounter");
     }
 
-    /**ToByteArray
+    /**
      * This method retrieves turn data as byte array
      * @return Turn data in Byte Array
      */
