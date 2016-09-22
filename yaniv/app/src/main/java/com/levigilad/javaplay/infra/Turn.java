@@ -43,7 +43,7 @@ public abstract class Turn implements IJsonSerializable {
      * This method retrieves turn data as byte array
      * @return Turn data in Byte Array
      */
-    public byte[] toByteArray() throws JSONException {
+    public byte[] export() throws JSONException {
         String st = toJson().toString();
 
         return st.getBytes(Charset.forName("UTF-8"));
