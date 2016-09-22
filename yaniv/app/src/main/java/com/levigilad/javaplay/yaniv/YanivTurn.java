@@ -1,7 +1,7 @@
 package com.levigilad.javaplay.yaniv;
 
 import com.levigilad.javaplay.infra.BaseTurn;
-import com.levigilad.javaplay.infra.entities.CardDeck;
+import com.levigilad.javaplay.infra.entities.CardsDeck;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,9 +13,9 @@ import java.util.HashMap;
  * Created by User on 21/09/2016.
  */
 public class YanivTurn extends BaseTurn {
-    private HashMap<String, CardDeck> _playerDecks = new HashMap<>();
-    private CardDeck _cashierDeck = new CardDeck();
-    private CardDeck _playedDeck = new CardDeck();
+    private HashMap<String, CardsDeck> _playerDecks = new HashMap<>();
+    private CardsDeck _cashierDeck = new CardsDeck();
+    private CardsDeck _playedDeck = new CardsDeck();
 
     @Override
     protected JSONObject dataToJson() throws JSONException {

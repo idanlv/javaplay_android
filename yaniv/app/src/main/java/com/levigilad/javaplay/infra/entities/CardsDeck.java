@@ -6,19 +6,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 /**
  * Created by User on 21/09/2016.
  */
-public class CardDeck implements IJsonSerializable {
+public class CardsDeck implements IJsonSerializable {
     private LinkedList<GameCard> _cards;
 
     /**
      * Consructor
      * Creates an empty deck
      */
-    public CardDeck() {
+    public CardsDeck() {
         _cards = new LinkedList<>();
     }
 
@@ -27,7 +28,7 @@ public class CardDeck implements IJsonSerializable {
      * Creates a deck with cards
      * @param cards initial deck cards
      */
-    public CardDeck(LinkedList<GameCard> cards) {
+    public CardsDeck(LinkedList<GameCard> cards) {
         this._cards = cards;
     }
 
@@ -92,5 +93,9 @@ public class CardDeck implements IJsonSerializable {
 
             this._cards.addLast(card);
         }
+    }
+
+    public void shuffle() {
+        Collections.shuffle(this._cards);
     }
 }
