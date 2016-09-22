@@ -6,8 +6,6 @@ import com.levigilad.javaplay.infra.entities.CardsDeck;
 import com.levigilad.javaplay.infra.entities.GameCard;
 import com.levigilad.javaplay.infra.enums.GameCardValues;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 
 /**
@@ -15,13 +13,54 @@ import java.util.LinkedList;
  */
 public class YanivGameLogic extends CardGameLogic {
     private final int INITIAL_CARD_COUNT = 5;
-    private final int MINIMUM_SEQUENCE_LENGTH = 3;
+    private final int MIN_SEQUENCE_LENGTH = 3;
     private final int MIN_DISCARDED_CARDS = 1;
     private final int MIN_DUPLICATES_LENGTH = 2;
+    private final int MAX_YANIV_CARD_SCORE = 7;
 
     @Override
     public Turn playTurn(Turn currentTurnData) {
         return null;
+    }
+
+    /**
+     * Checks if player's deck is available for Yaniv
+     * @param deck player's deck
+     * @return True or False
+     */
+    public boolean isYaniv(CardsDeck deck) {
+        return isYaniv(calculateDeckScore(deck));
+    }
+
+    private boolean isYaniv(int playerScore) {
+        return playerScore <= MAX_YANIV_CARD_SCORE;
+    }
+
+    /**
+     * Checks if player's deck is available for Assaf
+     * @param deck player's deck
+     * @param otherPlayerScore Score of the player who declared Yaniv
+     * @return True or False
+     */
+    public boolean isAssaf(CardsDeck deck, int otherPlayerScore) {
+        int score = calculateDeckScore(deck);
+
+        return (isYaniv(score) && (score <= otherPlayerScore));
+    }
+
+    /**
+     * Calculates the score of given deck
+     * @param deck player's deck
+     * @return Score
+     */
+    public int calculateDeckScore(CardsDeck deck) {
+        int cardsTotalValue = 0;
+
+        for (GameCard card : deck) {
+            cardsTotalValue += getCardValue(card);
+        }
+
+        return cardsTotalValue;
     }
 
     /**
@@ -64,7 +103,7 @@ public class YanivGameLogic extends CardGameLogic {
     private boolean isSequence(LinkedList<GameCard> cardSeries) {
         int previousValue = -1;
 
-        if (cardSeries.size() < MINIMUM_SEQUENCE_LENGTH) {
+        if (cardSeries.size() < MIN_SEQUENCE_LENGTH) {
             return false;
         }
 
