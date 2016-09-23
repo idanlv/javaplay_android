@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * This enum provides value options for game card
  */
-public enum GameCardValues implements Serializable {
+public enum GameCardRanks implements Serializable {
     ACE,
     TWO,
     THREE,
@@ -16,7 +16,7 @@ public enum GameCardValues implements Serializable {
     EIGHT,
     NINE,
     TEN,
-    PRINCE,
+    JACK,
     QUEEN,
     KING,
     JOKER;
@@ -43,7 +43,7 @@ public enum GameCardValues implements Serializable {
                 return 9;
             case TEN:
                 return 10;
-            case PRINCE:
+            case JACK:
                 return 11;
             case QUEEN:
                 return 12;

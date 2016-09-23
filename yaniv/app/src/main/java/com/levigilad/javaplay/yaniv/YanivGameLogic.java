@@ -1,10 +1,9 @@
 package com.levigilad.javaplay.yaniv;
 
-import com.levigilad.javaplay.infra.Turn;
 import com.levigilad.javaplay.infra.CardGameLogic;
-import com.levigilad.javaplay.infra.entities.CardsDeck;
+import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.GameCard;
-import com.levigilad.javaplay.infra.enums.GameCardValues;
+import com.levigilad.javaplay.infra.enums.GameCardRanks;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,7 +23,7 @@ public class YanivGameLogic extends CardGameLogic {
      * @param deck player's deck
      * @return True or False
      */
-    public boolean isYaniv(CardsDeck deck) {
+    public boolean isYaniv(DeckOfCards deck) {
         return isYaniv(calculateDeckScore(deck));
     }
 
@@ -43,7 +42,7 @@ public class YanivGameLogic extends CardGameLogic {
      * @param otherPlayerScore Score of the player who declared Yaniv
      * @return True or False
      */
-    public boolean isAssaf(CardsDeck deck, int otherPlayerScore) {
+    public boolean isAssaf(DeckOfCards deck, int otherPlayerScore) {
         int score = calculateDeckScore(deck);
 
         return (isYaniv(score) && (score <= otherPlayerScore));
@@ -54,7 +53,7 @@ public class YanivGameLogic extends CardGameLogic {
      * @param deck player's deck
      * @return Score
      */
-    public int calculateDeckScore(CardsDeck deck) {
+    public int calculateDeckScore(DeckOfCards deck) {
         int cardsTotalValue = 0;
 
         Iterator<GameCard> iterator = deck.iterator();
@@ -84,14 +83,14 @@ public class YanivGameLogic extends CardGameLogic {
      * @return True or False
      */
     private boolean isDuplicates(LinkedList<GameCard> cards) {
-        GameCardValues value = cards.peek().getValue();
+        GameCardRanks value = cards.peek().getRank();
 
         if (cards.size() < MIN_DUPLICATES_LENGTH) {
             return false;
         }
 
         for (GameCard card : cards) {
-            if (value != card.getValue()) {
+            if (value != card.getRank()) {
                 return false;
             }
         }
@@ -112,14 +111,14 @@ public class YanivGameLogic extends CardGameLogic {
         }
 
         for (GameCard card : cardSeries) {
-            int currentValue = card.getValue().getNumericValue();
+            int currentValue = card.getRank().getNumericValue();
             // First value in sequence
             if (previousValue == -1) {
                 previousValue = currentValue;
             }
             // You can place a joker inside your sequence and it will act as the next number in
             // series
-            else if ((currentValue == GameCardValues.JOKER.getNumericValue()) ||
+            else if ((currentValue == GameCardRanks.JOKER.getNumericValue()) ||
                     (currentValue == previousValue + 1)) {
                 previousValue++;
             }
@@ -138,14 +137,14 @@ public class YanivGameLogic extends CardGameLogic {
      * @return
      */
     private int getCardValue(GameCard card) {
-        switch (card.getValue()) {
+        switch (card.getRank()) {
             case TEN:
-            case PRINCE:
+            case JACK:
             case QUEEN:
             case KING:
                 return 10;
             default:
-                return card.getValue().getNumericValue();
+                return card.getRank().getNumericValue();
         }
     }
 }

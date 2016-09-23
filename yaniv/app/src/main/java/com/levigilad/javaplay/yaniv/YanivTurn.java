@@ -1,7 +1,7 @@
 package com.levigilad.javaplay.yaniv;
 
 import com.levigilad.javaplay.infra.Turn;
-import com.levigilad.javaplay.infra.entities.CardsDeck;
+import com.levigilad.javaplay.infra.entities.DeckOfCards;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,8 +13,8 @@ import java.util.LinkedList;
  * This class represents Yaniv game turn data
  */
 public class YanivTurn extends Turn {
-    private CardsDeck _hiddenDeck = new CardsDeck();
-    private CardsDeck _discardedDeck = new CardsDeck();
+    private DeckOfCards _hiddenDeck = new DeckOfCards();
+    private DeckOfCards _discardedDeck = new DeckOfCards();
     private LinkedList<Integer> _availableDiscardedCards = new LinkedList<>();
     private boolean _initializeDone = false;
 
@@ -50,9 +50,9 @@ public class YanivTurn extends Turn {
     @Override
     public void fromJson(JSONObject object) throws JSONException {
         this._initializeDone = object.getBoolean("initializeDone");
-        this._hiddenDeck = new CardsDeck();
+        this._hiddenDeck = new DeckOfCards();
         this._hiddenDeck.fromJson(object.getJSONObject("hiddenDeck"));
-        this._discardedDeck = new CardsDeck();
+        this._discardedDeck = new DeckOfCards();
         this._discardedDeck.fromJson(object.getJSONObject("discardedDeck"));
 
         this._availableDiscardedCards = new LinkedList<>();

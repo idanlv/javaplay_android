@@ -1,8 +1,8 @@
 package com.levigilad.javaplay.infra.entities;
 
 import com.levigilad.javaplay.infra.IJsonSerializable;
-import com.levigilad.javaplay.infra.enums.GameCardSymbols;
-import com.levigilad.javaplay.infra.enums.GameCardValues;
+import com.levigilad.javaplay.infra.enums.GameCardSuits;
+import com.levigilad.javaplay.infra.enums.GameCardRanks;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,8 +11,8 @@ import org.json.JSONObject;
  * This class represents a game card
  */
 public class GameCard implements IJsonSerializable, Comparable {
-    private GameCardValues _value;
-    private GameCardSymbols _symbol;
+    private GameCardRanks _rank;
+    private GameCardSuits _suit;
 
     /**
      * Empty Constructor
@@ -22,39 +22,39 @@ public class GameCard implements IJsonSerializable, Comparable {
 
     /**
      * Constructor
-     * @param value Value of card
-     * @param symbol Symbol of card
+     * @param rank Value of card
+     * @param suit Symbol of card
      */
-    public GameCard(GameCardValues value, GameCardSymbols symbol) {
-        this._value = value;
-        this._symbol = symbol;
-        validate(value, symbol);
+    public GameCard(GameCardRanks rank, GameCardSuits suit) {
+        this._rank = rank;
+        this._suit = suit;
+        validate(rank, suit);
     }
 
     /**
      * Getter
      * @return Card's value
      */
-    public GameCardValues getValue() {
-        return this._value;
+    public GameCardRanks getRank() {
+        return this._rank;
     }
 
     /**
      * Getter
      * @return Card's symbol
      */
-    public GameCardSymbols getSymbol() {
-        return this._symbol;
+    public GameCardSuits getSuit() {
+        return this._suit;
     }
 
     /**
      * Validates card was initialized properly
-     * @param value Card numeric value
-     * @param symbol Card symbol
+     * @param rank Card numeric rank
+     * @param suit Card symbol
      */
-    private void validate(GameCardValues value, GameCardSymbols symbol) {
-        if (((value == GameCardValues.JOKER) && (symbol != GameCardSymbols.NONE)) ||
-                ((value != GameCardValues.JOKER) && (symbol == GameCardSymbols.NONE))) {
+    private void validate(GameCardRanks rank, GameCardSuits suit) {
+        if (((rank == GameCardRanks.JOKER) && (suit != GameCardSuits.NONE)) ||
+                ((rank != GameCardRanks.JOKER) && (suit == GameCardSuits.NONE))) {
             throw new IllegalArgumentException("Card game cannot be initialized");
         }
     }
@@ -67,8 +67,8 @@ public class GameCard implements IJsonSerializable, Comparable {
     @Override
     public JSONObject toJson() throws JSONException {
         JSONObject cardObject = new JSONObject();
-        cardObject.put("value", this._value);
-        cardObject.put("symbol", this._symbol);
+        cardObject.put("value", this._rank);
+        cardObject.put("symbol", this._suit);
 
         return cardObject;
     }
@@ -80,8 +80,8 @@ public class GameCard implements IJsonSerializable, Comparable {
      */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
-        this._value = (GameCardValues)object.get("value");
-        this._symbol = (GameCardSymbols)object.get("symbol");
+        this._rank = (GameCardRanks)object.get("value");
+        this._suit = (GameCardSuits)object.get("symbol");
     }
 
     /**
@@ -94,7 +94,7 @@ public class GameCard implements IJsonSerializable, Comparable {
         if (another instanceof GameCard) {
             GameCard anotherCard = (GameCard)another;
 
-            return this.getValue().compareTo(anotherCard.getValue());
+            return this.getRank().compareTo(anotherCard.getRank());
         }
 
         throw new ClassCastException(

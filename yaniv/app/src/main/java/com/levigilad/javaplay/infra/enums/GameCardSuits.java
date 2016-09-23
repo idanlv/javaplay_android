@@ -5,10 +5,10 @@ import java.io.Serializable;
 /**
  * This enum provides symbol options for game card
  */
-public enum GameCardSymbols implements Serializable {
+public enum GameCardSuits implements Serializable {
     NONE,
     HEARTS,
     DIAMONDS,
     CLUBS,
-    SPADES;
+    SPADES
 }

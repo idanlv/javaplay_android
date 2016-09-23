@@ -13,13 +13,13 @@ import java.util.LinkedList;
 /**
  * This class represents a deck of cards
  */
-public class CardsDeck implements IJsonSerializable {
+public class DeckOfCards implements IJsonSerializable {
     private LinkedList<GameCard> _cards;
 
     /**
      * Constructor: Creates an empty deck
      */
-    public CardsDeck() {
+    public DeckOfCards() {
         _cards = new LinkedList<>();
     }
 
@@ -27,7 +27,7 @@ public class CardsDeck implements IJsonSerializable {
      * Constructor: Creates a deck with cards
      * @param cards initial deck cards
      */
-    public CardsDeck(LinkedList<GameCard> cards) {
+    public DeckOfCards(LinkedList<GameCard> cards) {
         this._cards = cards;
     }
 
