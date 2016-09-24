@@ -28,19 +28,22 @@ public abstract class GameOfCards extends Game {
      * Generates a new shuffled deck of cards
      * @return New deck of cards
      */
-    public DeckOfCards generateDeck() {
+    public DeckOfCards generateDeck( int jokerCount) {
         DeckOfCards deck = new DeckOfCards();
 
         // Create game deck
-        for (GameCardRanks value : GameCardRanks.values()) {
-            if (value != GameCardRanks.JOKER) {
-                for (GameCardSuits symbol : GameCardSuits.values()) {
-                    deck.addCard(new GameCard(value, symbol));
-                }
-            } else {
-                deck.addCard(new GameCard(value, GameCardSuits.NONE));
-                deck.addCard(new GameCard(value, GameCardSuits.NONE));
+        for (GameCardSuits symbol : GameCardSuits.values()) {
+            if (symbol == GameCardSuits.NONE) {
+                continue;
             }
+            for (GameCardRanks value : GameCardRanks.values()) {
+                deck.addCardToTop(new GameCard(value,symbol));
+            }
+        }
+
+        // Add the jokers
+        for (int i = 0; i < jokerCount; i++) {
+            deck.addCardToTop(new GameCard(GameCardRanks.JOKER, GameCardSuits.NONE));
         }
 
         deck.shuffle();
@@ -53,6 +56,7 @@ public abstract class GameOfCards extends Game {
      * @param numberOfDecks Number of decks to generate
      * @return List of decks
      */
+    // TODO: check if needed
     public LinkedList<DeckOfCards> generateEmptyDecks(int numberOfDecks) {
         LinkedList<DeckOfCards> decks = new LinkedList<>();
 

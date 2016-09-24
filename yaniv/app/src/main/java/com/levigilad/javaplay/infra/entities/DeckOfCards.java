@@ -14,6 +14,10 @@ import java.util.LinkedList;
  * This class represents a deck of cards
  */
 public class DeckOfCards implements IJsonSerializable {
+    // Consts
+    public static final String DECK = "deck";
+
+    // Members
     private LinkedList<GameCard> _cards;
 
     /**
@@ -28,7 +32,9 @@ public class DeckOfCards implements IJsonSerializable {
      * @param cards initial deck cards
      */
     public DeckOfCards(LinkedList<GameCard> cards) {
-        this._cards = cards;
+        for (GameCard card : cards) {
+            _cards.add(new GameCard(card));
+        }
     }
 
     /**
@@ -45,7 +51,7 @@ public class DeckOfCards implements IJsonSerializable {
      * Adds a card into deck
      * @param card card to add
      */
-    public void addCard(GameCard card) {
+    public void addCardToTop(GameCard card) {
         _cards.addFirst(card);
     }
 
@@ -72,7 +78,7 @@ public class DeckOfCards implements IJsonSerializable {
      */
     @Override
     public JSONObject toJson() throws JSONException {
-        JSONObject object = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
 
         JSONArray cardsArray = new JSONArray();
 
@@ -80,9 +86,9 @@ public class DeckOfCards implements IJsonSerializable {
             cardsArray.put(card.toJson());
         }
 
-        object.put("deck", cardsArray);
+        jsonObject.put(DECK, cardsArray);
 
-        return object;
+        return jsonObject;
     }
 
     /**
@@ -92,7 +98,7 @@ public class DeckOfCards implements IJsonSerializable {
      */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
-        JSONArray cardsArray = object.getJSONArray("deck");
+        JSONArray cardsArray = object.getJSONArray(DECK);
 
         this._cards.clear();
 
@@ -117,5 +123,19 @@ public class DeckOfCards implements IJsonSerializable {
      */
     public Iterator<GameCard> iterator() {
         return this._cards.iterator();
+    }
+
+
+    public String toString() {
+        String str = "";
+
+        for (GameCard card : _cards) {
+            str += "(" + card.getRank() + "," + card.getSuit() + "),";
+        }
+
+        // chop last char
+        str.substring(0, str.length() -1);
+
+        return str;
     }
 }

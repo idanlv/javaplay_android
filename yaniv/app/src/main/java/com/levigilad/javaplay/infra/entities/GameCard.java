@@ -11,6 +11,11 @@ import org.json.JSONObject;
  * This class represents a game card
  */
 public class GameCard implements IJsonSerializable, Comparable {
+    // Consts
+    public static final String CARD_VALUE = "card_value";
+    public static final String CARD_SYMBOL = "card_symbol";
+
+    // Members
     private GameCardRanks _rank;
     private GameCardSuits _suit;
 
@@ -29,6 +34,15 @@ public class GameCard implements IJsonSerializable, Comparable {
         this._rank = rank;
         this._suit = suit;
         validate(rank, suit);
+    }
+
+    /**
+     * Copy constructor
+     * @param other GameCard to copy from
+     */
+    public GameCard(GameCard other) {
+        this._rank = other.getRank();
+        this._suit = other.getSuit();
     }
 
     /**
@@ -67,8 +81,8 @@ public class GameCard implements IJsonSerializable, Comparable {
     @Override
     public JSONObject toJson() throws JSONException {
         JSONObject cardObject = new JSONObject();
-        cardObject.put("value", this._rank);
-        cardObject.put("symbol", this._suit);
+        cardObject.put(CARD_VALUE, this._rank);
+        cardObject.put(CARD_SYMBOL, this._suit);
 
         return cardObject;
     }
@@ -80,8 +94,8 @@ public class GameCard implements IJsonSerializable, Comparable {
      */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
-        this._rank = (GameCardRanks)object.get("value");
-        this._suit = (GameCardSuits)object.get("symbol");
+        this._rank = (GameCardRanks)object.get(CARD_VALUE);
+        this._suit = (GameCardSuits)object.get(CARD_SYMBOL);
     }
 
     /**

@@ -12,18 +12,18 @@ import java.util.LinkedList;
  * This class represents Yaniv game logic
  */
 public class YanivGame extends GameOfCards {
-    private static final int INITIAL_CARD_COUNT = 5;
+    private static final int INITIAL_DEFAULT_CARD_COUNT = 5;
+    private static final int MAX_DEFAULT_PLAYERS = 4;
+    private final int MAX_DEFAULT_YANIV_CARD_SCORE = 7;
     private final int MIN_SEQUENCE_LENGTH = 3;
     private final int MIN_DISCARDED_CARDS = 1;
     private final int MIN_DUPLICATES_LENGTH = 2;
-    private final int MAX_YANIV_CARD_SCORE = 7;
-    private static final int MAX_PLAYERS = 4;
 
     /**
      * Constructor
      */
-    public YanivGame() {
-        super(MAX_PLAYERS, INITIAL_CARD_COUNT);
+    public YanivGame(int numberOfPlayers, int numberOfStartingCards) {
+        super(numberOfPlayers, numberOfStartingCards);
     }
 
     /**
@@ -31,8 +31,8 @@ public class YanivGame extends GameOfCards {
      * @param deck player's deck
      * @return True or False
      */
-    public boolean isYaniv(DeckOfCards deck) {
-        return isYaniv(calculateDeckScore(deck));
+    public boolean canYaniv(DeckOfCards deck) {
+        return canYaniv(calculateDeckScore(deck));
     }
 
     /**
@@ -40,8 +40,8 @@ public class YanivGame extends GameOfCards {
      * @param playerScore Score
      * @return True or False
      */
-    private boolean isYaniv(int playerScore) {
-        return playerScore <= MAX_YANIV_CARD_SCORE;
+    private boolean canYaniv(int playerScore) {
+        return playerScore <= MAX_DEFAULT_YANIV_CARD_SCORE;
     }
 
     /**
@@ -53,7 +53,7 @@ public class YanivGame extends GameOfCards {
     public boolean isAssaf(DeckOfCards deck, int otherPlayerScore) {
         int score = calculateDeckScore(deck);
 
-        return (isYaniv(score) && (score <= otherPlayerScore));
+        return (canYaniv(score) && (score <= otherPlayerScore));
     }
 
     /**
