@@ -10,7 +10,20 @@ import java.util.LinkedList;
 /**
  * This class represents basic card game logic
  */
-public abstract class CardGameLogic implements IGameLogic {
+public abstract class CardGame extends Game {
+
+    private int _initialNumOfPlayerCards;
+
+    /**
+     * Constructor
+     * @param maxNumOfPlayers
+     * @param initialNumOfPlayerCards
+     */
+    public CardGame(int maxNumOfPlayers, int initialNumOfPlayerCards) {
+        super(maxNumOfPlayers);
+        _initialNumOfPlayerCards = initialNumOfPlayerCards;
+    }
+
     /**
      * Generates a new shuffled deck of cards
      * @return New deck of cards
@@ -49,5 +62,13 @@ public abstract class CardGameLogic implements IGameLogic {
         }
 
         return decks;
+    }
+
+    /**
+     * Getter
+     * @return Player's number of cards in beginning of game
+     */
+    public int getInitialNumOfPlayerCards() {
+        return _initialNumOfPlayerCards;
     }
 }

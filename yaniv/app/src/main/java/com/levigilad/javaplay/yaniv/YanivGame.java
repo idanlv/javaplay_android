@@ -1,6 +1,6 @@
 package com.levigilad.javaplay.yaniv;
 
-import com.levigilad.javaplay.infra.CardGameLogic;
+import com.levigilad.javaplay.infra.CardGame;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.GameCard;
 import com.levigilad.javaplay.infra.enums.GameCardRanks;
@@ -11,12 +11,20 @@ import java.util.LinkedList;
 /**
  * This class represents Yaniv game logic
  */
-public class YanivGameLogic extends CardGameLogic {
-    private final int INITIAL_CARD_COUNT = 5;
+public class YanivGame extends CardGame {
+    private static final int INITIAL_CARD_COUNT = 5;
     private final int MIN_SEQUENCE_LENGTH = 3;
     private final int MIN_DISCARDED_CARDS = 1;
     private final int MIN_DUPLICATES_LENGTH = 2;
     private final int MAX_YANIV_CARD_SCORE = 7;
+    private static final int MAX_PLAYERS = 4;
+
+    /**
+     * Constructor
+     */
+    public YanivGame() {
+        super(MAX_PLAYERS, INITIAL_CARD_COUNT);
+    }
 
     /**
      * Checks if player's deck is available for Yaniv
