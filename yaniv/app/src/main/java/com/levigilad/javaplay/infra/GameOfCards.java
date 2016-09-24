@@ -28,7 +28,7 @@ public abstract class GameOfCards extends Game {
      * Generates a new shuffled deck of cards
      * @return New deck of cards
      */
-    public DeckOfCards generateDeck( int jokerCount) {
+    public DeckOfCards generateDeck( int numberOfJokers) {
         DeckOfCards deck = new DeckOfCards();
 
         // Create game deck
@@ -42,7 +42,7 @@ public abstract class GameOfCards extends Game {
         }
 
         // Add the jokers
-        for (int i = 0; i < jokerCount; i++) {
+        for (int i = 0; i < numberOfJokers; i++) {
             deck.addCardToTop(new GameCard(GameCardRanks.JOKER, GameCardSuits.NONE));
         }
 

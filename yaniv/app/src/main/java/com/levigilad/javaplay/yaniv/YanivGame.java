@@ -12,6 +12,8 @@ import java.util.LinkedList;
  * This class represents Yaniv game logic
  */
 public class YanivGame extends GameOfCards {
+    
+    // Consts
     private static final int INITIAL_DEFAULT_CARD_COUNT = 5;
     private static final int MAX_DEFAULT_PLAYERS = 4;
     private final int MAX_DEFAULT_YANIV_CARD_SCORE = 7;
@@ -20,7 +22,16 @@ public class YanivGame extends GameOfCards {
     private final int MIN_DUPLICATES_LENGTH = 2;
 
     /**
+     * Empty constructor
+     */
+    public YanivGame() {
+        super(MAX_DEFAULT_PLAYERS, INITIAL_DEFAULT_CARD_COUNT);
+    }
+
+    /**
      * Constructor
+     * @param numberOfPlayers number of players in game
+     * @param numberOfStartingCards number of starting cards for player
      */
     public YanivGame(int numberOfPlayers, int numberOfStartingCards) {
         super(numberOfPlayers, numberOfStartingCards);
