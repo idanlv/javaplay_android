@@ -23,11 +23,8 @@ public abstract class Game {
     }
 
     /**
-     * Returns a String representation of the object
+     * Returns game's name
      * @return
      */
-    @Override
-    public String toString() {
-        return this.getClass().getName();
-    }
+    public abstract String getDisplayName();
 }

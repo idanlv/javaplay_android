@@ -10,7 +10,7 @@ import java.util.LinkedList;
 /**
  * This class represents basic card game logic
  */
-public abstract class CardGame extends Game {
+public abstract class GameOfCards extends Game {
 
     private int _initialNumOfPlayerCards;
 
@@ -19,7 +19,7 @@ public abstract class CardGame extends Game {
      * @param maxNumOfPlayers
      * @param initialNumOfPlayerCards
      */
-    public CardGame(int maxNumOfPlayers, int initialNumOfPlayerCards) {
+    public GameOfCards(int maxNumOfPlayers, int initialNumOfPlayerCards) {
         super(maxNumOfPlayers);
         _initialNumOfPlayerCards = initialNumOfPlayerCards;
     }
