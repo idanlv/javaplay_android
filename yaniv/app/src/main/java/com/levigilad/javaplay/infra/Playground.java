@@ -2,13 +2,20 @@ package com.levigilad.javaplay.infra;
 
 import android.util.Log;
 
+import com.levigilad.javaplay.yaniv.YanivGame;
+
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import static org.reflections.ReflectionUtils.*;
 
 /**
  * This class represents a Singleton of a Playground
@@ -16,7 +23,7 @@ import java.util.Set;
 public class Playground {
     private static final String TAG = Playground.class.getName();
     private static Playground _instance = null;
-    private ArrayList<Game> _games = new ArrayList<>();
+    private List<Game> _games = new LinkedList<>();
 
     /**
      * Constructor
@@ -41,7 +48,8 @@ public class Playground {
      * Loads all game options
      */
     private void init() {
-        Reflections reflections = new Reflections(this.getClass().getPackage());
+        // TODO: fix reflection
+        /*Reflections reflections = new Reflections("com.levigilad");
 
         // Gets all subclass of type Game
         Set<Class<? extends Game>> gameModules = reflections.getSubTypesOf(Game.class);
@@ -56,7 +64,9 @@ public class Playground {
                     Log.e(TAG, String.format("Could not initiate game of type (0)", game.getName()));
                 }
             }
-        }
+        }*/
+
+        _games.add(new YanivGame());
     }
 
     /**

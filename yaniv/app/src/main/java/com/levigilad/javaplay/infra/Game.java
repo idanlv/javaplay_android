@@ -27,4 +27,9 @@ public abstract class Game {
      * @return
      */
     public abstract String getDisplayName();
+
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
 }

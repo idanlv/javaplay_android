@@ -21,4 +21,5 @@
 
     <!-- Replace by your "Trivial Victory" achievement ID -->
     <string name="achievement_trivial_victory">CgkIyuG_9qMQEAIQAQ</string>
+    <item name="pick_a_game_textView" type="id" />
 </resources>

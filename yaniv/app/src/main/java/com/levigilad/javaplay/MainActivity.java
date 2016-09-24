@@ -1,5 +1,6 @@
 package com.levigilad.javaplay;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -72,16 +73,21 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
                 showSignInBar();
                 break;
             case R.id.button_win:
-                // win!
+                /*// win!
                 Log.d(TAG, "Win button clicked");
                 BaseGameUtils.showAlert(this, getString(R.string.you_won));
                 if (isSignedIn()) {
                     // unlock the "Trivial Victory" achievement.
-                    Games.Achievements.unlock(getApiClient(),
-                            getString(R.string.achievement_trivial_victory));
-                }
+                    Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_trivial_victory));
+                }*/
+                showGameOptions();
                 break;
         }
+    }
+
+    private void showGameOptions() {
+        Intent i = new Intent(this, GamePickerActivity.class);
+        startActivity(i);
     }
 
     @Override
@@ -91,6 +97,6 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 
     @Override
     public void onSignInSucceeded() {
-
+        showSignOutBar();
     }
 }
