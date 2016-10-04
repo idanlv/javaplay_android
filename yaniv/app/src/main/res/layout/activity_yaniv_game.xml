@@ -55,14 +55,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="clip_horizontal"
-            android:paddingRight="20dp">
+            android:paddingRight="20dp"
+            android:gravity="center_vertical">
 
             <TextView
                 android:text="Score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="clip_horizontal"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:textSize="20sp"
+                android:textStyle="normal|bold" />
 
             <TextView
                 android:text="0"
@@ -70,7 +73,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/score_text_view"
                 android:gravity="clip_horizontal"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:textSize="17sp" />
+
+            <Button
+                android:text="Discard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/discard_button" />
 
         </LinearLayout>
 
@@ -78,11 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/two_clubs"
-            android:id="@+id/card_stub_image_view"
-            android:padding="2dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginTop="10dp" />
+            android:id="@+id/card_stub_image_view" />
 
     </LinearLayout>
 

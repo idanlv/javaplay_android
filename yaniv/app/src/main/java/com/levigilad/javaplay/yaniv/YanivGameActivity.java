@@ -1,23 +1,17 @@
 package com.levigilad.javaplay.yaniv;
 
 import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.Toast;
 
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
-import com.levigilad.javaplay.infra.CardsArrayAdapter;
 import com.levigilad.javaplay.infra.GameActivity;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
@@ -36,13 +30,14 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
 
     // Designer members
     private LinearLayout _playerDataLinearLayout;
+    private Button _discardButton;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_yaniv_game);
+        setContentView(R.layout.activity_yaniv_game);;
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         _game = new YanivGame();
@@ -57,6 +52,10 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
         // Remove stub image which was created for design purposes
         View stubImage = findViewById(R.id.card_stub_image_view);
         _playerDataLinearLayout.removeView(stubImage);
+
+        _discardButton = (Button)findViewById(R.id.discard_button);
+        _discardButton.setEnabled(false);
+        _discardButton.setOnClickListener(this);
     }
 
     @Override
@@ -77,37 +76,11 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
         try
         {
             ImageView t = new ImageView(getBaseContext());
-            t.setPadding(0, 20, 0, 0);
+            t.setOnClickListener(this);
+            t.setPadding(0, 0, 0, 0);
 
             t.setImageDrawable(getResources().getDrawable(R.drawable.two_clubs));
             t.setTag(R.string.playing_card_id, new PlayingCard(GameCardRanks.TWO, GameCardSuits.CLUBS));
-
-            t.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PlayingCard card = (PlayingCard) v.getTag(R.string.playing_card_id);
-                    Object discardedTag = v.getTag(R.bool.isCardDiscarded);
-
-                    boolean shouldDiscard;
-
-                    if (discardedTag == null) {
-                        shouldDiscard = true;
-                    } else {
-                        shouldDiscard = !((boolean)discardedTag);
-                    }
-
-                    v.setTag(R.bool.isCardDiscarded, shouldDiscard);
-
-                    if (shouldDiscard) {
-                        _cardsToDiscard.add(card);
-                        v.setPadding(0, 0, 0, 0);
-                    } else {
-                        _cardsToDiscard.remove(card);
-                        v.setPadding(0, 20, 0, 0);
-                    }
-                }
-            });
-
 
             _playerDataLinearLayout.addView(t);
         } catch (Exception ex) {
@@ -143,8 +116,54 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if (v instanceof ImageButton) {
+        if (v instanceof ImageView) {
+            cardOnClicked(v);
+        }
 
+        switch (v.getId()) {
+            case (R.id.discard_button): {
+                discardButtonOnClicked();
+                break;
+            }
+        }
+    }
+
+    private void cardOnClicked(View view) {
+        PlayingCard card = (PlayingCard) view.getTag(R.string.playing_card_id);
+        Object discardedTag = view.getTag(R.bool.shouldDiscard);
+
+        boolean shouldDiscard;
+
+        if (discardedTag == null) {
+            shouldDiscard = true;
+        } else {
+            shouldDiscard = !((boolean)discardedTag);
+        }
+
+        view.setTag(R.bool.shouldDiscard, shouldDiscard);
+
+        if (shouldDiscard) {
+            _cardsToDiscard.add(card);
+            view.setPadding(0, 20, 0, 0);
+
+            _discardButton.setEnabled(true);
+        } else {
+            _cardsToDiscard.remove(card);
+            view.setPadding(0, 0, 0, 0);
+
+            if (_cardsToDiscard.size() == 0) {
+                _discardButton.setEnabled(false);
+            }
+        }
+    }
+
+    private void discardButtonOnClicked() {
+        boolean isValid = _game.isCardsDiscardValid(_cardsToDiscard);
+
+        if (!isValid) {
+            Toast.makeText(this, "Invalid discard", Toast.LENGTH_SHORT);
+        } else {
+            _discardButton.setEnabled(false);
         }
     }
 }

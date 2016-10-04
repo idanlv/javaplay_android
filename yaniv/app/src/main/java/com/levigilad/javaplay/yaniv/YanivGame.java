@@ -1,13 +1,18 @@
 package com.levigilad.javaplay.yaniv;
 
+import android.os.Build;
+
 import com.levigilad.javaplay.infra.GameActivity;
 import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.GameCardRanks;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class represents Yaniv game logic
@@ -91,7 +96,7 @@ public class YanivGame extends GameOfCards {
      * @param discardCards cards
      * @return True or False
      */
-    public boolean isCardsDiscardValid(LinkedList<PlayingCard> discardCards) {
+    public boolean isCardsDiscardValid(List<PlayingCard> discardCards) {
         return ((discardCards.size() == MIN_DISCARDED_CARDS)
                 || isSequence(discardCards)
                 || isDuplicates(discardCards));
@@ -102,8 +107,8 @@ public class YanivGame extends GameOfCards {
      * @param cards cards
      * @return True or False
      */
-    private boolean isDuplicates(LinkedList<PlayingCard> cards) {
-        GameCardRanks value = cards.peek().getRank();
+    private boolean isDuplicates(List<PlayingCard> cards) {
+        GameCardRanks value = cards.get(0).getRank();
 
         if (cards.size() < MIN_DUPLICATES_LENGTH) {
             return false;
@@ -123,12 +128,19 @@ public class YanivGame extends GameOfCards {
      * @param cardSeries cards
      * @return True or False
      */
-    private boolean isSequence(LinkedList<PlayingCard> cardSeries) {
+    private boolean isSequence(List<PlayingCard> cardSeries) {
         int previousValue = -1;
 
         if (cardSeries.size() < MIN_SEQUENCE_LENGTH) {
             return false;
         }
+
+        Collections.sort(cardSeries, new Comparator<PlayingCard>() {
+            @Override
+            public int compare(PlayingCard o1, PlayingCard o2) {
+                return o1.compareTo(o2);
+            }
+        });
 
         for (PlayingCard card : cardSeries) {
             int currentValue = card.getRank().getNumericValue();
@@ -141,7 +153,7 @@ public class YanivGame extends GameOfCards {
             else if ((currentValue == GameCardRanks.JOKER.getNumericValue()) ||
                     (currentValue == previousValue + 1)) {
                 previousValue++;
-            }
+           ; }
             // Current number does not continue the sequence
             else {
                 return false;
