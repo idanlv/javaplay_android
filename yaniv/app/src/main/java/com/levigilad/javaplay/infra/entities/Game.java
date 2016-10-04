@@ -1,9 +1,13 @@
-package com.levigilad.javaplay.infra;
+package com.levigilad.javaplay.infra.entities;
+
+import com.levigilad.javaplay.infra.GameActivity;
+
+import java.io.Serializable;
 
 /**
  * This abstract provides minimal Game functionality
  */
-public abstract class Game {
+public abstract class Game implements Serializable {
     private int _maxNumberOfPlayers;
 
     /**
@@ -32,4 +36,6 @@ public abstract class Game {
     public String toString() {
         return getDisplayName();
     }
+
+    public abstract Class getActivity();
 }

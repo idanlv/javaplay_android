@@ -1,6 +1,6 @@
 package com.levigilad.javaplay.infra.entities;
 
-import com.levigilad.javaplay.infra.IJsonSerializable;
+import com.levigilad.javaplay.infra.interfaces.IJsonSerializable;
 import com.levigilad.javaplay.infra.enums.GameCardSuits;
 import com.levigilad.javaplay.infra.enums.GameCardRanks;
 
@@ -10,7 +10,7 @@ import org.json.JSONObject;
 /**
  * This class represents a game card
  */
-public class GameCard implements IJsonSerializable, Comparable {
+public class PlayingCard implements IJsonSerializable, Comparable {
     // Consts
     public static final String CARD_VALUE = "card_value";
     public static final String CARD_SYMBOL = "card_symbol";
@@ -22,7 +22,7 @@ public class GameCard implements IJsonSerializable, Comparable {
     /**
      * Empty Constructor
      */
-    public GameCard() {
+    public PlayingCard() {
     }
 
     /**
@@ -30,7 +30,7 @@ public class GameCard implements IJsonSerializable, Comparable {
      * @param rank Value of card
      * @param suit Symbol of card
      */
-    public GameCard(GameCardRanks rank, GameCardSuits suit) {
+    public PlayingCard(GameCardRanks rank, GameCardSuits suit) {
         this._rank = rank;
         this._suit = suit;
         validate(rank, suit);
@@ -38,9 +38,9 @@ public class GameCard implements IJsonSerializable, Comparable {
 
     /**
      * Copy constructor
-     * @param other GameCard to copy from
+     * @param other PlayingCard to copy from
      */
-    public GameCard(GameCard other) {
+    public PlayingCard(PlayingCard other) {
         this._rank = other.getRank();
         this._suit = other.getSuit();
     }
@@ -59,6 +59,10 @@ public class GameCard implements IJsonSerializable, Comparable {
      */
     public GameCardSuits getSuit() {
         return this._suit;
+    }
+
+    public int getDrawableId() {
+        return 0;
     }
 
     /**
@@ -105,14 +109,14 @@ public class GameCard implements IJsonSerializable, Comparable {
      */
     @Override
     public int compareTo(Object another) {
-        if (another instanceof GameCard) {
-            GameCard anotherCard = (GameCard)another;
+        if (another instanceof PlayingCard) {
+            PlayingCard anotherCard = (PlayingCard)another;
 
             return this.getRank().compareTo(anotherCard.getRank());
         }
 
         throw new ClassCastException(
-                String.format("Comparing type (0) to GameCard is not supported",
+                String.format("Comparing type (0) to PlayingCard is not supported",
                         another.getClass().getName()));
     }
 }

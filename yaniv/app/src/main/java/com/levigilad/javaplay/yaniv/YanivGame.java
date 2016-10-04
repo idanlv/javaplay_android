@@ -1,8 +1,9 @@
 package com.levigilad.javaplay.yaniv;
 
-import com.levigilad.javaplay.infra.GameOfCards;
+import com.levigilad.javaplay.infra.GameActivity;
+import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
-import com.levigilad.javaplay.infra.entities.GameCard;
+import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.GameCardRanks;
 
 import java.util.Iterator;
@@ -75,10 +76,10 @@ public class YanivGame extends GameOfCards {
     public int calculateDeckScore(DeckOfCards deck) {
         int cardsTotalValue = 0;
 
-        Iterator<GameCard> iterator = deck.iterator();
+        Iterator<PlayingCard> iterator = deck.iterator();
 
         while (iterator.hasNext()) {
-            GameCard card = iterator.next();
+            PlayingCard card = iterator.next();
             cardsTotalValue += getCardValue(card);
         }
 
@@ -90,7 +91,7 @@ public class YanivGame extends GameOfCards {
      * @param discardCards cards
      * @return True or False
      */
-    public boolean isCardsDiscardValid(LinkedList<GameCard> discardCards) {
+    public boolean isCardsDiscardValid(LinkedList<PlayingCard> discardCards) {
         return ((discardCards.size() == MIN_DISCARDED_CARDS)
                 || isSequence(discardCards)
                 || isDuplicates(discardCards));
@@ -101,14 +102,14 @@ public class YanivGame extends GameOfCards {
      * @param cards cards
      * @return True or False
      */
-    private boolean isDuplicates(LinkedList<GameCard> cards) {
+    private boolean isDuplicates(LinkedList<PlayingCard> cards) {
         GameCardRanks value = cards.peek().getRank();
 
         if (cards.size() < MIN_DUPLICATES_LENGTH) {
             return false;
         }
 
-        for (GameCard card : cards) {
+        for (PlayingCard card : cards) {
             if (value != card.getRank()) {
                 return false;
             }
@@ -122,14 +123,14 @@ public class YanivGame extends GameOfCards {
      * @param cardSeries cards
      * @return True or False
      */
-    private boolean isSequence(LinkedList<GameCard> cardSeries) {
+    private boolean isSequence(LinkedList<PlayingCard> cardSeries) {
         int previousValue = -1;
 
         if (cardSeries.size() < MIN_SEQUENCE_LENGTH) {
             return false;
         }
 
-        for (GameCard card : cardSeries) {
+        for (PlayingCard card : cardSeries) {
             int currentValue = card.getRank().getNumericValue();
             // First value in sequence
             if (previousValue == -1) {
@@ -155,7 +156,7 @@ public class YanivGame extends GameOfCards {
      * @param card
      * @return
      */
-    private int getCardValue(GameCard card) {
+    private int getCardValue(PlayingCard card) {
         switch (card.getRank()) {
             case TEN:
             case JACK:
@@ -170,5 +171,10 @@ public class YanivGame extends GameOfCards {
     @Override
     public String getDisplayName() {
         return "Yaniv";
+    }
+
+    @Override
+    public Class getActivity() {
+        return YanivGameActivity.class;
     }
 }

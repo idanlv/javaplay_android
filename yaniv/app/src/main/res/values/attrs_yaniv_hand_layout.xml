@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="YanivHandLayout">
+        <attr name="score" format="integer"/>
+    </declare-styleable>
+</resources>

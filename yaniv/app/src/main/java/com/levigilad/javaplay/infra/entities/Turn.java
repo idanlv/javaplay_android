@@ -1,4 +1,6 @@
-package com.levigilad.javaplay.infra;
+package com.levigilad.javaplay.infra.entities;
+
+import com.levigilad.javaplay.infra.interfaces.IJsonSerializable;
 
 import org.json.JSONException;
 import org.json.JSONObject;

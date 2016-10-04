@@ -5,5 +5,5 @@
     android:layout_height="wrap_content"
     android:id="@+id/game_list_item"
     android:textAlignment="center"
-    android:textColor="#000"
-    android:textSize="20sp"/>
+    android:textColor="#FFF"
+    android:textSize="30sp"/>

@@ -1,21 +1,9 @@
-package com.levigilad.javaplay.infra;
-
-import android.util.Log;
+package com.levigilad.javaplay.infra.entities;
 
 import com.levigilad.javaplay.yaniv.YanivGame;
 
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-
-import static org.reflections.ReflectionUtils.*;
 
 /**
  * This class represents a Singleton of a Playground
