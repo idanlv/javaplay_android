@@ -19,6 +19,9 @@
     <!-- Replace by your app ID -->
     <string name="app_id">559399563466</string>
 
+    <!-- Yaniv Game -->
+    <string name="playing_card_id"></string>
+
     <!-- Replace by your "Trivial Victory" achievement ID -->
     <string name="achievement_trivial_victory">CgkIyuG_9qMQEAIQAQ</string>
     <item name="pick_a_game_textView" type="id" />

@@ -32,7 +32,7 @@
     <string name="title_activity_game">GameActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="waiting_for_players">Waiting for players...</string>
+    <string name="waiting_for_players">Waiting for players to join</string>
 
     <string name="status_multiplayer_error_not_trusted_tester">Anyone you invite must be a trusted tester</string>
     <string name="match_error_already_rematched">This rematch has already been started!</string>
