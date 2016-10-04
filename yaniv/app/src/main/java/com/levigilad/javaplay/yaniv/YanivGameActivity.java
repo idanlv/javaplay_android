@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.games.Games;
@@ -31,7 +32,7 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
     // Designer members
     private LinearLayout _playerDataLinearLayout;
     private Button _discardButton;
-
+    private TextView _instructionsTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,8 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
         _discardButton = (Button)findViewById(R.id.discard_button);
         _discardButton.setEnabled(false);
         _discardButton.setOnClickListener(this);
+
+        _instructionsTextView = (TextView)findViewById(R.id.instructions_text_view);
     }
 
     @Override
