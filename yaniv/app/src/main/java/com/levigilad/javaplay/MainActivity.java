@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.google.android.gms.games.Games;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.google.basegameutils.games.BaseGameUtils;
 
@@ -86,7 +85,7 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
     }
 
     private void showGameOptions() {
-        Intent i = new Intent(this, GamePickerActivity.class);
+        Intent i = new Intent(this, GameSelectionActivity.class);
         startActivity(i);
     }
 

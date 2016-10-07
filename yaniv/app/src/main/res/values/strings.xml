@@ -42,4 +42,17 @@
     <string name="unexpected_status">Unexpected status</string>
     <string name="match_error_inactive_match">This match is inactive.</string>
     <string name='match_error_locally_modified'>This match has locally-modified data.  This operation cannot be performed until the match is sent to the server.</string>
+    <string name="game_description_stub">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquam pellentesque sem eu varius. Integer sed fermentum metus, ut sagittis velit. Quisque nisl nisl, posuere nec vulputate et, scelerisque quis eros. Morbi iaculis hendrerit ante, vulputate pulvinar nunc lacinia sed. Duis porttitor magna est, a mattis ex facilisis quis. Suspendisse potenti. Nunc vel turpis ante. Praesent id dignissim lectus, in sodales ex. Vestibulum tellus est, convallis id nisl vel, ornare semper lorem. Suspendisse potenti. Mauris auctor lectus quis rhoncus maximus. Praesent vel consequat metus. Sed quis mi quis lorem egestas semper. Etiam a lacus nulla.</string>
+    <string name="title_activity_game_options">GameOptionsActivity</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

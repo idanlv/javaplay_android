@@ -1,19 +1,17 @@
 package com.levigilad.javaplay;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.basegameutils.games.BaseGameActivity;
+import com.levigilad.javaplay.infra.GameOptionsRecyclerViewAdapter;
 import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.entities.Playground;
 
@@ -22,31 +20,35 @@ import java.util.ArrayList;
 /**
  * This activity is the viewer for picking a game
  */
-public class GamePickerActivity extends BaseGameActivity implements ListView.OnItemClickListener {
+public class GameSelectionActivity extends BaseGameActivity implements
+        GameOptionsRecyclerViewAdapter.MyClickListener {
 
     private static final int RC_SELECT_PLAYERS = 5001;
-    private Game _game = null;
+    private static final String TAG = "GameSelectionActivity";
+    private Game _game;
+
+    // Designer members
+    private RecyclerView _gameOptionsRecyclerView;
+    private RecyclerView.LayoutManager _layoutManager;
+    private RecyclerView.Adapter _adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_picker);
+        setContentView(R.layout.activity_game_selection);
 
-        ListView gameOptionsListView = (ListView)findViewById(R.id.game_options_listview);
-        gameOptionsListView.setOnItemClickListener(this);
-
-        loadGames(gameOptionsListView);
+        initializeViews();
     }
 
-    private void loadGames(ListView gameOptionsListView) {
-        Playground playground = Playground.getInstance();
+    private void initializeViews() {
+        _gameOptionsRecyclerView = (RecyclerView) findViewById(R.id.game_options_recycler_view);
+        _gameOptionsRecyclerView.setHasFixedSize(true);
 
-        ArrayAdapter<Game> adapter = new ArrayAdapter<>(
-                this,
-                R.layout.game_list_item,
-                playground.getGames());
+        _layoutManager = new LinearLayoutManager(this);
+        _gameOptionsRecyclerView.setLayoutManager(_layoutManager);
 
-        gameOptionsListView.setAdapter(adapter);
+        _adapter = new GameOptionsRecyclerViewAdapter(Playground.getInstance().getGames());
+        _gameOptionsRecyclerView.setAdapter(_adapter);
     }
 
     @Override
@@ -55,13 +57,9 @@ public class GamePickerActivity extends BaseGameActivity implements ListView.OnI
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ListView gameOptions = (ListView) findViewById(R.id.game_options_listview);
-        _game = (Game) gameOptions.getItemAtPosition(position);
-
-        Intent intent =
-                Games.TurnBasedMultiplayer.getSelectOpponentsIntent(getApiClient(), 1, 7, true);
-        startActivityForResult(intent, RC_SELECT_PLAYERS);
+    protected void onResume() {
+        super.onResume();
+        ((GameOptionsRecyclerViewAdapter)_adapter).setOnClickListener(this);
     }
 
     @Override
@@ -104,5 +102,14 @@ public class GamePickerActivity extends BaseGameActivity implements ListView.OnI
 
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onItemClicked(int position, View v) {
+        _game = ((GameOptionsRecyclerViewAdapter)_adapter).getItem(position);
+
+        Intent intent =
+                Games.TurnBasedMultiplayer.getSelectOpponentsIntent(getApiClient(), 1, 7, true);
+        startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 }

@@ -189,4 +189,9 @@ public class YanivGame extends GameOfCards {
     public Class getActivity() {
         return YanivGameActivity.class;
     }
+
+    @Override
+    public String getDescription() {
+        return "Bla bla bla yaniv";
+    }
 }

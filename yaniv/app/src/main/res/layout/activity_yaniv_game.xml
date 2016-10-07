@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.levigilad.javaplay.yaniv.YanivGameActivity"
-    android:theme="@android:style/Theme.Material.Panel"
+    android:theme="@style/FullscreenTheme"
     android:orientation="vertical">
 
     <TextView

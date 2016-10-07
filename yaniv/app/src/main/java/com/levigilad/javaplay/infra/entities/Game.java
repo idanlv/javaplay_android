@@ -38,4 +38,6 @@ public abstract class Game implements Serializable {
     }
 
     public abstract Class getActivity();
+
+    public abstract String getDescription();
 }
