@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.StackView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,8 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
     private LinearLayout _playerDataLinearLayout;
     private Button _discardButton;
     private TextView _instructionsTextView;
+    private StackView _deckStackView;
+    private ImageView _deckImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,11 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
         _discardButton.setOnClickListener(this);
 
         _instructionsTextView = (TextView)findViewById(R.id.instructions_text_view);
+
+        _deckStackView = (StackView)findViewById(R.id.deck_stack_view);
+
+        _deckImageView = (ImageView)findViewById(R.id.deck_image_view);
+        _deckImageView.setOnClickListener(this);
     }
 
     @Override
@@ -80,7 +88,7 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
         {
             ImageView t = new ImageView(getBaseContext());
             t.setOnClickListener(this);
-            t.setPadding(0, 0, 0, 0);
+            t.setPadding(10, 10, 10, 10);
 
             t.setImageDrawable(getResources().getDrawable(R.drawable.two_clubs));
             t.setTag(R.string.playing_card_id, new PlayingCard(GameCardRanks.TWO, GameCardSuits.CLUBS));
@@ -119,16 +127,28 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if (v instanceof ImageView) {
-            cardOnClicked(v);
-        }
-
         switch (v.getId()) {
             case (R.id.discard_button): {
                 discardButtonOnClicked();
                 break;
             }
+            case (R.id.deck_image_view): {
+                deckImageViewOnClicked();
+                break;
+            }
+            default: {
+                if (v instanceof ImageView) {
+                    cardOnClicked(v);
+                }
+            }
         }
+    }
+
+    private void deckImageViewOnClicked() {
+        // TODO: Add card from deck to player
+
+        // TODO: Disable view and change opacity if deck is empty
+
     }
 
     private void cardOnClicked(View view) {
@@ -147,12 +167,12 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
 
         if (shouldDiscard) {
             _cardsToDiscard.add(card);
-            view.setPadding(0, 20, 0, 0);
+            view.setRotation(20);
 
             _discardButton.setEnabled(true);
         } else {
             _cardsToDiscard.remove(card);
-            view.setPadding(0, 0, 0, 0);
+            view.setRotation(0);
 
             if (_cardsToDiscard.size() == 0) {
                 _discardButton.setEnabled(false);
