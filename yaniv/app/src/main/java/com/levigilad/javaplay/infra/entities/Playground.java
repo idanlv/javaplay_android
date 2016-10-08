@@ -1,5 +1,7 @@
 package com.levigilad.javaplay.infra.entities;
 
+import android.content.Context;
+
 import com.levigilad.javaplay.yaniv.YanivGame;
 
 import java.util.ArrayList;
@@ -17,17 +19,17 @@ public class Playground {
     /**
      * Constructor
      */
-    private Playground() {
-        init();
+    private Playground(Context context) {
+        init(context);
     }
 
     /**
      * Retrieves Playground instance
      * @return Playground instance
      */
-    public static Playground getInstance() {
+    public static Playground getInstance(Context context) {
         if (_instance == null) {
-            _instance = new Playground();
+            _instance = new Playground(context);
         }
 
         return _instance;
@@ -36,8 +38,8 @@ public class Playground {
     /**
      * Loads all game options
      */
-    private void init() {
-        _games.add(new YanivGame());
+    private void init(Context context) {
+        _games.add(new YanivGame(context));
     }
 
     /**
@@ -46,5 +48,9 @@ public class Playground {
      */
     public ArrayList<Game> getGames() {
         return this._games;
+    }
+
+    public void getGame(String gameId) {
+
     }
 }

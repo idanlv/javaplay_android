@@ -48,7 +48,8 @@ public class GameSelectionActivity extends BaseGameActivity implements
         _layoutManager = new LinearLayoutManager(this);
         _gameOptionsRecyclerView.setLayoutManager(_layoutManager);
 
-        _adapter = new GameSelectionRecyclerViewAdapter(Playground.getInstance().getGames());
+        _adapter = new GameSelectionRecyclerViewAdapter(
+                Playground.getInstance(this.getApplicationContext()).getGames());
         _gameOptionsRecyclerView.setAdapter(_adapter);
     }
 

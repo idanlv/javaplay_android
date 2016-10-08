@@ -61,7 +61,7 @@ public class GameSelectionRecyclerViewAdapter extends
 
     @Override
     public void onBindViewHolder(GameHolder holder, int position) {
-        holder._nameTextView.setText(_games.get(position).getDisplayName());
+        holder._nameTextView.setText(_games.get(position).getGameId());
         holder._descriptionTextView.setText(_games.get(position).getDescription());
     }
 

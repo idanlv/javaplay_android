@@ -17,11 +17,10 @@ public abstract class Game implements Serializable {
      * Constructor
      * @param maxNumberOfPlayers Maximum number of players in match
      */
-    public Game(int gameId, int descriptionId, int leaderboardId, int maxNumberOfPlayers) {
-
-        this.mGameId = Resources.getSystem().getString(gameId);
-        this.mLeaderboardId = Resources.getSystem().getString(leaderboardId);
-        this.mDescription = Resources.getSystem().getString(descriptionId);
+    public Game(String gameId, String description, String leaderboardId, int maxNumberOfPlayers) {
+        this.mGameId = gameId;
+        this.mLeaderboardId = leaderboardId;
+        this.mDescription = description;
         this.mMaxNumberOfPlayers = maxNumberOfPlayers;
     }
 

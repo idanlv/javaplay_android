@@ -1,5 +1,7 @@
 package com.levigilad.javaplay.yaniv;
 
+import android.content.Context;
+
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
@@ -27,8 +29,8 @@ public class YanivGame extends GameOfCards {
     /**
      * Empty constructor
      */
-    public YanivGame() {
-        this(MAX_DEFAULT_PLAYERS, INITIAL_DEFAULT_CARD_COUNT);
+    public YanivGame(Context context) {
+        this(context, MAX_DEFAULT_PLAYERS, INITIAL_DEFAULT_CARD_COUNT);
     }
 
     /**
@@ -36,9 +38,12 @@ public class YanivGame extends GameOfCards {
      * @param numberOfPlayers number of players in game
      * @param numberOfStartingCards number of starting cards for player
      */
-    public YanivGame(int numberOfPlayers, int numberOfStartingCards) {
-        super(R.string.yaniv_game_id, R.string.yaniv_description, R.string.yaniv_leaderboard_id,
-                numberOfPlayers, numberOfStartingCards);
+    public YanivGame(Context context, int numberOfPlayers, int numberOfStartingCards) {
+        super(context.getString(R.string.yaniv_game_id),
+                context.getString(R.string.yaniv_description),
+                context.getString(R.string.yaniv_leaderboard_id),
+                numberOfPlayers,
+                numberOfStartingCards);
     }
 
     /**
