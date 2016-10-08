@@ -1,7 +1,5 @@
 package com.levigilad.javaplay.yaniv;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +14,7 @@ import android.widget.Toast;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
-import com.levigilad.javaplay.infra.GameFragment;
+import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
 
@@ -26,8 +24,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class YanivGameFragment extends GameFragment implements View.OnClickListener {
-    private static final String TAG = "YanivGameFragment";
+public class YanivPlayFragment extends PlayFragment implements View.OnClickListener {
+    private static final String TAG = "YanivPlayFragment";
 
     private YanivGame _game;
     private List<PlayingCard> _hand = new LinkedList<>();
@@ -45,7 +43,7 @@ public class YanivGameFragment extends GameFragment implements View.OnClickListe
     /**
      * Required empty constructor
      */
-    public YanivGameFragment() {
+    public YanivPlayFragment() {
         super();
     }
 
@@ -53,12 +51,12 @@ public class YanivGameFragment extends GameFragment implements View.OnClickListe
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment YanivGameFragment.
+     * @return A new instance of fragment YanivPlayFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static YanivGameFragment newInstance(ArrayList<String> invitees,
+    public static YanivPlayFragment newInstance(ArrayList<String> invitees,
                                                 Bundle autoMatchCriteria) {
-        YanivGameFragment fragment = new YanivGameFragment();
+        YanivPlayFragment fragment = new YanivPlayFragment();
         Bundle args = new Bundle();
         args.putStringArrayList(INVITEES, invitees);
         args.putBundle(AUTO_MATCH, autoMatchCriteria);

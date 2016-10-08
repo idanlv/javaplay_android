@@ -1,16 +1,12 @@
 package com.levigilad.javaplay.infra;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
@@ -27,129 +23,32 @@ import java.util.ArrayList;
  * Created by User on 08/10/2016.
  */
 
-public abstract class GameFragment extends Fragment implements GameHelper.GameHelperListener {
-    private static final String TAG = "GameFragment";
-
-    private OnFragmentInteractionListener mListener;
+public abstract class PlayFragment extends BaseGameFragment {
+    private static final String TAG = "PlayFragment";
 
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTOMATCH";
+
+    private static final int REQUESTED_CLIENTS = GameHelper.CLIENT_GAMES;
     private static final int RC_SELECT_PLAYERS = 5001;
 
-    private int mRequestedClients = GameHelper.CLIENT_GAMES;
-
-    private GameHelper mHelper;
-    private boolean mDebugLog;
     private ArrayList<String> _invitees;
     private Bundle _autoMatchCriteria;
     private Game _game;
 
-    public GameFragment() {
-        super();
+    public PlayFragment() {
+        super(REQUESTED_CLIENTS);
     }
 
-    public GameHelper getGameHelper() {
-        if (mHelper == null) {
-            mHelper = new GameHelper(this.getActivity(), mRequestedClients);
-            mHelper.enableDebugLog(mDebugLog);
-        }
-        return mHelper;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (mHelper == null) {
-            getGameHelper();
-        }
-
-        mHelper.setup(this);
-
         if (getArguments() != null) {
             _invitees = getArguments().getStringArrayList(INVITEES);
             _autoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        mHelper.onStart(this.getActivity());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mHelper.onStop();
-    }
-
-    protected GoogleApiClient getApiClient() {
-        return mHelper.getApiClient();
-    }
-
-    protected boolean isSignedIn() {
-        return mHelper.isSignedIn();
-    }
-
-    protected void beginUserInitiatedSignIn() {
-        mHelper.beginUserInitiatedSignIn();
-    }
-
-    protected void signOut() {
-        mHelper.signOut();
-    }
-
-    protected void showAlert(String message) {
-        mHelper.makeSimpleDialog(message).show();
-    }
-
-    protected void showAlert(String title, String message) {
-        mHelper.makeSimpleDialog(title, message).show();
-    }
-
-    protected void enableDebugLog(boolean enabled) {
-        mDebugLog = true;
-        if (mHelper != null) {
-            mHelper.enableDebugLog(enabled);
-        }
-    }
-
-    protected void reconnectClient() {
-        mHelper.reconnectClient();
-    }
-
-    protected boolean hasSignInError() {
-        return mHelper.hasSignInError();
-    }
-
-    protected GameHelper.SignInFailureReason getSignInError() {
-        return mHelper.getSignInError();
-    }
-
-    /**
-     * Called when sign-in fails. As a result, a "Sign-In" button can be
-     * shown to the user; when that button is clicked, call
-     *
-     * @link{GamesHelper#beginUserInitiatedSignIn . Note that not all calls
-     *                                            to this method mean an
-     *                                            error; it may be a result
-     *                                            of the fact that automatic
-     *                                            sign-in could not proceed
-     *                                            because user interaction
-     *                                            was required (consent
-     *                                            dialogs). So
-     *                                            implementations of this
-     *                                            method should NOT display
-     *                                            an error message unless a
-     *                                            call to @link{GamesHelper#
-     *                                            hasSignInError} indicates
-     *                                            that an error indeed
-     *                                            occurred.
-     */
-    public void onSignInFailed() {
-        reconnectClient();
     }
 
     public void onSignInSucceeded() {
@@ -323,24 +222,6 @@ public abstract class GameFragment extends Fragment implements GameHelper.GameHe
                 });
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-
     protected abstract void startMatch(TurnBasedMatch match);
 
     protected abstract void updateMatch(TurnBasedMatch match);
@@ -348,19 +229,4 @@ public abstract class GameFragment extends Fragment implements GameHelper.GameHe
     protected abstract void updateView(byte[] turnData);
 
     protected abstract void askForRematch();
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

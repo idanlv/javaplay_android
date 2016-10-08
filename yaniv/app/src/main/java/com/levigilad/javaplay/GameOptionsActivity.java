@@ -13,16 +13,19 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.basegameutils.games.BaseGameActivity;
-import com.levigilad.javaplay.infra.GameFragment;
-import com.levigilad.javaplay.yaniv.YanivGameFragment;
+import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
+import com.levigilad.javaplay.yaniv.YanivPlayFragment;
 
 import java.util.ArrayList;
 
 public class GameOptionsActivity extends BaseGameActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
-        GameFragment.OnFragmentInteractionListener {
+        OnFragmentInteractionListener {
 
     private static final int RC_SELECT_PLAYERS = 5001;
+    private static final String GAME_ID = "GameId";
+
+    private int mGameId;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -35,6 +38,10 @@ public class GameOptionsActivity extends BaseGameActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_options);
+
+        if (savedInstanceState != null) {
+            mGameId = savedInstanceState.getInt(GAME_ID);
+        }
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -76,7 +83,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 autoMatchCriteria = null;
             }
 
-            YanivGameFragment fragment = YanivGameFragment.newInstance(invitees, autoMatchCriteria);
+            YanivPlayFragment fragment = YanivPlayFragment.newInstance(invitees, autoMatchCriteria);
 
             replaceFragment(fragment);
         } else {
