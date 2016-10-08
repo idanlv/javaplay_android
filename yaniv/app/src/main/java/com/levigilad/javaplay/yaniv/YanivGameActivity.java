@@ -90,8 +90,8 @@ public class YanivGameActivity extends GameActivity implements View.OnClickListe
             t.setOnClickListener(this);
             t.setPadding(10, 10, 10, 10);
 
-            t.setImageDrawable(getResources().getDrawable(R.drawable.two_clubs));
-            t.setTag(R.string.playing_card_id, new PlayingCard(GameCardRanks.TWO, GameCardSuits.CLUBS));
+            t.setImageDrawable(getResources().getDrawable(R.drawable.ic_joker));
+            t.setTag(R.string.playing_card_id, new PlayingCard(GameCardRanks.JOKER, GameCardSuits.NONE));
 
             _playerDataLinearLayout.addView(t);
         } catch (Exception ex) {
