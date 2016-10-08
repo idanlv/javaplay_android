@@ -1,8 +1,8 @@
 package com.levigilad.javaplay.infra.entities;
 
 import com.levigilad.javaplay.infra.interfaces.IJsonSerializable;
-import com.levigilad.javaplay.infra.enums.GameCardSuits;
-import com.levigilad.javaplay.infra.enums.GameCardRanks;
+import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
+import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,8 +16,8 @@ public class PlayingCard implements IJsonSerializable, Comparable {
     public static final String CARD_SYMBOL = "card_symbol";
 
     // Members
-    private GameCardRanks _rank;
-    private GameCardSuits _suit;
+    private PlayingCardRanks _rank;
+    private PlayingCardSuits _suit;
 
     /**
      * Empty Constructor
@@ -30,7 +30,7 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      * @param rank Value of card
      * @param suit Symbol of card
      */
-    public PlayingCard(GameCardRanks rank, GameCardSuits suit) {
+    public PlayingCard(PlayingCardRanks rank, PlayingCardSuits suit) {
         this._rank = rank;
         this._suit = suit;
         validate(rank, suit);
@@ -49,7 +49,7 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      * Getter
      * @return Card's value
      */
-    public GameCardRanks getRank() {
+    public PlayingCardRanks getRank() {
         return this._rank;
     }
 
@@ -57,7 +57,7 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      * Getter
      * @return Card's symbol
      */
-    public GameCardSuits getSuit() {
+    public PlayingCardSuits getSuit() {
         return this._suit;
     }
 
@@ -70,9 +70,9 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      * @param rank Card numeric rank
      * @param suit Card symbol
      */
-    private void validate(GameCardRanks rank, GameCardSuits suit) {
-        if (((rank == GameCardRanks.JOKER) && (suit != GameCardSuits.NONE)) ||
-                ((rank != GameCardRanks.JOKER) && (suit == GameCardSuits.NONE))) {
+    private void validate(PlayingCardRanks rank, PlayingCardSuits suit) {
+        if (((rank == PlayingCardRanks.JOKER) && (suit != PlayingCardSuits.NONE)) ||
+                ((rank != PlayingCardRanks.JOKER) && (suit == PlayingCardSuits.NONE))) {
             throw new IllegalArgumentException("Card game cannot be initialized");
         }
     }
@@ -98,8 +98,8 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
-        this._rank = (GameCardRanks)object.get(CARD_VALUE);
-        this._suit = (GameCardSuits)object.get(CARD_SYMBOL);
+        this._rank = (PlayingCardRanks)object.get(CARD_VALUE);
+        this._suit = (PlayingCardSuits)object.get(CARD_SYMBOL);
     }
 
     /**

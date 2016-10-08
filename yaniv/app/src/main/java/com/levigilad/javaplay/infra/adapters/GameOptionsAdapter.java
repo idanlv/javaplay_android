@@ -37,7 +37,7 @@ public class GameOptionsAdapter extends ArrayAdapter<String>{
 
         switch (GameOptions.valueOf(option)) {
             case LEADERSHIP_BOARD: {
-                drawable_id = R.drawable.leadership_board;
+                drawable_id = R.drawable.game_leaderboards;
                 break;
             }
             case INSTRUCTIONS: {
