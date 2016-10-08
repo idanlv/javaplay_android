@@ -40,7 +40,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_card_back_red"
+                app:srcCompat="@drawable/playingcard_card_back_red"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/deck_image_view"/>
 
@@ -103,7 +103,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_joker"
+                app:srcCompat="@drawable/playingcard_card_back_blue"
                 android:id="@+id/card_stub_image_view"
                 android:padding="10dp" />
 
