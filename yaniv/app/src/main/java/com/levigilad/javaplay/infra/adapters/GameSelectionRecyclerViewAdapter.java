@@ -1,4 +1,4 @@
-package com.levigilad.javaplay.infra;
+package com.levigilad.javaplay.infra.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,11 +16,11 @@ import java.util.ArrayList;
  * Created by User on 08/10/2016.
  */
 
-public class GameOptionsRecyclerViewAdapter extends
-        RecyclerView.Adapter<GameOptionsRecyclerViewAdapter.GameHolder> {
-    private static final String TAG = "GameOptionsRecyclerView";
+public class GameSelectionRecyclerViewAdapter extends
+        RecyclerView.Adapter<GameSelectionRecyclerViewAdapter.GameHolder> {
+    private static final String TAG = "GameSelectionView";
     private ArrayList<Game> _games;
-    private static MyClickListener _listener;
+    private static GameClickedListener _listener;
 
     public static class GameHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView _nameTextView;
@@ -42,11 +42,11 @@ public class GameOptionsRecyclerViewAdapter extends
         }
     }
 
-    public void setOnClickListener(MyClickListener listener) {
+    public void setOnClickListener(GameClickedListener listener) {
         this._listener = listener;
     }
 
-    public GameOptionsRecyclerViewAdapter(ArrayList<Game> games) {
+    public GameSelectionRecyclerViewAdapter(ArrayList<Game> games) {
         this._games = games;
     }
 
@@ -84,7 +84,7 @@ public class GameOptionsRecyclerViewAdapter extends
         return _games.size();
     }
 
-    public interface MyClickListener {
+    public interface GameClickedListener {
         void onItemClicked(int position, View v);
     }
 }

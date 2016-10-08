@@ -11,7 +11,7 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.basegameutils.games.BaseGameActivity;
-import com.levigilad.javaplay.infra.GameOptionsRecyclerViewAdapter;
+import com.levigilad.javaplay.infra.adapters.GameSelectionRecyclerViewAdapter;
 import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.entities.Playground;
 
@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * This activity is the viewer for picking a game
  */
 public class GameSelectionActivity extends BaseGameActivity implements
-        GameOptionsRecyclerViewAdapter.MyClickListener {
+        GameSelectionRecyclerViewAdapter.GameClickedListener {
 
     private static final int RC_SELECT_PLAYERS = 5001;
     private static final String TAG = "GameSelectionActivity";
@@ -47,7 +47,7 @@ public class GameSelectionActivity extends BaseGameActivity implements
         _layoutManager = new LinearLayoutManager(this);
         _gameOptionsRecyclerView.setLayoutManager(_layoutManager);
 
-        _adapter = new GameOptionsRecyclerViewAdapter(Playground.getInstance().getGames());
+        _adapter = new GameSelectionRecyclerViewAdapter(Playground.getInstance().getGames());
         _gameOptionsRecyclerView.setAdapter(_adapter);
     }
 
@@ -59,7 +59,7 @@ public class GameSelectionActivity extends BaseGameActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        ((GameOptionsRecyclerViewAdapter)_adapter).setOnClickListener(this);
+        ((GameSelectionRecyclerViewAdapter)_adapter).setOnClickListener(this);
     }
 
     @Override
@@ -106,10 +106,14 @@ public class GameSelectionActivity extends BaseGameActivity implements
 
     @Override
     public void onItemClicked(int position, View v) {
-        _game = ((GameOptionsRecyclerViewAdapter)_adapter).getItem(position);
+        /*_game = ((GameSelectionRecyclerViewAdapter)_adapter).getItem(position);
 
         Intent intent =
                 Games.TurnBasedMultiplayer.getSelectOpponentsIntent(getApiClient(), 1, 7, true);
-        startActivityForResult(intent, RC_SELECT_PLAYERS);
+        startActivityForResult(intent, RC_SELECT_PLAYERS);*/
+
+        Intent intent = new Intent(this, GameOptionsActivity.class);
+        intent.putExtra("Game", _game);
+        startActivity(intent);
     }
 }
