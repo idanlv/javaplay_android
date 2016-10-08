@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.games.Games;
 import com.google.basegameutils.games.GameHelper;
 import com.levigilad.javaplay.R;
 
@@ -36,8 +37,13 @@ public class LeaderBoardFragment extends BaseGameFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_leadership, container, false);
+        
+        initializeView(view);
 
         return view;
+    }
+
+    private void initializeView(View view) {
     }
 
     @Override
