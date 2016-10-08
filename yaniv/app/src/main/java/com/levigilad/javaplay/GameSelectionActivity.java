@@ -25,6 +25,7 @@ public class GameSelectionActivity extends BaseGameActivity implements
 
     private static final int RC_SELECT_PLAYERS = 5001;
     private static final String TAG = "GameSelectionActivity";
+    private static final String GAME_ID = "GameId";
     private Game _game;
 
     // Designer members
@@ -74,14 +75,8 @@ public class GameSelectionActivity extends BaseGameActivity implements
 
     @Override
     public void onItemClicked(int position, View v) {
-        /*_game = ((GameSelectionRecyclerViewAdapter)_adapter).getItem(position);
-
-        Intent intent =
-                Games.TurnBasedMultiplayer.getSelectOpponentsIntent(getApiClient(), 1, 7, true);
-        startActivityForResult(intent, RC_SELECT_PLAYERS);*/
-
         Intent intent = new Intent(this, GameOptionsActivity.class);
-        intent.putExtra("Game", _game);
+        intent.putExtra(GAME_ID, position);
         startActivity(intent);
     }
 }

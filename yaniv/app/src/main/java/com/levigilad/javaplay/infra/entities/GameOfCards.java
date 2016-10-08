@@ -17,8 +17,9 @@ public abstract class GameOfCards extends Game {
      * @param maxNumOfPlayers
      * @param initialNumOfPlayerCards
      */
-    public GameOfCards(int maxNumOfPlayers, int initialNumOfPlayerCards) {
-        super(maxNumOfPlayers);
+    public GameOfCards(int gameId, int descriptionId, int leaderboardId,
+                       int maxNumOfPlayers, int initialNumOfPlayerCards) {
+        super(gameId, descriptionId, leaderboardId, maxNumOfPlayers);
         _initialNumOfPlayerCards = initialNumOfPlayerCards;
     }
 

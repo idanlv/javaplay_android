@@ -1,5 +1,6 @@
 package com.levigilad.javaplay.yaniv;
 
+import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
@@ -27,7 +28,7 @@ public class YanivGame extends GameOfCards {
      * Empty constructor
      */
     public YanivGame() {
-        super(MAX_DEFAULT_PLAYERS, INITIAL_DEFAULT_CARD_COUNT);
+        this(MAX_DEFAULT_PLAYERS, INITIAL_DEFAULT_CARD_COUNT);
     }
 
     /**
@@ -36,7 +37,8 @@ public class YanivGame extends GameOfCards {
      * @param numberOfStartingCards number of starting cards for player
      */
     public YanivGame(int numberOfPlayers, int numberOfStartingCards) {
-        super(numberOfPlayers, numberOfStartingCards);
+        super(R.string.yaniv_game_id, R.string.yaniv_description, R.string.yaniv_leaderboard_id,
+                numberOfPlayers, numberOfStartingCards);
     }
 
     /**
@@ -174,15 +176,5 @@ public class YanivGame extends GameOfCards {
             default:
                 return card.getRank().getNumericValue();
         }
-    }
-
-    @Override
-    public String getDisplayName() {
-        return "Yaniv";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Bla bla bla yaniv";
     }
 }

@@ -1,39 +1,56 @@
 package com.levigilad.javaplay.infra.entities;
 
+import android.content.res.Resources;
+
 import java.io.Serializable;
 
 /**
  * This abstract provides minimal Game functionality
  */
 public abstract class Game implements Serializable {
-    private int _maxNumberOfPlayers;
+    private final String mGameId;
+    private final String mLeaderboardId;
+    private final String mDescription;
+    private final int mMaxNumberOfPlayers;
 
     /**
      * Constructor
      * @param maxNumberOfPlayers Maximum number of players in match
      */
-    public Game(int maxNumberOfPlayers) {
-        this._maxNumberOfPlayers = maxNumberOfPlayers;
+    public Game(int gameId, int descriptionId, int leaderboardId, int maxNumberOfPlayers) {
+
+        this.mGameId = Resources.getSystem().getString(gameId);
+        this.mLeaderboardId = Resources.getSystem().getString(leaderboardId);
+        this.mDescription = Resources.getSystem().getString(descriptionId);
+        this.mMaxNumberOfPlayers = maxNumberOfPlayers;
+    }
+
+    /**
+     * Getter
+     */
+    public int getMaxNumberOfPlayers() {
+        return mMaxNumberOfPlayers;
+    }
+
+    /**
+     * Getter
+     */
+    public String getLeaderboardId() {
+        return mLeaderboardId;
+    }
+
+    /**
+     * Getter
+     */
+    public String getDescription() {
+        return mDescription;
     }
 
     /**
      * Getter
      * @return
      */
-    public int getMaxNumberOfPlayers() {
-        return _maxNumberOfPlayers;
+    public String getGameId() {
+        return mGameId;
     }
-
-    /**
-     * Returns game's name
-     * @return
-     */
-    public abstract String getDisplayName();
-
-    @Override
-    public String toString() {
-        return getDisplayName();
-    }
-
-    public abstract String getDescription();
 }

@@ -1,21 +1,15 @@
 package com.levigilad.javaplay.infra;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
-import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
@@ -29,42 +23,27 @@ import java.util.ArrayList;
  * Created by User on 08/10/2016.
  */
 
-public abstract class GameFragment extends Fragment implements GameHelper.GameHelperListener {
-    private static final String TAG = "GameFragment";
+public abstract class PlayFragment extends BaseGameFragment {
+    private static final String TAG = "PlayFragment";
 
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTOMATCH";
+
+    private static final int REQUESTED_CLIENTS = GameHelper.CLIENT_GAMES;
     private static final int RC_SELECT_PLAYERS = 5001;
 
-    private int mRequestedClients = GameHelper.CLIENT_GAMES;
-
-    private GameHelper mHelper;
-    private boolean mDebugLog;
     private ArrayList<String> _invitees;
     private Bundle _autoMatchCriteria;
     private Game _game;
 
-    public GameFragment() {
-        super();
+    public PlayFragment() {
+        super(REQUESTED_CLIENTS);
     }
 
-    public GameHelper getGameHelper() {
-        if (mHelper == null) {
-            mHelper = new GameHelper(this.getActivity(), mRequestedClients);
-            mHelper.enableDebugLog(mDebugLog);
-        }
-        return mHelper;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (mHelper == null) {
-            getGameHelper();
-        }
-
-        mHelper.setup(this);
 
         if (getArguments() != null) {
             _invitees = getArguments().getStringArrayList(INVITEES);
@@ -72,131 +51,22 @@ public abstract class GameFragment extends Fragment implements GameHelper.GameHe
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        mHelper.onStart(this.getActivity());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mHelper.onStop();
-    }
-
-    @Override
-    public void onActivityResult(int request, int response, Intent data) {
-        super.onActivityResult(request, response, data);
-
-        if (request == RC_SELECT_PLAYERS) {
-            if (response != Activity.RESULT_OK) {
-                // user canceled
-                return;
-            }
-
-            // Get the invitee list.
-            final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-
-            // Get auto-match criteria.
-            Bundle autoMatchCriteria = null;
-            int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-            int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-            if (minAutoMatchPlayers > 0) {
-                autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
-                        minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            } else {
-                autoMatchCriteria = null;
-            }
-
-            _invitees = invitees;
-            _autoMatchCriteria = autoMatchCriteria;
-
-            /*Intent intent = new Intent(this, _game.getActivity());
-            intent.putExtra("Invitees", invitees);
-            intent.putExtra("AutoMatchCriteria", autoMatchCriteria);
-
-            startActivity(intent);*/
-        } else {
-            mHelper.onActivityResult(request, response, data);
-        }
-    }
-
-    protected GoogleApiClient getApiClient() {
-        return mHelper.getApiClient();
-    }
-
-    protected boolean isSignedIn() {
-        return mHelper.isSignedIn();
-    }
-
-    protected void beginUserInitiatedSignIn() {
-        mHelper.beginUserInitiatedSignIn();
-    }
-
-    protected void signOut() {
-        mHelper.signOut();
-    }
-
-    protected void showAlert(String message) {
-        mHelper.makeSimpleDialog(message).show();
-    }
-
-    protected void showAlert(String title, String message) {
-        mHelper.makeSimpleDialog(title, message).show();
-    }
-
-    protected void enableDebugLog(boolean enabled) {
-        mDebugLog = true;
-        if (mHelper != null) {
-            mHelper.enableDebugLog(enabled);
-        }
-    }
-
-    protected void reconnectClient() {
-        mHelper.reconnectClient();
-    }
-
-    protected boolean hasSignInError() {
-        return mHelper.hasSignInError();
-    }
-
-    protected GameHelper.SignInFailureReason getSignInError() {
-        return mHelper.getSignInError();
-    }
-
-    /**
-     * Called when sign-in fails. As a result, a "Sign-In" button can be
-     * shown to the user; when that button is clicked, call
-     *
-     * @link{GamesHelper#beginUserInitiatedSignIn . Note that not all calls
-     *                                            to this method mean an
-     *                                            error; it may be a result
-     *                                            of the fact that automatic
-     *                                            sign-in could not proceed
-     *                                            because user interaction
-     *                                            was required (consent
-     *                                            dialogs). So
-     *                                            implementations of this
-     *                                            method should NOT display
-     *                                            an error message unless a
-     *                                            call to @link{GamesHelper#
-     *                                            hasSignInError} indicates
-     *                                            that an error indeed
-     *                                            occurred.
-     */
-    public void onSignInFailed() {
-        reconnectClient();
-    }
-
-    /** Called when sign-in succeeds. */
     public void onSignInSucceeded() {
-        // TODO: Handle resume of game
-        Intent intent =
-                Games.TurnBasedMultiplayer.getSelectOpponentsIntent(getApiClient(), 1, 7, true);
-        startActivityForResult(intent, RC_SELECT_PLAYERS);
-    };
+        TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+                .addInvitedPlayers(_invitees)
+                .setAutoMatchCriteria(_autoMatchCriteria)
+                .build();
 
+        // Create and start the match.
+        Games.TurnBasedMultiplayer
+                .createMatch(getApiClient(), tbmc)
+                .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+                    @Override
+                    public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+                        processResult(initiateMatchResult);
+                    }
+                });
+    }
 
     /**
      * Returns false if something went wrong, probably. This should handle
