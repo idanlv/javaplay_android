@@ -2,36 +2,34 @@ package com.levigilad.javaplay;
 
 import android.app.Activity;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.basegameutils.games.BaseGameActivity;
+import com.levigilad.javaplay.infra.GameFragment;
+import com.levigilad.javaplay.yaniv.YanivGameFragment;
 
-public class GameOptionsActivity extends BaseGameActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+import java.util.ArrayList;
+
+public class GameOptionsActivity extends BaseGameActivity implements
+        NavigationDrawerFragment.NavigationDrawerCallbacks,
+        GameFragment.OnFragmentInteractionListener {
+
+    private static final int RC_SELECT_PLAYERS = 5001;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
+    private boolean mStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +38,6 @@ public class GameOptionsActivity extends BaseGameActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -49,34 +46,66 @@ public class GameOptionsActivity extends BaseGameActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        mStarted = true;
+    }
+
+    @Override
+    public void onActivityResult(int request, int response, Intent data) {
+        super.onActivityResult(request, response, data);
+
+        if (request == RC_SELECT_PLAYERS) {
+            if (response != Activity.RESULT_OK) {
+                // user canceled
+                return;
+            }
+
+            // Get the invitee list.
+            final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+
+            // Get auto-match criteria.
+            Bundle autoMatchCriteria = null;
+            int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+            int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+            if (minAutoMatchPlayers > 0) {
+                autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
+                        minAutoMatchPlayers, maxAutoMatchPlayers, 0);
+            } else {
+                autoMatchCriteria = null;
+            }
+
+            YanivGameFragment fragment = YanivGameFragment.newInstance(invitees, autoMatchCriteria);
+
+            replaceFragment(fragment);
+        } else {
+            mHelper.onActivityResult(request, response, data);
+        }
+    }
+
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
+        if (position == 0) {
+
+            if (mStarted) {
+                Intent intent =
+                        Games.TurnBasedMultiplayer.getSelectOpponentsIntent(getApiClient(), 1, 7, true);
+                startActivityForResult(intent, RC_SELECT_PLAYERS);
+            }
+        } else {
+
+        }
+
+    }
+
+    private void replaceFragment(Fragment fragment) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
 
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, fragment)
                 .commit();
-    }
-
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-        }
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
     }
 
     @Override
@@ -89,62 +118,8 @@ public class GameOptionsActivity extends BaseGameActivity
         // TODO
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            int sectionNumber = 0;
-
-            if (savedInstanceState != null) {
-                sectionNumber = savedInstanceState.getInt(ARG_SECTION_NUMBER);
-            }
-
-            int layoutId = 0;
-
-            switch (sectionNumber) {
-                case 1: {
-                    layoutId = R.layout.fragment_yaniv_game;
-                    break;
-                }
-                default: {
-                    // TODO: Change later
-                    layoutId = R.layout.fragment_yaniv_game;
-                }
-            }
-
-            View rootView = inflater.inflate(layoutId, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Context context) {
-            super.onAttach(context);
-            ((GameOptionsActivity) context).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //TODO
     }
 }

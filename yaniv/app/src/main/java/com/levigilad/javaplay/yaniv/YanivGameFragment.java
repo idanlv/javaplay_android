@@ -29,7 +29,6 @@ import java.util.List;
 public class YanivGameFragment extends GameFragment implements View.OnClickListener {
     private static final String TAG = "YanivGameFragment";
 
-    private OnFragmentInteractionListener mListener;
     private YanivGame _game;
     private List<PlayingCard> _hand = new LinkedList<>();
     private List<PlayingCard> _cardsToDiscard = new LinkedList<>();
@@ -67,31 +66,22 @@ public class YanivGameFragment extends GameFragment implements View.OnClickListe
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        initializeViews();
-    }
-
-    private void initializeViews() {
-        View view = getView();
-
-        mPlayerDataLinearLayout = (LinearLayout) view.findViewById(R.id.player_data_linear_layout);
+    private void initializeView(View parentView) {
+        mPlayerDataLinearLayout = (LinearLayout) parentView.findViewById(R.id.player_data_linear_layout);
 
         // Remove stub image which was created for design purposes
-        View stubImage = view.findViewById(R.id.card_stub_image_view);
+        View stubImage = parentView.findViewById(R.id.card_stub_image_view);
         mPlayerDataLinearLayout.removeView(stubImage);
 
-        mDiscardButton = (Button)view.findViewById(R.id.discard_button);
+        mDiscardButton = (Button)parentView.findViewById(R.id.discard_button);
         mDiscardButton.setEnabled(false);
         mDiscardButton.setOnClickListener(this);
 
-        mInstructionsTextView = (TextView)view.findViewById(R.id.instructions_text_view);
+        mInstructionsTextView = (TextView)parentView.findViewById(R.id.instructions_text_view);
 
-        mDeckStackView = (StackView)view.findViewById(R.id.deck_stack_view);
+        mDeckStackView = (StackView)parentView.findViewById(R.id.deck_stack_view);
 
-        mDeckImageView = (ImageView)view.findViewById(R.id.deck_image_view);
+        mDeckImageView = (ImageView)parentView.findViewById(R.id.deck_image_view);
         mDeckImageView.setOnClickListener(this);
     }
 
@@ -99,25 +89,12 @@ public class YanivGameFragment extends GameFragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_yaniv_game, container, false);
+        View view = inflater.inflate(R.layout.fragment_yaniv_game, container, false);
+        initializeView(view);
+
+        return view;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     @Override
     public void onClick(View v) {
@@ -185,20 +162,6 @@ public class YanivGameFragment extends GameFragment implements View.OnClickListe
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 
     @Override
     protected void askForRematch() {

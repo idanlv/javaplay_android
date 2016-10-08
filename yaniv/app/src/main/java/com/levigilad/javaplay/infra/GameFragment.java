@@ -1,10 +1,10 @@
 package com.levigilad.javaplay.infra;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -14,8 +14,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
-import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
@@ -31,6 +29,8 @@ import java.util.ArrayList;
 
 public abstract class GameFragment extends Fragment implements GameHelper.GameHelperListener {
     private static final String TAG = "GameFragment";
+
+    private OnFragmentInteractionListener mListener;
 
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTOMATCH";
@@ -83,43 +83,6 @@ public abstract class GameFragment extends Fragment implements GameHelper.GameHe
     public void onStop() {
         super.onStop();
         mHelper.onStop();
-    }
-
-    @Override
-    public void onActivityResult(int request, int response, Intent data) {
-        super.onActivityResult(request, response, data);
-
-        if (request == RC_SELECT_PLAYERS) {
-            if (response != Activity.RESULT_OK) {
-                // user canceled
-                return;
-            }
-
-            // Get the invitee list.
-            final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-
-            // Get auto-match criteria.
-            Bundle autoMatchCriteria = null;
-            int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-            int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-            if (minAutoMatchPlayers > 0) {
-                autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
-                        minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            } else {
-                autoMatchCriteria = null;
-            }
-
-            _invitees = invitees;
-            _autoMatchCriteria = autoMatchCriteria;
-
-            /*Intent intent = new Intent(this, _game.getActivity());
-            intent.putExtra("Invitees", invitees);
-            intent.putExtra("AutoMatchCriteria", autoMatchCriteria);
-
-            startActivity(intent);*/
-        } else {
-            mHelper.onActivityResult(request, response, data);
-        }
     }
 
     protected GoogleApiClient getApiClient() {
@@ -189,14 +152,22 @@ public abstract class GameFragment extends Fragment implements GameHelper.GameHe
         reconnectClient();
     }
 
-    /** Called when sign-in succeeds. */
     public void onSignInSucceeded() {
-        // TODO: Handle resume of game
-        Intent intent =
-                Games.TurnBasedMultiplayer.getSelectOpponentsIntent(getApiClient(), 1, 7, true);
-        startActivityForResult(intent, RC_SELECT_PLAYERS);
-    };
+        TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+                .addInvitedPlayers(_invitees)
+                .setAutoMatchCriteria(_autoMatchCriteria)
+                .build();
 
+        // Create and start the match.
+        Games.TurnBasedMultiplayer
+                .createMatch(getApiClient(), tbmc)
+                .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+                    @Override
+                    public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+                        processResult(initiateMatchResult);
+                    }
+                });
+    }
 
     /**
      * Returns false if something went wrong, probably. This should handle
@@ -352,6 +323,24 @@ public abstract class GameFragment extends Fragment implements GameHelper.GameHe
                 });
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+
     protected abstract void startMatch(TurnBasedMatch match);
 
     protected abstract void updateMatch(TurnBasedMatch match);
@@ -359,4 +348,19 @@ public abstract class GameFragment extends Fragment implements GameHelper.GameHe
     protected abstract void updateView(byte[] turnData);
 
     protected abstract void askForRematch();
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
 }
