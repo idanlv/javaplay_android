@@ -1,7 +1,6 @@
 package com.levigilad.javaplay.infra.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.vision.text.Text;
-import com.levigilad.javaplay.R;
+import com.levigilad.javaplay.R;;
+import com.levigilad.javaplay.infra.enums.GameOptions;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by User on 08/10/2016.
@@ -22,16 +20,12 @@ import java.util.List;
 
 public class GameOptionsAdapter extends ArrayAdapter<String>{
 
-    private enum GAME_OPTIONS {
-        LEADERSHIP_BOARD,
-        INSTRUCTIONS
-    }
-
     public GameOptionsAdapter(Context context, int resource) {
         super(context, resource, new ArrayList<String>(){
             {
-                add(GAME_OPTIONS.LEADERSHIP_BOARD.name());
-                add(GAME_OPTIONS.INSTRUCTIONS.name());
+                for (GameOptions option : GameOptions.values()) {
+                    add(option.name());
+                }
             }});
     }
 
@@ -41,13 +35,21 @@ public class GameOptionsAdapter extends ArrayAdapter<String>{
         String option = this.getItem(position);
         int drawable_id = 0;
 
-        switch (GAME_OPTIONS.valueOf(option)) {
+        switch (GameOptions.valueOf(option)) {
             case LEADERSHIP_BOARD: {
                 drawable_id = R.drawable.leadership_board;
                 break;
             }
             case INSTRUCTIONS: {
                 drawable_id = R.drawable.game_instructions;
+                break;
+            }
+            case ACHIEVEMENTS: {
+                drawable_id = R.drawable.game_achievments;
+                break;
+            }
+            case PLAY: {
+                drawable_id = R.drawable.game_play;
                 break;
             }
         }
