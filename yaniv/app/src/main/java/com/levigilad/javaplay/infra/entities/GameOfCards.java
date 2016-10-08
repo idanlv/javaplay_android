@@ -1,10 +1,7 @@
 package com.levigilad.javaplay.infra.entities;
 
-import com.levigilad.javaplay.infra.entities.DeckOfCards;
-import com.levigilad.javaplay.infra.entities.Game;
-import com.levigilad.javaplay.infra.entities.PlayingCard;
-import com.levigilad.javaplay.infra.enums.GameCardSuits;
-import com.levigilad.javaplay.infra.enums.GameCardRanks;
+import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
+import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 
 import java.util.LinkedList;
 
@@ -34,12 +31,12 @@ public abstract class GameOfCards extends Game {
         DeckOfCards deck = new DeckOfCards();
 
         // Create game deck
-        for (GameCardSuits symbol : GameCardSuits.values()) {
-            if (symbol == GameCardSuits.NONE) {
+        for (PlayingCardSuits symbol : PlayingCardSuits.values()) {
+            if (symbol == PlayingCardSuits.NONE) {
                 continue;
             }
-            for (GameCardRanks value : GameCardRanks.values()) {
-                if (value == GameCardRanks.JOKER) {
+            for (PlayingCardRanks value : PlayingCardRanks.values()) {
+                if (value == PlayingCardRanks.JOKER) {
                     continue;
                 }
                 deck.addCardToTop(new PlayingCard(value,symbol));
@@ -48,7 +45,7 @@ public abstract class GameOfCards extends Game {
 
         // Add the jokers
         for (int i = 0; i < numberOfJokers; i++) {
-            deck.addCardToTop(new PlayingCard(GameCardRanks.JOKER, GameCardSuits.NONE));
+            deck.addCardToTop(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
         }
 
         deck.shuffle();

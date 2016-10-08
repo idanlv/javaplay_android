@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * This enum provides symbol options for game card
  */
-public enum GameCardSuits implements Serializable {
+public enum PlayingCardSuits implements Serializable {
     NONE,
     HEARTS,
     DIAMONDS,

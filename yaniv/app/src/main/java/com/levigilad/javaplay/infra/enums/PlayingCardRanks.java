@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * This enum provides value options for game card
  */
-public enum GameCardRanks implements Serializable {
+public enum PlayingCardRanks implements Serializable {
     ACE,
     TWO,
     THREE,

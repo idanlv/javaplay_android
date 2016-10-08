@@ -6,7 +6,7 @@ import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
-import com.levigilad.javaplay.infra.enums.GameCardRanks;
+import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -111,7 +111,7 @@ public class YanivGame extends GameOfCards {
      * @return True or False
      */
     private boolean isDuplicates(List<PlayingCard> cards) {
-        GameCardRanks value = cards.get(0).getRank();
+        PlayingCardRanks value = cards.get(0).getRank();
 
         if (cards.size() < MIN_DUPLICATES_LENGTH) {
             return false;
@@ -153,7 +153,7 @@ public class YanivGame extends GameOfCards {
             }
             // You can place a joker inside your sequence and it will act as the next number in
             // series
-            else if ((currentValue == GameCardRanks.JOKER.getNumericValue()) ||
+            else if ((currentValue == PlayingCardRanks.JOKER.getNumericValue()) ||
                     (currentValue == previousValue + 1)) {
                 previousValue++;
            ; }
