@@ -1,4 +1,4 @@
-package com.levigilad.javaplay.infra;
+package com.levigilad.javaplay.infra.interfaces;
 
 import org.json.JSONException;
 import org.json.JSONObject;

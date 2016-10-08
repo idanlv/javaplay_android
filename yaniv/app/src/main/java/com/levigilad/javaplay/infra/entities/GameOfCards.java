@@ -1,7 +1,8 @@
-package com.levigilad.javaplay.infra;
+package com.levigilad.javaplay.infra.entities;
 
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
-import com.levigilad.javaplay.infra.entities.GameCard;
+import com.levigilad.javaplay.infra.entities.Game;
+import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.GameCardSuits;
 import com.levigilad.javaplay.infra.enums.GameCardRanks;
 
@@ -37,13 +38,16 @@ public abstract class GameOfCards extends Game {
                 continue;
             }
             for (GameCardRanks value : GameCardRanks.values()) {
-                deck.addCardToTop(new GameCard(value,symbol));
+                if (value == GameCardRanks.JOKER) {
+                    continue;
+                }
+                deck.addCardToTop(new PlayingCard(value,symbol));
             }
         }
 
         // Add the jokers
         for (int i = 0; i < numberOfJokers; i++) {
-            deck.addCardToTop(new GameCard(GameCardRanks.JOKER, GameCardSuits.NONE));
+            deck.addCardToTop(new PlayingCard(GameCardRanks.JOKER, GameCardSuits.NONE));
         }
 
         deck.shuffle();

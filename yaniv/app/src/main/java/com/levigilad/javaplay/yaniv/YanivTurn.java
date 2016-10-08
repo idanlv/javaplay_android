@@ -1,6 +1,6 @@
 package com.levigilad.javaplay.yaniv;
 
-import com.levigilad.javaplay.infra.Turn;
+import com.levigilad.javaplay.infra.entities.Turn;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 
 import org.json.JSONArray;
@@ -20,10 +20,23 @@ public class YanivTurn extends Turn {
     public static final String AVAILABLE_CARDS = "availableCards";
 
     // Members
-    private DeckOfCards _availableDeck = new DeckOfCards();
-    private DeckOfCards _discardedDeck = new DeckOfCards();
-    private LinkedList<Integer> _availableDiscardedCards = new LinkedList<>();
-    private boolean _initializeDone = false;
+    private DeckOfCards _availableDeck;
+    private DeckOfCards _discardedDeck;
+    private LinkedList<Integer> _availableDiscardedCards;
+    private boolean _initializeDone;
+
+    public YanivTurn() {
+        super();
+
+        _availableDeck = new DeckOfCards();
+        _discardedDeck = new DeckOfCards();
+        _availableDiscardedCards = new LinkedList<>();
+        _initializeDone = false;
+    }
+
+    public void setAvailableDeck(DeckOfCards deck) {
+        _availableDeck = new DeckOfCards(deck);
+    }
 
     /**
      * Retrieve Json representation of object
