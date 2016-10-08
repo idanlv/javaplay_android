@@ -32,7 +32,7 @@ class GameHelperUtils {
 
     private final static int[] RES_IDS = {
             R.string.unknown_error, R.string.sign_in_failed,
-            R.string.app_misconfigured, R.string.license_failed
+            R.string.app_misconfigured, R.string.status_license_failed
     };
 
     static String activityResponseCodeToString(int respCode) {

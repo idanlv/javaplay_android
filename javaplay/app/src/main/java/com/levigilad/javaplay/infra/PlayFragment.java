@@ -1,7 +1,5 @@
 package com.levigilad.javaplay.infra;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -91,34 +89,28 @@ public abstract class PlayFragment extends BaseGameFragment {
                 // it from your final application.
                 return true;
             case GamesStatusCodes.STATUS_MULTIPLAYER_ERROR_NOT_TRUSTED_TESTER:
-                showErrorMessage(match, statusCode,
-                        R.string.status_multiplayer_error_not_trusted_tester);
+                showErrorMessage(statusCode, R.string.status_multiplayer_error_not_trusted_tester);
                 break;
             case GamesStatusCodes.STATUS_MATCH_ERROR_ALREADY_REMATCHED:
-                showErrorMessage(match, statusCode,
-                        R.string.match_error_already_rematched);
+                showErrorMessage(statusCode, R.string.match_error_already_rematched);
                 break;
             case GamesStatusCodes.STATUS_NETWORK_ERROR_OPERATION_FAILED:
-                showErrorMessage(match, statusCode,
-                        R.string.network_error_operation_failed);
+                showErrorMessage(statusCode, R.string.network_error_operation_failed);
                 break;
             case GamesStatusCodes.STATUS_CLIENT_RECONNECT_REQUIRED:
-                showErrorMessage(match, statusCode,
-                        R.string.client_reconnect_required);
+                showErrorMessage(statusCode, R.string.status_client_reconnect_required);
                 break;
             case GamesStatusCodes.STATUS_INTERNAL_ERROR:
-                showErrorMessage(match, statusCode, R.string.internal_error);
+                showErrorMessage(statusCode, R.string.status_internal_error);
                 break;
             case GamesStatusCodes.STATUS_MATCH_ERROR_INACTIVE_MATCH:
-                showErrorMessage(match, statusCode,
-                        R.string.match_error_inactive_match);
+                showErrorMessage(statusCode, R.string.match_error_inactive_match);
                 break;
             case GamesStatusCodes.STATUS_MATCH_ERROR_LOCALLY_MODIFIED:
-                showErrorMessage(match, statusCode,
-                        R.string.match_error_locally_modified);
+                showErrorMessage(statusCode, R.string.match_error_locally_modified);
                 break;
             default:
-                showErrorMessage(match, statusCode, R.string.unexpected_status);
+                showErrorMessage(statusCode, R.string.unexpected_status);
                 Log.d(TAG, "Did not have warning or string to deal with: "
                         + statusCode);
         }
@@ -126,33 +118,6 @@ public abstract class PlayFragment extends BaseGameFragment {
         return false;
     }
 
-    protected void showErrorMessage(TurnBasedMatch match, int statusCode, int stringId) {
-        showWarning("Warning", getResources().getString(stringId));
-    }
-
-    protected void showWarning(String title, String message) {
-        AlertDialog.Builder alertDialogBuilder =
-                new AlertDialog.Builder(this.getActivity().getApplicationContext());
-
-        // set title
-        alertDialogBuilder.setTitle(title).setMessage(message);
-
-        // set dialog message
-        alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // if this button is clicked, close
-                        // current activity
-                    }
-                });
-
-        // create alert dialog
-        AlertDialog dialog = alertDialogBuilder.create();
-
-        // show it
-        dialog.show();
-    }
 
     public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         TurnBasedMatch match = result.getMatch();

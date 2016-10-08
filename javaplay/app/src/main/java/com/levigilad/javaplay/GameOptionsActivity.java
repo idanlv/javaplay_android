@@ -13,6 +13,8 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.basegameutils.games.BaseGameActivity;
+import com.levigilad.javaplay.infra.LeaderBoardFragment;
+import com.levigilad.javaplay.infra.enums.GameOptions;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.yaniv.YanivPlayFragment;
 
@@ -25,7 +27,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
     private static final int RC_SELECT_PLAYERS = 5001;
     private static final String GAME_ID = "GameId";
 
-    private int mGameId;
+    private String mGameId;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -40,7 +42,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
         setContentView(R.layout.activity_game_options);
 
         if (savedInstanceState != null) {
-            mGameId = savedInstanceState.getInt(GAME_ID);
+            mGameId = savedInstanceState.getString(GAME_ID);
         }
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -93,17 +95,23 @@ public class GameOptionsActivity extends BaseGameActivity implements
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        if (position == 0) {
+        GameOptions option = GameOptions.values()[position];
 
-            if (mStarted) {
-                Intent intent =
-                        Games.TurnBasedMultiplayer.getSelectOpponentsIntent(getApiClient(), 1, 7, true);
-                startActivityForResult(intent, RC_SELECT_PLAYERS);
+        switch (option) {
+            case PLAY: {
+                if (mStarted) {
+                    Intent intent = Games.TurnBasedMultiplayer
+                            .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
+                    startActivityForResult(intent, RC_SELECT_PLAYERS);
+                }
+                break;
             }
-        } else {
-
+            case LEADERSHIP_BOARD: {
+                LeaderBoardFragment fragment = LeaderBoardFragment.newInstance(mGameId);
+                replaceFragment(fragment);
+                break;
+            }
         }
-
     }
 
     private void replaceFragment(Fragment fragment) {

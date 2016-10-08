@@ -129,7 +129,7 @@ public class BaseGameUtils {
                 break;
             case GamesActivityResultCodes.RESULT_LICENSE_FAILED:
                 errorDialog = makeSimpleDialog(activity,
-                        activity.getString(R.string.license_failed));
+                        activity.getString(R.string.status_license_failed));
                 break;
             default:
                 // No meaningful Activity response code, so generate default Google

@@ -5,8 +5,6 @@ import android.content.Context;
 import com.levigilad.javaplay.yaniv.YanivGame;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * This class represents a Singleton of a Playground
@@ -14,7 +12,7 @@ import java.util.List;
 public class Playground {
     private static final String TAG = Playground.class.getName();
     private static Playground _instance = null;
-    private ArrayList<Game> _games = new ArrayList<>();
+    private ArrayList<Game> mGames = new ArrayList<>();
 
     /**
      * Constructor
@@ -39,7 +37,7 @@ public class Playground {
      * Loads all game options
      */
     private void init(Context context) {
-        _games.add(new YanivGame(context));
+        mGames.add(new YanivGame(context));
     }
 
     /**
@@ -47,10 +45,16 @@ public class Playground {
      * @return
      */
     public ArrayList<Game> getGames() {
-        return this._games;
+        return this.mGames;
     }
 
-    public void getGame(String gameId) {
+    public Game getGame(String gameId) {
+        for (Game game : this.mGames) {
+            if (game.getGameId().equals(gameId)) {
+                return game;
+            }
+        }
 
+        return null;
     }
 }

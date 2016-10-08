@@ -1,7 +1,9 @@
 package com.levigilad.javaplay.infra;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,7 +23,7 @@ public abstract class BaseGameFragment extends Fragment implements GameHelper.Ga
     private int mRequestedClients;
 
     private OnFragmentInteractionListener mListener;
-    private int mGameId;
+    private String mGameId;
 
     public BaseGameFragment(int requestedClients) {
         super();
@@ -39,7 +41,7 @@ public abstract class BaseGameFragment extends Fragment implements GameHelper.Ga
         mHelper.setup(this);
 
         if (getArguments() != null) {
-            mGameId = getArguments().getInt(GAME_ID);
+            mGameId = getArguments().getString(GAME_ID);
         }
     }
 
@@ -147,4 +149,37 @@ public abstract class BaseGameFragment extends Fragment implements GameHelper.Ga
         super.onDetach();
         mListener = null;
     }
+
+    public String getGameId() {
+        return mGameId;
+    }
+
+    protected void showErrorMessage(int statusCode, int stringId) {
+        showWarning("Warning", getResources().getString(stringId));
+    }
+
+    protected void showWarning(String title, String message) {
+        AlertDialog.Builder alertDialogBuilder =
+                new AlertDialog.Builder(this.getActivity().getApplicationContext());
+
+        // set title
+        alertDialogBuilder.setTitle(title).setMessage(message);
+
+        // set dialog message
+        alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, close
+                        // current activity
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog dialog = alertDialogBuilder.create();
+
+        // show it
+        dialog.show();
+    }
+
 }
