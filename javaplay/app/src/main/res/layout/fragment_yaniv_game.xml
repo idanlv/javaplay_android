@@ -40,9 +40,10 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/playingcard_card_back_red"
+                android:src="@drawable/playingcard_card_back_red"
                 android:layout_gravity="center_vertical"
-                android:id="@+id/deck_image_view"/>
+                android:id="@+id/deck_image_view"
+                android:adjustViewBounds="true" />
 
             <StackView
                 android:layout_width="match_parent"
@@ -61,7 +62,6 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/player_data_linear_layout"
             android:layout_weight="2"
             android:paddingTop="20dp">
 
@@ -100,12 +100,20 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/playingcard_card_back_blue"
-                android:id="@+id/card_stub_image_view"
-                android:padding="10dp" />
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/hand_layout">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/playingcard_card_back_blue"
+                    android:id="@+id/card_stub_image_view"
+                    android:padding="10dp"
+                    android:adjustViewBounds="true" />
+
+            </GridLayout>
 
         </LinearLayout>
 

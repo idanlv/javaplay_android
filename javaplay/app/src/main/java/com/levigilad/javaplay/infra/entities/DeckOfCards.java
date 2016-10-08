@@ -39,6 +39,10 @@ public class DeckOfCards implements IJsonSerializable {
         }
     }
 
+    /**
+     * Copy constructor
+     * @param deck of cards
+     */
     public DeckOfCards(DeckOfCards deck) {
         this(deck.getCards());
     }
@@ -51,6 +55,23 @@ public class DeckOfCards implements IJsonSerializable {
         if (!_cards.remove(card)) {
             throw new IllegalArgumentException("Card does not exists in deck");
         }
+    }
+
+    /**
+     * Returns deck size
+     * @return deck size
+     */
+    public int size() {
+        return _cards.size();
+    }
+
+    /**
+     * Get playing card by index
+     * @param index
+     * @return PlayingCard by index
+     */
+    public PlayingCard get(int index) {
+        return _cards.get(index);
     }
 
     /**
@@ -131,7 +152,10 @@ public class DeckOfCards implements IJsonSerializable {
         return this._cards.iterator();
     }
 
-
+    /**
+     * Return a String representation of the deck
+     * @return String representation of the deck
+     */
     public String toString() {
         String str = "";
 
@@ -145,7 +169,11 @@ public class DeckOfCards implements IJsonSerializable {
         return str;
     }
 
+    /**
+     * Playing card in a linked list
+     * @return PlayingCards in a LinkedList
+     */
     public LinkedList<PlayingCard> getCards() {
-        return this._cards;
+        return new LinkedList<>(this._cards);
     }
 }

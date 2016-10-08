@@ -11,7 +11,7 @@ import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * This class represents Yaniv game logic
@@ -19,7 +19,7 @@ import java.util.List;
 public class YanivGame extends GameOfCards {
     
     // Consts
-    private static final int INITIAL_DEFAULT_CARD_COUNT = 5;
+    public static final int INITIAL_DEFAULT_CARD_COUNT = 5;
     private static final int MAX_DEFAULT_PLAYERS = 4;
     private final int MAX_DEFAULT_YANIV_CARD_SCORE = 7;
     private final int MIN_SEQUENCE_LENGTH = 3;
@@ -60,7 +60,7 @@ public class YanivGame extends GameOfCards {
      * @param playerScore Score
      * @return True or False
      */
-    private boolean canYaniv(int playerScore) {
+    public boolean canYaniv(int playerScore) {
         return playerScore <= MAX_DEFAULT_YANIV_CARD_SCORE;
     }
 
@@ -88,7 +88,7 @@ public class YanivGame extends GameOfCards {
 
         while (iterator.hasNext()) {
             PlayingCard card = iterator.next();
-            cardsTotalValue += getCardValue(card);
+            cardsTotalValue += getYanivCardValue(card);
         }
 
         return cardsTotalValue;
@@ -99,7 +99,7 @@ public class YanivGame extends GameOfCards {
      * @param discardCards cards
      * @return True or False
      */
-    public boolean isCardsDiscardValid(List<PlayingCard> discardCards) {
+    public boolean isCardsDiscardValid(DeckOfCards discardCards) {
         return ((discardCards.size() == MIN_DISCARDED_CARDS)
                 || isSequence(discardCards)
                 || isDuplicates(discardCards));
@@ -110,17 +110,20 @@ public class YanivGame extends GameOfCards {
      * @param cards cards
      * @return True or False
      */
-    private boolean isDuplicates(List<PlayingCard> cards) {
+    public boolean isDuplicates(DeckOfCards cards) {
         PlayingCardRanks value = cards.get(0).getRank();
 
         if (cards.size() < MIN_DUPLICATES_LENGTH) {
             return false;
         }
 
-        for (PlayingCard card : cards) {
-            if (value != card.getRank()) {
+        Iterator<PlayingCard> it = cards.iterator();
+
+        while (it.hasNext()) {
+            if (value != it.next().getRank()) {
                 return false;
             }
+
         }
 
         return true;
@@ -131,21 +134,23 @@ public class YanivGame extends GameOfCards {
      * @param cardSeries cards
      * @return True or False
      */
-    private boolean isSequence(List<PlayingCard> cardSeries) {
+    public boolean isSequence(DeckOfCards cardSeries) {
+        LinkedList<PlayingCard> cards = cardSeries.getCards();
+
         int previousValue = -1;
 
-        if (cardSeries.size() < MIN_SEQUENCE_LENGTH) {
+        if (cards.size() < MIN_SEQUENCE_LENGTH) {
             return false;
         }
 
-        Collections.sort(cardSeries, new Comparator<PlayingCard>() {
+        Collections.sort(cards, new Comparator<PlayingCard>() {
             @Override
             public int compare(PlayingCard o1, PlayingCard o2) {
                 return o1.compareTo(o2);
             }
         });
 
-        for (PlayingCard card : cardSeries) {
+        for (PlayingCard card : cards) {
             int currentValue = card.getRank().getNumericValue();
             // First value in sequence
             if (previousValue == -1) {
@@ -156,7 +161,7 @@ public class YanivGame extends GameOfCards {
             else if ((currentValue == PlayingCardRanks.JOKER.getNumericValue()) ||
                     (currentValue == previousValue + 1)) {
                 previousValue++;
-           ; }
+            }
             // Current number does not continue the sequence
             else {
                 return false;
@@ -168,10 +173,10 @@ public class YanivGame extends GameOfCards {
 
     /**
      * This method returns the numeric value of the card within game rules
-     * @param card
-     * @return
+     * @param card as PlayingCard
+     * @return int value as Yaniv card value
      */
-    private int getCardValue(PlayingCard card) {
+    public int getYanivCardValue(PlayingCard card) {
         switch (card.getRank()) {
             case TEN:
             case JACK:
