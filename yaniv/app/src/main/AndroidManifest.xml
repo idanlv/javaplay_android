@@ -35,7 +35,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.levigilad.javaplay.MainActivity" />
         </activity>
-        <activity android:name=".yaniv.YanivGameActivity" />
         <activity
             android:name=".GameOptionsActivity"
             android:label="@string/title_activity_game_options"

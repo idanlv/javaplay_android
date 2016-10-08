@@ -18,7 +18,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class GameOptionsActivity extends Activity
+import com.google.basegameutils.games.BaseGameActivity;
+
+public class GameOptionsActivity extends BaseGameActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
@@ -50,6 +52,7 @@ public class GameOptionsActivity extends Activity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
+
         fragmentManager.beginTransaction()
                 .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
                 .commit();
@@ -74,6 +77,16 @@ public class GameOptionsActivity extends Activity
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
+    }
+
+    @Override
+    public void onSignInFailed() {
+        reconnectClient();
+    }
+
+    @Override
+    public void onSignInSucceeded() {
+        // TODO
     }
 
     /**
@@ -104,16 +117,34 @@ public class GameOptionsActivity extends Activity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_game_options, container, false);
+            int sectionNumber = 0;
+
+            if (savedInstanceState != null) {
+                sectionNumber = savedInstanceState.getInt(ARG_SECTION_NUMBER);
+            }
+
+            int layoutId = 0;
+
+            switch (sectionNumber) {
+                case 1: {
+                    layoutId = R.layout.fragment_yaniv_game;
+                    break;
+                }
+                default: {
+                    // TODO: Change later
+                    layoutId = R.layout.fragment_yaniv_game;
+                }
+            }
+
+            View rootView = inflater.inflate(layoutId, container, false);
             return rootView;
         }
 
         @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((GameOptionsActivity) activity).onSectionAttached(
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            ((GameOptionsActivity) context).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
-
 }

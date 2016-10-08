@@ -1,8 +1,5 @@
 package com.levigilad.javaplay.yaniv;
 
-import android.os.Build;
-
-import com.levigilad.javaplay.infra.GameActivity;
 import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
@@ -11,7 +8,6 @@ import com.levigilad.javaplay.infra.enums.GameCardRanks;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -183,11 +179,6 @@ public class YanivGame extends GameOfCards {
     @Override
     public String getDisplayName() {
         return "Yaniv";
-    }
-
-    @Override
-    public Class getActivity() {
-        return YanivGameActivity.class;
     }
 
     @Override

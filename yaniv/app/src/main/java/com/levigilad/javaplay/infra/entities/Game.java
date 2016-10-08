@@ -1,7 +1,5 @@
 package com.levigilad.javaplay.infra.entities;
 
-import com.levigilad.javaplay.infra.GameActivity;
-
 import java.io.Serializable;
 
 /**
@@ -36,8 +34,6 @@ public abstract class Game implements Serializable {
     public String toString() {
         return getDisplayName();
     }
-
-    public abstract Class getActivity();
 
     public abstract String getDescription();
 }

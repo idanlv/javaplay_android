@@ -57,7 +57,7 @@ public class GameOptionsAdapter extends ArrayAdapter<String>{
         LayoutInflater inflater =
                 (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View optionView = inflater.inflate(R.layout.fragment_game_options, parent, false);
+        View optionView = inflater.inflate(R.layout.game_option_list_item, parent, false);
 
         ImageView iconView = (ImageView) optionView.findViewById(R.id.section_icon);
         iconView.setImageResource(drawable_id);

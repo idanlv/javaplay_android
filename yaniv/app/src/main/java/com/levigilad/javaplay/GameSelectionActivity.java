@@ -73,38 +73,6 @@ public class GameSelectionActivity extends BaseGameActivity implements
     }
 
     @Override
-    protected void onActivityResult(int request, int response, Intent data) {
-        super.onActivityResult(request, response, data);
-
-        if (request == RC_SELECT_PLAYERS) {
-            if (response != Activity.RESULT_OK) {
-                // user canceled
-                return;
-            }
-
-            // Get the invitee list.
-            final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-
-            // Get auto-match criteria.
-            Bundle autoMatchCriteria = null;
-            int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-            int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-            if (minAutoMatchPlayers > 0) {
-                autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
-                        minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            } else {
-                autoMatchCriteria = null;
-            }
-
-            Intent intent = new Intent(this, _game.getActivity());
-            intent.putExtra("Invitees", invitees);
-            intent.putExtra("AutoMatchCriteria", autoMatchCriteria);
-
-            startActivity(intent);
-        }
-    }
-
-    @Override
     public void onItemClicked(int position, View v) {
         /*_game = ((GameSelectionRecyclerViewAdapter)_adapter).getItem(position);
 
