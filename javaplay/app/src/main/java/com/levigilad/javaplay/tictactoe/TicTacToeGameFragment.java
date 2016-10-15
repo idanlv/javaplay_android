@@ -22,10 +22,14 @@ import java.util.ArrayList;
 public class TicTacToeGameFragment extends PlayFragment implements View.OnClickListener {
     private static final String TAG = "TicTacToeGameFragment";
 
-    private TicTacToeTurn mTurnData = null;
-    private TableLayout mTableLayoutBoard;
     private TicTacToeSymbol mCurrentPlayerSymbol;
+    private TicTacToeTurn mTurnData = null;
     private TurnBasedMatch mMatch;
+
+    /**
+     * Designer
+     */
+    private TableLayout mTableLayoutBoard;
 
     public TicTacToeGameFragment() {
         super();
@@ -60,7 +64,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
     private void initializeView(View parentView) {
         mTableLayoutBoard = (TableLayout) parentView.findViewById(R.id.table_layout_board);
-        mTableLayoutBoard.setActivated(false);
+        mTableLayoutBoard.setEnabled(false);
 
         for (int i = 0; i < mTableLayoutBoard.getChildCount(); i++) {
             TableRow row = (TableRow) mTableLayoutBoard.getChildAt(i);
@@ -70,6 +74,8 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 cell.setOnClickListener(this);
             }
         }
+
+        setEnabledRecursively(mTableLayoutBoard, false);
     }
 
     @Override
@@ -82,6 +88,8 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
             mTurnData = new TicTacToeTurn();
             mTurnData.addParticipant(participantId, mCurrentPlayerSymbol);
+
+            setEnabledRecursively(mTableLayoutBoard, true);
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
         }
@@ -90,7 +98,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     @Override
     protected void updateMatch(TurnBasedMatch match) {
         mMatch = match;
-        mTableLayoutBoard.setActivated(true);
+        setEnabledRecursively(mTableLayoutBoard, true);
     }
 
     @Override
@@ -120,7 +128,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                         default: {
                             text = getString(R.string.tictactoe_empty_cell);
                         }
-                    }
+                    };
 
                     cell.setText(text);
                 }
@@ -134,18 +142,6 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     @Override
     protected void askForRematch() {
 
-    }
-
-    public void btnCell_OnClick(int row, int column) {
-        try {
-            mTurnData.getBoard().setCell(mCurrentPlayerSymbol, row, column);
-
-            mTableLayoutBoard.setActivated(false);
-
-            finishTurn(mMatch.getMatchId(), null, mTurnData.export());
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getMessage());
-        }
     }
 
     @Override
@@ -186,6 +182,30 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             case R.id.button9: {
                 btnCell_OnClick(2, 2);
                 break;
+            }
+        }
+    }
+
+    public void btnCell_OnClick(int row, int column) {
+        try {
+            mTurnData.getBoard().setCell(mCurrentPlayerSymbol, row, column);
+
+            setEnabledRecursively(mTableLayoutBoard, false);
+
+            finishTurn(mMatch.getMatchId(), null, mTurnData.export());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
+        }
+    }
+
+    private void setEnabledRecursively(ViewGroup parentView, boolean enabled) {
+        parentView.setEnabled(enabled);
+        for (int i = 0; i < parentView.getChildCount(); i++) {
+            View child = parentView.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                setEnabledRecursively((ViewGroup) child, enabled);
+            } else {
+                child.setEnabled(enabled);
             }
         }
     }
