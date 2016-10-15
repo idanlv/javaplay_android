@@ -1,27 +1,23 @@
 package com.levigilad.javaplay;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
-import com.google.android.gms.games.Games;
-import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.levigilad.javaplay.infra.adapters.GameSelectionRecyclerViewAdapter;
 import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.entities.Playground;
-
-import java.util.ArrayList;
+import com.levigilad.javaplay.infra.interfaces.OnItemClickListener;
 
 /**
  * This activity is the viewer for picking a game
  */
 public class GameSelectionActivity extends BaseGameActivity implements
-        GameSelectionRecyclerViewAdapter.GameClickedListener {
+        OnItemClickListener {
 
     private static final int RC_SELECT_PLAYERS = 5001;
     private static final String TAG = "GameSelectionActivity";
@@ -29,9 +25,9 @@ public class GameSelectionActivity extends BaseGameActivity implements
     private Game _game;
 
     // Designer members
-    private RecyclerView _gameOptionsRecyclerView;
-    private RecyclerView.LayoutManager _layoutManager;
-    private RecyclerView.Adapter _adapter;
+    private RecyclerView mRecyclerViewGameOptions;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +38,15 @@ public class GameSelectionActivity extends BaseGameActivity implements
     }
 
     private void initializeViews() {
-        _gameOptionsRecyclerView = (RecyclerView) findViewById(R.id.game_options_recycler_view);
-        _gameOptionsRecyclerView.setHasFixedSize(true);
+        mRecyclerViewGameOptions = (RecyclerView) findViewById(R.id.game_options_recycler_view);
+        mRecyclerViewGameOptions.setHasFixedSize(true);
 
-        _layoutManager = new LinearLayoutManager(this);
-        _gameOptionsRecyclerView.setLayoutManager(_layoutManager);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerViewGameOptions.setLayoutManager(mLayoutManager);
 
-        _adapter = new GameSelectionRecyclerViewAdapter(
+        mAdapter = new GameSelectionRecyclerViewAdapter(
                 Playground.getInstance(this.getApplicationContext()).getGames());
-        _gameOptionsRecyclerView.setAdapter(_adapter);
+        mRecyclerViewGameOptions.setAdapter(mAdapter);
     }
 
     @Override
@@ -61,7 +57,7 @@ public class GameSelectionActivity extends BaseGameActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        ((GameSelectionRecyclerViewAdapter)_adapter).setOnClickListener(this);
+        ((GameSelectionRecyclerViewAdapter) mAdapter).setOnClickListener(this);
     }
 
     @Override
@@ -77,7 +73,7 @@ public class GameSelectionActivity extends BaseGameActivity implements
     @Override
     public void onItemClicked(int position, View v) {
         Intent intent = new Intent(this, GameOptionsActivity.class);
-        intent.putExtra(GAME_ID, position);
+        intent.putExtra(GAME_ID, ((TextView) v.findViewById(R.id.game_name_text_view)).getText());
         startActivity(intent);
     }
 }

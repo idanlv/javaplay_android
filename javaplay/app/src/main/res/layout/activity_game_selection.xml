@@ -10,8 +10,7 @@
     android:textAlignment="center"
     android:textDirection="ltr"
     android:layout_height="match_parent"
-    tools:style="@android:style/Theme.Material.Light.DarkActionBar"
-    style="@style/AppTheme">
+    android:theme="@style/AppTheme">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

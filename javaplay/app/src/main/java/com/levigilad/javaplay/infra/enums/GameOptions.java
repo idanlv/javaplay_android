@@ -6,7 +6,7 @@ package com.levigilad.javaplay.infra.enums;
 
 public enum GameOptions {
     PLAY,
-    LEADERSHIP_BOARD,
+    LEADERBOARD,
     ACHIEVEMENTS,
     INSTRUCTIONS
 }

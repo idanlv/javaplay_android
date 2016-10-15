@@ -10,7 +10,7 @@ import java.util.LinkedList;
  */
 public abstract class GameOfCards extends Game {
 
-    private int _initialNumOfPlayerCards;
+    private int mInitialNumOfPlayerCards;
 
     /**
      * Constructor
@@ -20,7 +20,7 @@ public abstract class GameOfCards extends Game {
     public GameOfCards(String gameId, String description, String leaderboardId,
                        int maxNumOfPlayers, int initialNumOfPlayerCards) {
         super(gameId, description, leaderboardId, maxNumOfPlayers);
-        _initialNumOfPlayerCards = initialNumOfPlayerCards;
+        mInitialNumOfPlayerCards = initialNumOfPlayerCards;
     }
 
     /**
@@ -75,6 +75,6 @@ public abstract class GameOfCards extends Game {
      * @return Player's number of cards in beginning of game
      */
     public int getInitialNumOfPlayerCards() {
-        return _initialNumOfPlayerCards;
+        return mInitialNumOfPlayerCards;
     }
 }

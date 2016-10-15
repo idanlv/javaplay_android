@@ -29,8 +29,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.Api.ApiOptions.NoOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
@@ -273,7 +276,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         }
 
         if (0 != (mRequestedClients & CLIENT_PLUS)) {
-            builder.addApi(Plus.API);
+            builder.addApi(Auth.GOOGLE_SIGN_IN_API);
             builder.addScope(Plus.SCOPE_PLUS_LOGIN);
         }
 
@@ -950,8 +953,8 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
             default:
                 // No meaningful Activity response code, so generate default Google
                 // Play services dialog
-                errorDialog = GooglePlayServicesUtil.getErrorDialog(errorCode,
-                        activity, RC_UNUSED, null);
+                errorDialog = GoogleApiAvailability.getInstance().getErrorDialog(activity,
+                        errorCode, RC_UNUSED, null);
                 if (errorDialog == null) {
                     // get fallback dialog
                     Log.e("GameHelper",

@@ -1,4 +1,4 @@
-package com.levigilad.javaplay.infra;
+package com.levigilad.javaplay;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -13,20 +14,19 @@ import android.widget.TextView;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
-import com.google.android.gms.games.leaderboard.Leaderboard;
 import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.games.leaderboard.Leaderboards;
 import com.google.basegameutils.games.GameHelper;
-import com.levigilad.javaplay.R;
+import com.levigilad.javaplay.infra.BaseGameFragment;
 import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.entities.Playground;
 
 import java.util.Iterator;
 
-public class LeaderBoardFragment extends BaseGameFragment {
-    private static final String TAG = "LeaderBoardFragment";
+public class LeaderboardFragment extends BaseGameFragment {
+    private static final String TAG = "LeaderboardFragment";
     private static final String GAME_ID = "GameId";
 
     private static final int REQUESTED_CLIENTS = GameHelper.CLIENT_GAMES;
@@ -36,13 +36,14 @@ public class LeaderBoardFragment extends BaseGameFragment {
      * Designer
      */
     private TableLayout mLeaderboardTableLayout;
+    private ProgressBar mLeaderboardLoadProgressBar;
 
-    public LeaderBoardFragment() {
+    public LeaderboardFragment() {
         super(REQUESTED_CLIENTS);
     }
 
-    public static LeaderBoardFragment newInstance(String gameId) {
-        LeaderBoardFragment fragment = new LeaderBoardFragment();
+    public static LeaderboardFragment newInstance(String gameId) {
+        LeaderboardFragment fragment = new LeaderboardFragment();
         Bundle args = new Bundle();
         args.putString(GAME_ID, gameId);
         fragment.setArguments(args);
@@ -50,15 +51,10 @@ public class LeaderBoardFragment extends BaseGameFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_leadership, container, false);
+        View view = inflater.inflate(R.layout.fragment_leaderboard, container, false);
         initializeView(view);
 
         return view;
@@ -66,6 +62,8 @@ public class LeaderBoardFragment extends BaseGameFragment {
 
     private void initializeView(View view) {
         mLeaderboardTableLayout = (TableLayout)view.findViewById(R.id.leaderboard_table_layout);
+        mLeaderboardLoadProgressBar =
+                (ProgressBar)view.findViewById(R.id.leaderboard_load_progress_bar);
     }
 
     @Override
@@ -76,19 +74,21 @@ public class LeaderBoardFragment extends BaseGameFragment {
                 false);
     }
 
-    private void loadTopScores(int timeFrame, int collectionType, boolean isRefresh) {
+    private void loadTopScores(int timeFrame, int collectionType, boolean forceReload) {
         Playground playground = Playground.getInstance(this.getActivity().getApplicationContext());
 
         Game game = playground.getGame(getGameId());
 
         Games.Leaderboards.loadTopScores(getApiClient(), game.getLeaderboardId(),
-                timeFrame, collectionType, MAX_RESULTS, isRefresh)
+                timeFrame, collectionType, MAX_RESULTS, forceReload)
                 .setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
                     @Override
                     public void onResult(@NonNull Leaderboards.LoadScoresResult loadScoresResult) {
                         processResult(loadScoresResult);
                     }
                 });
+
+        mLeaderboardLoadProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void processResult(Leaderboards.LoadScoresResult loadScoresResult) {
@@ -119,6 +119,8 @@ public class LeaderBoardFragment extends BaseGameFragment {
 
             mLeaderboardTableLayout.addView(tableRow);
         }
+
+        mLeaderboardLoadProgressBar.setVisibility(View.GONE);
     }
 
     /**

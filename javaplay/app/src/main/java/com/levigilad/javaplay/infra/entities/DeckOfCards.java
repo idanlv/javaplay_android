@@ -18,13 +18,13 @@ public class DeckOfCards implements IJsonSerializable {
     public static final String DECK = "deck";
 
     // Members
-    private LinkedList<PlayingCard> _cards;
+    private LinkedList<PlayingCard> mCards;
 
     /**
      * Constructor: Creates an empty deck
      */
     public DeckOfCards() {
-        _cards = new LinkedList<>();
+        mCards = new LinkedList<>();
     }
 
     /**
@@ -32,10 +32,10 @@ public class DeckOfCards implements IJsonSerializable {
      * @param cards initial deck cards
      */
     public DeckOfCards(LinkedList<PlayingCard> cards) {
-        _cards = new LinkedList<>();
+        mCards = new LinkedList<>();
 
         for (PlayingCard card : cards) {
-            _cards.add(new PlayingCard(card));
+            mCards.add(new PlayingCard(card));
         }
     }
 
@@ -48,7 +48,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @param card card to remove
      */
     public void removeCard(PlayingCard card) {
-        if (!_cards.remove(card)) {
+        if (!mCards.remove(card)) {
             throw new IllegalArgumentException("Card does not exists in deck");
         }
     }
@@ -58,7 +58,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @param card card to add
      */
     public void addCardToTop(PlayingCard card) {
-        _cards.addFirst(card);
+        mCards.addFirst(card);
     }
 
     /**
@@ -66,7 +66,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @return card at top of the deck
      */
     public PlayingCard peek() {
-        return _cards.peek();
+        return mCards.peek();
     }
 
     /**
@@ -74,7 +74,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @return card at top of the deck
      */
     public PlayingCard pop() {
-        return _cards.pop();
+        return mCards.pop();
     }
 
     /**
@@ -88,7 +88,7 @@ public class DeckOfCards implements IJsonSerializable {
 
         JSONArray cardsArray = new JSONArray();
 
-        for (PlayingCard card : this._cards) {
+        for (PlayingCard card : this.mCards) {
             cardsArray.put(card.toJson());
         }
 
@@ -106,13 +106,13 @@ public class DeckOfCards implements IJsonSerializable {
     public void fromJson(JSONObject object) throws JSONException {
         JSONArray cardsArray = object.getJSONArray(DECK);
 
-        this._cards.clear();
+        this.mCards.clear();
 
         for (int i = 0; i < cardsArray.length(); i++) {
             PlayingCard card = new PlayingCard();
             card.fromJson((JSONObject) cardsArray.get(i));
 
-            this._cards.addLast(card);
+            this.mCards.addLast(card);
         }
     }
 
@@ -120,7 +120,7 @@ public class DeckOfCards implements IJsonSerializable {
      * Shuffles cards in deck
      */
     public void shuffle() {
-        Collections.shuffle(this._cards);
+        Collections.shuffle(this.mCards);
     }
 
     /**
@@ -128,14 +128,14 @@ public class DeckOfCards implements IJsonSerializable {
      * @return Iterator
      */
     public Iterator<PlayingCard> iterator() {
-        return this._cards.iterator();
+        return this.mCards.iterator();
     }
 
 
     public String toString() {
         String str = "";
 
-        for (PlayingCard card : _cards) {
+        for (PlayingCard card : mCards) {
             str += "(" + card.getRank() + "," + card.getSuit() + "),";
         }
 
@@ -146,6 +146,6 @@ public class DeckOfCards implements IJsonSerializable {
     }
 
     public LinkedList<PlayingCard> getCards() {
-        return this._cards;
+        return this.mCards;
     }
 }

@@ -20,22 +20,22 @@ public class YanivTurn extends Turn {
     public static final String AVAILABLE_CARDS = "availableCards";
 
     // Members
-    private DeckOfCards _availableDeck;
-    private DeckOfCards _discardedDeck;
-    private LinkedList<Integer> _availableDiscardedCards;
-    private boolean _initializeDone;
+    private DeckOfCards mAvailableDeck;
+    private DeckOfCards mDiscardedDeck;
+    private LinkedList<Integer> mAvailableDiscardedCards;
+    private boolean mInitializeDone;
 
     public YanivTurn() {
         super();
 
-        _availableDeck = new DeckOfCards();
-        _discardedDeck = new DeckOfCards();
-        _availableDiscardedCards = new LinkedList<>();
-        _initializeDone = false;
+        mAvailableDeck = new DeckOfCards();
+        mDiscardedDeck = new DeckOfCards();
+        mAvailableDiscardedCards = new LinkedList<>();
+        mInitializeDone = false;
     }
 
     public void setAvailableDeck(DeckOfCards deck) {
-        _availableDeck = new DeckOfCards(deck);
+        mAvailableDeck = new DeckOfCards(deck);
     }
 
     /**
@@ -47,13 +47,13 @@ public class YanivTurn extends Turn {
     public JSONObject toJson() throws JSONException {
         JSONObject gameData = super.toJson();
 
-        gameData.put(INITIALIZE_DONE, this._initializeDone);
-        gameData.put(AVAILABLE_DECK, this._availableDeck.toJson());
-        gameData.put(DISCARDED_DECK, this._discardedDeck.toJson());
+        gameData.put(INITIALIZE_DONE, this.mInitializeDone);
+        gameData.put(AVAILABLE_DECK, this.mAvailableDeck.toJson());
+        gameData.put(DISCARDED_DECK, this.mDiscardedDeck.toJson());
 
         JSONArray availableArray = new JSONArray();
 
-        for (Integer location : this._availableDiscardedCards) {
+        for (Integer location : this.mAvailableDiscardedCards) {
             availableArray.put(availableArray);
         }
 
@@ -69,17 +69,17 @@ public class YanivTurn extends Turn {
      */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
-        this._initializeDone = object.getBoolean(INITIALIZE_DONE);
-        this._availableDeck = new DeckOfCards();
-        this._availableDeck.fromJson(object.getJSONObject(AVAILABLE_DECK));
-        this._discardedDeck = new DeckOfCards();
-        this._discardedDeck.fromJson(object.getJSONObject(DISCARDED_DECK));
+        this.mInitializeDone = object.getBoolean(INITIALIZE_DONE);
+        this.mAvailableDeck = new DeckOfCards();
+        this.mAvailableDeck.fromJson(object.getJSONObject(AVAILABLE_DECK));
+        this.mDiscardedDeck = new DeckOfCards();
+        this.mDiscardedDeck.fromJson(object.getJSONObject(DISCARDED_DECK));
 
-        this._availableDiscardedCards = new LinkedList<>();
+        this.mAvailableDiscardedCards = new LinkedList<>();
         JSONArray availableArray = object.getJSONArray(AVAILABLE_CARDS);
 
         for (int i = 0; i < availableArray.length(); i++) {
-            this._availableDiscardedCards.add(availableArray.getInt(i));
+            this.mAvailableDiscardedCards.add(availableArray.getInt(i));
         }
 
         super.fromJson(object);

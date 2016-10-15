@@ -13,9 +13,9 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.basegameutils.games.BaseGameActivity;
-import com.levigilad.javaplay.infra.LeaderBoardFragment;
 import com.levigilad.javaplay.infra.enums.GameOptions;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
+import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
 import com.levigilad.javaplay.yaniv.YanivPlayFragment;
 
 import java.util.ArrayList;
@@ -34,17 +34,19 @@ public class GameOptionsActivity extends BaseGameActivity implements
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    private boolean mStarted = false;
+;    private boolean mStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_options);
 
-        if (savedInstanceState != null) {
-            mGameId = savedInstanceState.getString(GAME_ID);
-        }
+        mGameId = getIntent().getStringExtra(GAME_ID);
 
+        initializeViews();
+    }
+
+    private void initializeViews() {
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
 
@@ -52,6 +54,8 @@ public class GameOptionsActivity extends BaseGameActivity implements
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        setTitle(mGameId);
     }
 
     @Override
@@ -85,7 +89,14 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 autoMatchCriteria = null;
             }
 
-            YanivPlayFragment fragment = YanivPlayFragment.newInstance(invitees, autoMatchCriteria);
+            Fragment fragment = null;
+
+            if (mGameId.equals(getString(R.string.yaniv_game_id))) {
+                fragment = YanivPlayFragment.newInstance(invitees, autoMatchCriteria);
+            } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
+                fragment = TicTacToeGameFragment.newInstance(invitees, autoMatchCriteria);
+            }
+
 
             replaceFragment(fragment);
         } else {
@@ -106,9 +117,16 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 }
                 break;
             }
-            case LEADERSHIP_BOARD: {
-                LeaderBoardFragment fragment = LeaderBoardFragment.newInstance(mGameId);
+            case LEADERBOARD: {
+                LeaderboardFragment fragment = LeaderboardFragment.newInstance(mGameId);
                 replaceFragment(fragment);
+                break;
+            }
+            case ACHIEVEMENTS: {
+                AchievementsFragment fragment = AchievementsFragment.newInstance(mGameId);
+                replaceFragment(fragment);
+            }
+            case INSTRUCTIONS: {
                 break;
             }
         }

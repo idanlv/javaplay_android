@@ -2,6 +2,7 @@ package com.levigilad.javaplay.infra.entities;
 
 import android.content.Context;
 
+import com.levigilad.javaplay.tictactoe.TicTacToeGame;
 import com.levigilad.javaplay.yaniv.YanivGame;
 
 import java.util.ArrayList;
@@ -11,7 +12,8 @@ import java.util.ArrayList;
  */
 public class Playground {
     private static final String TAG = Playground.class.getName();
-    private static Playground _instance = null;
+
+    private static Playground mInstance = null;
     private ArrayList<Game> mGames = new ArrayList<>();
 
     /**
@@ -26,11 +28,11 @@ public class Playground {
      * @return Playground instance
      */
     public static Playground getInstance(Context context) {
-        if (_instance == null) {
-            _instance = new Playground(context);
+        if (mInstance == null) {
+            mInstance = new Playground(context);
         }
 
-        return _instance;
+        return mInstance;
     }
 
     /**
@@ -38,6 +40,7 @@ public class Playground {
      */
     private void init(Context context) {
         mGames.add(new YanivGame(context));
+        mGames.add(new TicTacToeGame(context));
     }
 
     /**

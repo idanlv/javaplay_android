@@ -12,10 +12,11 @@ import java.nio.charset.Charset;
  */
 public abstract class Turn implements IJsonSerializable {
     private static final String TAG = "Turn";
-    private int _turnCounter;
+
+    private int mTurnCounter;
 
     public Turn() {
-        _turnCounter = 1;
+        mTurnCounter = 1;
     }
 
     /**
@@ -25,7 +26,7 @@ public abstract class Turn implements IJsonSerializable {
      */
     public JSONObject toJson() throws JSONException {
         JSONObject retVal = new JSONObject();
-        retVal.put("turnCounter", this._turnCounter);
+        retVal.put("turnCounter", this.mTurnCounter);
 
         return retVal;
     }
@@ -36,7 +37,7 @@ public abstract class Turn implements IJsonSerializable {
      * @throws JSONException
      */
     public void fromJson(JSONObject object) throws JSONException {
-        this._turnCounter = object.getInt("turnCounter");
+        this.mTurnCounter = object.getInt("turnCounter");
     }
 
     /**

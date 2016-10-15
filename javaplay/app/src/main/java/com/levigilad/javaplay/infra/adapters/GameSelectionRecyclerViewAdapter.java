@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.Game;
+import com.levigilad.javaplay.infra.interfaces.OnItemClickListener;
 
 import java.util.ArrayList;
 
@@ -19,17 +20,18 @@ import java.util.ArrayList;
 public class GameSelectionRecyclerViewAdapter extends
         RecyclerView.Adapter<GameSelectionRecyclerViewAdapter.GameHolder> {
     private static final String TAG = "GameSelectionView";
-    private ArrayList<Game> _games;
-    private static GameClickedListener _listener;
+
+    private ArrayList<Game> mGames;
+    private static OnItemClickListener mListener;
 
     public static class GameHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView _nameTextView;
-        TextView _descriptionTextView;
+        TextView mNameTextView;
+        TextView mDescriptionTextView;
 
         public GameHolder(View itemView) {
             super(itemView);
-            _nameTextView = (TextView) itemView.findViewById(R.id.game_name_text_view);
-            _descriptionTextView = (TextView) itemView.findViewById(R.id.game_description_text_view);
+            mNameTextView = (TextView) itemView.findViewById(R.id.game_name_text_view);
+            mDescriptionTextView = (TextView) itemView.findViewById(R.id.game_description_text_view);
 
             Log.i(TAG, "Added listener");
 
@@ -38,16 +40,16 @@ public class GameSelectionRecyclerViewAdapter extends
 
         @Override
         public void onClick(View v) {
-            _listener.onItemClicked(getAdapterPosition(), v);
+            mListener.onItemClicked(getAdapterPosition(), v);
         }
     }
 
-    public void setOnClickListener(GameClickedListener listener) {
-        this._listener = listener;
+    public void setOnClickListener(OnItemClickListener listener) {
+        this.mListener = listener;
     }
 
     public GameSelectionRecyclerViewAdapter(ArrayList<Game> games) {
-        this._games = games;
+        this.mGames = games;
     }
 
     @Override
@@ -61,30 +63,26 @@ public class GameSelectionRecyclerViewAdapter extends
 
     @Override
     public void onBindViewHolder(GameHolder holder, int position) {
-        holder._nameTextView.setText(_games.get(position).getGameId());
-        holder._descriptionTextView.setText(_games.get(position).getDescription());
+        holder.mNameTextView.setText(mGames.get(position).getGameId());
+        holder.mDescriptionTextView.setText(mGames.get(position).getDescription());
     }
 
     public void addItem(Game game, int index) {
-        _games.add(index, game);
+        mGames.add(index, game);
         notifyItemInserted(index);
     }
 
     public void removeItem(int index) {
-        _games.remove(index);
+        mGames.remove(index);
         notifyItemRemoved(index);
     }
 
     public Game getItem(int index) {
-        return _games.get(index);
+        return mGames.get(index);
     }
 
     @Override
     public int getItemCount() {
-        return _games.size();
-    }
-
-    public interface GameClickedListener {
-        void onItemClicked(int position, View v);
+        return mGames.size();
     }
 }

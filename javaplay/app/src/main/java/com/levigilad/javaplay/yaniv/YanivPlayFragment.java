@@ -27,15 +27,15 @@ import java.util.List;
 public class YanivPlayFragment extends PlayFragment implements View.OnClickListener {
     private static final String TAG = "YanivPlayFragment";
 
-    private YanivGame _game;
-    private List<PlayingCard> _hand = new LinkedList<>();
-    private List<PlayingCard> _cardsToDiscard = new LinkedList<>();
+    private YanivGame mGame;
+    private List<PlayingCard> mHand = new LinkedList<>();
+    private List<PlayingCard> mCardsToDiscard = new LinkedList<>();
 
     /**
      * Designer
      */
-    private LinearLayout mPlayerDataLinearLayout;
-    private Button mDiscardButton;
+    private LinearLayout mLinearLayoutPlayerData;
+    private Button mBtnDiscard;
     private TextView mInstructionsTextView;
     private StackView mDeckStackView;
     private ImageView mDeckImageView;
@@ -65,15 +65,15 @@ public class YanivPlayFragment extends PlayFragment implements View.OnClickListe
     }
 
     private void initializeView(View parentView) {
-        mPlayerDataLinearLayout = (LinearLayout) parentView.findViewById(R.id.player_data_linear_layout);
+        mLinearLayoutPlayerData = (LinearLayout) parentView.findViewById(R.id.player_data_linear_layout);
 
         // Remove stub image which was created for design purposes
         View stubImage = parentView.findViewById(R.id.card_stub_image_view);
-        mPlayerDataLinearLayout.removeView(stubImage);
+        mLinearLayoutPlayerData.removeView(stubImage);
 
-        mDiscardButton = (Button)parentView.findViewById(R.id.discard_button);
-        mDiscardButton.setEnabled(false);
-        mDiscardButton.setOnClickListener(this);
+        mBtnDiscard = (Button)parentView.findViewById(R.id.discard_button);
+        mBtnDiscard.setEnabled(false);
+        mBtnDiscard.setOnClickListener(this);
 
         mInstructionsTextView = (TextView)parentView.findViewById(R.id.instructions_text_view);
 
@@ -135,28 +135,28 @@ public class YanivPlayFragment extends PlayFragment implements View.OnClickListe
         view.setTag(R.bool.shouldDiscard, shouldDiscard);
 
         if (shouldDiscard) {
-            _cardsToDiscard.add(card);
+            mCardsToDiscard.add(card);
             view.setRotation(20);
 
-            mDiscardButton.setEnabled(true);
+            mBtnDiscard.setEnabled(true);
         } else {
-            _cardsToDiscard.remove(card);
+            mCardsToDiscard.remove(card);
             view.setRotation(0);
 
-            if (_cardsToDiscard.size() == 0) {
-                mDiscardButton.setEnabled(false);
+            if (mCardsToDiscard.size() == 0) {
+                mBtnDiscard.setEnabled(false);
             }
         }
     }
 
     private void discardButtonOnClicked() {
-        boolean isValid = _game.isCardsDiscardValid(_cardsToDiscard);
+        boolean isValid = mGame.isCardsDiscardValid(mCardsToDiscard);
 
         if (!isValid) {
             Toast.makeText(this.getActivity().getApplicationContext(),
                     "Invalid discard", Toast.LENGTH_SHORT);
         } else {
-            mDiscardButton.setEnabled(false);
+            mBtnDiscard.setEnabled(false);
         }
     }
 
@@ -169,17 +169,16 @@ public class YanivPlayFragment extends PlayFragment implements View.OnClickListe
     @Override
     protected void startMatch(TurnBasedMatch match) {
         try {
-            DeckOfCards cards = _game.generateDeck(2);
+            DeckOfCards cards = mGame.generateDeck(2);
 
             YanivTurn turnData = new YanivTurn();
 
-            _hand.add(cards.pop());
+            mHand.add(cards.pop());
             turnData.setAvailableDeck(cards);
 
             String playerId = Games.Players.getCurrentPlayerId(getApiClient());
-            String myParticipantId = match.getParticipantId(playerId);
 
-            finishTurn(match.getMatchId(), myParticipantId, turnData.export());
+            finishTurn(match.getMatchId(), null, turnData.export());
         } catch (JSONException e) {
             e.printStackTrace();
         }

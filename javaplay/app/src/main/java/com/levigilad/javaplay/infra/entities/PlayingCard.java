@@ -16,8 +16,8 @@ public class PlayingCard implements IJsonSerializable, Comparable {
     public static final String CARD_SYMBOL = "card_symbol";
 
     // Members
-    private PlayingCardRanks _rank;
-    private PlayingCardSuits _suit;
+    private PlayingCardRanks mRank;
+    private PlayingCardSuits mSuit;
 
     /**
      * Empty Constructor
@@ -31,8 +31,8 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      * @param suit Symbol of card
      */
     public PlayingCard(PlayingCardRanks rank, PlayingCardSuits suit) {
-        this._rank = rank;
-        this._suit = suit;
+        this.mRank = rank;
+        this.mSuit = suit;
         validate(rank, suit);
     }
 
@@ -41,8 +41,8 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      * @param other PlayingCard to copy from
      */
     public PlayingCard(PlayingCard other) {
-        this._rank = other.getRank();
-        this._suit = other.getSuit();
+        this.mRank = other.getRank();
+        this.mSuit = other.getSuit();
     }
 
     /**
@@ -50,7 +50,7 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      * @return Card's value
      */
     public PlayingCardRanks getRank() {
-        return this._rank;
+        return this.mRank;
     }
 
     /**
@@ -58,7 +58,7 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      * @return Card's symbol
      */
     public PlayingCardSuits getSuit() {
-        return this._suit;
+        return this.mSuit;
     }
 
     public int getDrawableId() {
@@ -85,8 +85,8 @@ public class PlayingCard implements IJsonSerializable, Comparable {
     @Override
     public JSONObject toJson() throws JSONException {
         JSONObject cardObject = new JSONObject();
-        cardObject.put(CARD_VALUE, this._rank);
-        cardObject.put(CARD_SYMBOL, this._suit);
+        cardObject.put(CARD_VALUE, this.mRank);
+        cardObject.put(CARD_SYMBOL, this.mSuit);
 
         return cardObject;
     }
@@ -98,8 +98,8 @@ public class PlayingCard implements IJsonSerializable, Comparable {
      */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
-        this._rank = (PlayingCardRanks)object.get(CARD_VALUE);
-        this._suit = (PlayingCardSuits)object.get(CARD_SYMBOL);
+        this.mRank = (PlayingCardRanks)object.get(CARD_VALUE);
+        this.mSuit = (PlayingCardSuits)object.get(CARD_SYMBOL);
     }
 
     /**

@@ -17,8 +17,10 @@ import java.util.List;
  * This class represents Yaniv game logic
  */
 public class YanivGame extends GameOfCards {
-    
-    // Consts
+
+    /**
+     * Constants
+     */
     private static final int INITIAL_DEFAULT_CARD_COUNT = 5;
     private static final int MAX_DEFAULT_PLAYERS = 4;
     private final int MAX_DEFAULT_YANIV_CARD_SCORE = 7;

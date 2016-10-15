@@ -4,21 +4,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.google.basegameutils.games.BaseGameActivity;
-import com.google.basegameutils.games.BaseGameUtils;
 
-/**
- * Trivial quest. A sample game that sets up the Google Play game services
- * API and allows the user to click a button to win (yes, incredibly epic).
- * Even though winning the game is fun, the purpose of this sample is to
- * illustrate the simplest possible game that uses the API.
- *
- * @author Bruno Oliveira (Google)
- */
 public class MainActivity extends BaseGameActivity implements View.OnClickListener {
 
-    private static final String TAG = "TrivialQuest";
+    private static final String TAG = "MainActivity";
+
+    /**
+     * Designer
+     */
+    private com.google.android.gms.common.SignInButton mBtnSignIn;
+    private Button mBtnSignOut;
+    private Button mBtnPlay;
+    private ProgressBar mProgressBarConnect;
+    private LinearLayout mBarSignIn;
+    private LinearLayout mBarSignOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,63 +32,77 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
 
         setContentView(R.layout.activity_main);
 
-        // set this class to listen for the button clicks
-        findViewById(R.id.button_sign_in).setOnClickListener(this);
-        findViewById(R.id.button_sign_out).setOnClickListener(this);
-        findViewById(R.id.button_win).setOnClickListener(this);
+        initializeViews();
     }
 
-    // Shows the "sign in" bar (explanation and button).
+    private void initializeViews() {
+        mBarSignIn = (LinearLayout) findViewById(R.id.sign_in_bar);
+
+        mBarSignOut = (LinearLayout) findViewById(R.id.sign_out_bar);
+
+        mBtnSignIn = (com.google.android.gms.common.SignInButton) findViewById(R.id.button_sign_in);
+        mBtnSignIn.setOnClickListener(this);
+
+        mBtnSignOut = (Button) findViewById(R.id.button_sign_out);
+        mBtnSignOut.setOnClickListener(this);
+
+        mBtnPlay = (Button) findViewById(R.id.btn_play);
+        mBtnPlay.setOnClickListener(this);
+        mBtnPlay.setVisibility(View.GONE);
+
+        mProgressBarConnect = (ProgressBar) findViewById(R.id.progressBar_connect);
+        mProgressBarConnect.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Shows the "sign in" bar (explanation and button)
+     */
     private void showSignInBar() {
         Log.d(TAG, "Showing sign in bar");
-        findViewById(R.id.sign_in_bar).setVisibility(View.VISIBLE);
-        findViewById(R.id.sign_out_bar).setVisibility(View.GONE);
+        mBarSignIn.setVisibility(View.VISIBLE);
+        mBarSignOut.setVisibility(View.GONE);
     }
 
-    // Shows the "sign out" bar (explanation and button).
+    /**
+     * Shows the "sign out" bar (explanation and button)
+     */
     private void showSignOutBar() {
         Log.d(TAG, "Showing sign out bar");
-        findViewById(R.id.sign_in_bar).setVisibility(View.GONE);
-        findViewById(R.id.sign_out_bar).setVisibility(View.VISIBLE);
+        mBarSignIn.setVisibility(View.GONE);
+        mBarSignOut.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_sign_in:
-                // Check to see the developer who's running this sample code read the instructions :-)
-                // NOTE: this check is here only because this is a sample! Don't include this
-                // check in your actual production app.
-                if (!BaseGameUtils.verifySampleSetup(this, R.string.app_id,
-                        R.string.achievement_trivial_victory)) {
-                    Log.w(TAG, "*** Warning: setup problems detected. Sign in may not work!");
-                }
-
-                // start the sign-in flow
-                Log.d(TAG, "Sign-in button clicked");
-                beginUserInitiatedSignIn();
-                showSignOutBar();
+                btnSignIn_OnClick();
                 break;
             case R.id.button_sign_out:
-                // sign out.
-                Log.d(TAG, "Sign-out button clicked");
-                signOut();
-                showSignInBar();
+                btnSignOut_OnClick();
                 break;
-            case R.id.button_win:
-                /*// win!
-                Log.d(TAG, "Win button clicked");
-                BaseGameUtils.showAlert(this, getString(R.string.you_won));
-                if (isSignedIn()) {
-                    // unlock the "Trivial Victory" achievement.
-                    Games.Achievements.unlock(getApiClient(), getString(R.string.achievement_trivial_victory));
-                }*/
-                showGameOptions();
+            case R.id.btn_play:
+                btnPlay_OnClick();
                 break;
         }
     }
 
-    private void showGameOptions() {
+    private void btnSignOut_OnClick() {
+        // sign out.
+        Log.d(TAG, "Sign-out button clicked");
+        signOut();
+        showSignInBar();
+    }
+
+    private void btnSignIn_OnClick() {
+        Log.d(TAG, "Sign-in button clicked");
+        beginUserInitiatedSignIn();
+        mProgressBarConnect.setVisibility(View.VISIBLE);
+        mBtnPlay.setVisibility(View.GONE);
+        showSignOutBar();
+    }
+
+    private void btnPlay_OnClick() {
         Intent i = new Intent(this, GameSelectionActivity.class);
         startActivity(i);
     }
@@ -92,10 +110,14 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
     @Override
     public void onSignInFailed() {
         beginUserInitiatedSignIn();
+        mBtnPlay.setVisibility(View.GONE);
+        mProgressBarConnect.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onSignInSucceeded() {
         showSignOutBar();
+        mProgressBarConnect.setVisibility(View.GONE);
+        mBtnPlay.setVisibility(View.VISIBLE);
     }
 }
