@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/MainLayout"
+    tools:context=".MainActivity"
+    android:layout_gravity="center"
+    android:theme="@style/AppTheme.NoActionBar.FullScreen">
+
+    <TextView
+        android:text="Welcome to Java Play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="top|center"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar_connect"
+        android:layout_gravity="center" />
+
+    <Button
+        android:text="@string/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_play"
+        android:layout_gravity="center"/>
+
+    <!-- SIGN-IN BAR -->
+
+    <LinearLayout android:id="@+id/sign_in_bar" style="@style/SignInOutBar"
+        android:gravity="bottom"
+        android:layout_gravity="bottom">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/button_sign_in" style="@style/SignInButton" />
+
+        <TextView style="@style/SignInOutBarBlurb" android:text="@string/sign_in_explanation" />
+    </LinearLayout>
+
+    <!-- SIGN-OUT BAR -->
+    <LinearLayout android:id="@+id/sign_out_bar" style="@style/SignInOutBar"
+        android:visibility="gone"
+        android:layout_gravity="bottom"
+        android:gravity="bottom">
+
+        <TextView style="@style/SignInOutBarBlurb"
+            android:text="@string/you_are_signed_in" />
+
+        <Button style="@style/SignOutButton" android:id="@+id/button_sign_out"
+            android:text="@string/sign_out" />
+
+    </LinearLayout>
+</FrameLayout>
