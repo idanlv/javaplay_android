@@ -18,13 +18,13 @@ public class DeckOfCards implements IJsonSerializable {
     public static final String DECK = "deck";
 
     // Members
-    private LinkedList<PlayingCard> mCards;
+    private LinkedList<PlayingCard> _cards;
 
     /**
      * Constructor: Creates an empty deck
      */
     public DeckOfCards() {
-        mCards = new LinkedList<>();
+        _cards = new LinkedList<>();
     }
 
     /**
@@ -32,13 +32,17 @@ public class DeckOfCards implements IJsonSerializable {
      * @param cards initial deck cards
      */
     public DeckOfCards(LinkedList<PlayingCard> cards) {
-        mCards = new LinkedList<>();
+        _cards = new LinkedList<>();
 
         for (PlayingCard card : cards) {
-            mCards.add(new PlayingCard(card));
+            _cards.add(new PlayingCard(card));
         }
     }
 
+    /**
+     * Copy constructor
+     * @param deck of cards
+     */
     public DeckOfCards(DeckOfCards deck) {
         this(deck.getCards());
     }
@@ -48,9 +52,26 @@ public class DeckOfCards implements IJsonSerializable {
      * @param card card to remove
      */
     public void removeCard(PlayingCard card) {
-        if (!mCards.remove(card)) {
+        if (!_cards.remove(card)) {
             throw new IllegalArgumentException("Card does not exists in deck");
         }
+    }
+
+    /**
+     * Returns deck size
+     * @return deck size
+     */
+    public int size() {
+        return _cards.size();
+    }
+
+    /**
+     * Get playing card by index
+     * @param index
+     * @return PlayingCard by index
+     */
+    public PlayingCard get(int index) {
+        return _cards.get(index);
     }
 
     /**
@@ -58,7 +79,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @param card card to add
      */
     public void addCardToTop(PlayingCard card) {
-        mCards.addFirst(card);
+        _cards.addFirst(card);
     }
 
     /**
@@ -66,7 +87,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @return card at top of the deck
      */
     public PlayingCard peek() {
-        return mCards.peek();
+        return _cards.peek();
     }
 
     /**
@@ -74,7 +95,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @return card at top of the deck
      */
     public PlayingCard pop() {
-        return mCards.pop();
+        return _cards.pop();
     }
 
     /**
@@ -88,7 +109,7 @@ public class DeckOfCards implements IJsonSerializable {
 
         JSONArray cardsArray = new JSONArray();
 
-        for (PlayingCard card : this.mCards) {
+        for (PlayingCard card : this._cards) {
             cardsArray.put(card.toJson());
         }
 
@@ -106,13 +127,13 @@ public class DeckOfCards implements IJsonSerializable {
     public void fromJson(JSONObject object) throws JSONException {
         JSONArray cardsArray = object.getJSONArray(DECK);
 
-        this.mCards.clear();
+        this._cards.clear();
 
         for (int i = 0; i < cardsArray.length(); i++) {
             PlayingCard card = new PlayingCard();
             card.fromJson((JSONObject) cardsArray.get(i));
 
-            this.mCards.addLast(card);
+            this._cards.addLast(card);
         }
     }
 
@@ -120,7 +141,7 @@ public class DeckOfCards implements IJsonSerializable {
      * Shuffles cards in deck
      */
     public void shuffle() {
-        Collections.shuffle(this.mCards);
+        Collections.shuffle(this._cards);
     }
 
     /**
@@ -128,24 +149,33 @@ public class DeckOfCards implements IJsonSerializable {
      * @return Iterator
      */
     public Iterator<PlayingCard> iterator() {
-        return this.mCards.iterator();
+        return this._cards.iterator();
     }
 
-
+    /**
+     * Return a String representation of the deck
+     * @return String representation of the deck
+     */
     public String toString() {
         String str = "";
 
-        for (PlayingCard card : mCards) {
+        for (PlayingCard card : _cards) {
             str += "(" + card.getRank() + "," + card.getSuit() + "),";
         }
 
-        // chop last char
-        str.substring(0, str.length() -1);
+        // chop last char if not empty
+        if (str.length() > 0) {
+            str = str.substring(0, str.length() -1);
+        }
 
         return str;
     }
 
+    /**
+     * Playing card in a linked list
+     * @return PlayingCards in a LinkedList
+     */
     public LinkedList<PlayingCard> getCards() {
-        return this.mCards;
+        return new LinkedList<>(this._cards);
     }
 }
