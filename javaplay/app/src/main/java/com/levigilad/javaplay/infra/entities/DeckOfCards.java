@@ -58,6 +58,14 @@ public class DeckOfCards implements IJsonSerializable {
     }
 
     /**
+     * Removes a specific card from deck by index
+     * @param index index of card to remove
+     */
+    public void removeCardByIndex(int index){
+        _cards.remove(index);
+    }
+
+    /**
      * Returns deck size
      * @return deck size
      */
