@@ -163,8 +163,10 @@ public class DeckOfCards implements IJsonSerializable {
             str += "(" + card.getRank() + "," + card.getSuit() + "),";
         }
 
-        // chop last char
-        str.substring(0, str.length() -1);
+        // chop last char if not empty
+        if (str.length() > 0) {
+            str = str.substring(0, str.length() -1);
+        }
 
         return str;
     }
