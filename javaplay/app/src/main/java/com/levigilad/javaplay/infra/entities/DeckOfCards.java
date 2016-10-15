@@ -75,11 +75,19 @@ public class DeckOfCards implements IJsonSerializable {
     }
 
     /**
-     * Adds a card into deck
+     * Adds a card to top of deck
      * @param card card to add
      */
     public void addCardToTop(PlayingCard card) {
         _cards.addFirst(card);
+    }
+
+    /**
+     * Adds a card to bottom of deck
+     * @param card card to add
+     */
+    public void addCardToBottom(PlayingCard card) {
+        _cards.addLast(card);
     }
 
     /**

@@ -111,11 +111,12 @@ public class YanivGame extends GameOfCards {
      * @return True or False
      */
     public boolean isDuplicates(DeckOfCards cards) {
-        PlayingCardRanks value = cards.get(0).getRank();
 
         if (cards.size() < MIN_DUPLICATES_LENGTH) {
             return false;
         }
+
+        PlayingCardRanks value = cards.get(0).getRank();
 
         Iterator<PlayingCard> it = cards.iterator();
 
