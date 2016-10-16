@@ -7,6 +7,7 @@ import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
+import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -111,11 +112,12 @@ public class YanivGame extends GameOfCards {
      * @return True or False
      */
     public boolean isDuplicates(DeckOfCards cards) {
-        PlayingCardRanks value = cards.get(0).getRank();
 
         if (cards.size() < MIN_DUPLICATES_LENGTH) {
             return false;
         }
+
+        PlayingCardRanks value = cards.get(0).getRank();
 
         Iterator<PlayingCard> it = cards.iterator();
 
@@ -135,39 +137,63 @@ public class YanivGame extends GameOfCards {
      * @return True or False
      */
     public boolean isSequence(DeckOfCards cardSeries) {
-        LinkedList<PlayingCard> cards = cardSeries.getCards();
+        PlayingCardSuits cardsSuit;
+        Iterator<PlayingCard> it;
+        PlayingCard playingCard = null;
+        int jokerCount = 0;
+        int previousValue;
+        PlayingCardSuits suit;
 
-        int previousValue = -1;
 
-        if (cards.size() < MIN_SEQUENCE_LENGTH) {
+        if (cardSeries.size() < MIN_SEQUENCE_LENGTH) {
             return false;
         }
 
-        Collections.sort(cards, new Comparator<PlayingCard>() {
-            @Override
-            public int compare(PlayingCard o1, PlayingCard o2) {
-                return o1.compareTo(o2);
-            }
-        });
+        cardSeries.sort();
 
-        for (PlayingCard card : cards) {
-            int currentValue = card.getRank().getNumericValue();
-            // First value in sequence
-            if (previousValue == -1) {
-                previousValue = currentValue;
+        // Get the joker count and move pass them
+        it = cardSeries.iterator();
+        while (it.hasNext()) {
+            playingCard = it.next();
+            if (playingCard.getRank() == PlayingCardRanks.JOKER) {
+                jokerCount++;
+            } else {
+                break;
             }
-            // You can place a joker inside your sequence and it will act as the next number in
-            // series
-            else if ((currentValue == PlayingCardRanks.JOKER.getNumericValue()) ||
-                    (currentValue == previousValue + 1)) {
+        }
+
+        // Get current card values
+        suit = playingCard.getSuit();
+        previousValue = playingCard.getRank().getNumericValue();
+
+        // Move on the remaining cards
+        while (it.hasNext()) {
+            playingCard = it.next();
+
+            // if not same suit, return quit
+            if (playingCard.getSuit() != suit) {
+                return false;
+            }
+
+            // Joker handle
+            while (playingCard.getRank().getNumericValue() > previousValue + 1 &&
+                    jokerCount > 0) {
+                jokerCount--;
                 previousValue++;
             }
+
+            // Check if this is the next expected card
+            if (playingCard.getRank().getNumericValue() == previousValue + 1) {
+                previousValue++;
+            }
+
             // Current number does not continue the sequence
             else {
                 return false;
             }
         }
 
+        // All is OK
         return true;
     }
 
