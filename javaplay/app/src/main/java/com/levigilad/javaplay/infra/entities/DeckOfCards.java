@@ -183,7 +183,7 @@ public class DeckOfCards implements IJsonSerializable {
         if (str.length() > 0) {
             str = str.substring(0, str.length() -1);
         }
-
+        
         return str;
     }
 
@@ -193,5 +193,13 @@ public class DeckOfCards implements IJsonSerializable {
      */
     public LinkedList<PlayingCard> getCards() {
         return new LinkedList<>(this._cards);
+    }
+
+    /**
+     * Sort the current deck
+     */
+    public void sort() {
+        Collections.sort(_cards);
+
     }
 }
