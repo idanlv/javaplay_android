@@ -5,114 +5,112 @@
     tools:context="com.levigilad.javaplay.yaniv.YanivPlayFragment"
     android:id="@+id/fragment_yaniv_game">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/activity_yaniv_game"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="com.levigilad.javaplay.yaniv.YanivGameActivity"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/instructions_text_view"
-            android:layout_weight="3"
-            android:textAllCaps="true"
-            android:textStyle="normal|bold"
-            android:textAlignment="center"
-            android:text="@string/waiting_for_players"
-            android:textSize="30sp" />
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_instructions"
+            tools:text="Waiting For Players"
+            android:textAppearance="@android:style/TextAppearance.Material.Large"
+            android:textAlignment="center" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:baselineAligned="false">
+            android:layout_height="109dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:src="@drawable/playingcard_card_back_red"
-                android:layout_gravity="center_vertical"
-                android:id="@+id/deck_image_view"
-                android:adjustViewBounds="true" />
+                android:id="@+id/iv_deck"
+                android:contentDescription="Deck"
+                android:layout_height="100dp"
+                android:adjustViewBounds="true"
+                android:layout_width="70dp" />
 
-            <StackView
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="12dp"
+                android:layout_height="match_parent"></LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:id="@+id/deck_stack_view"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:id="@+id/ll_discarded"
+                android:orientation="horizontal">
+
+            </LinearLayout>
 
             <ListView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:id="@+id/participants_status_list_view" />
+                android:layout_weight="0.19"
+                android:id="@+id/lv_cards_count" />
+
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:paddingTop="20dp">
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:gravity="center"
-                android:paddingLeft="10dp"
-                android:layout_gravity="center_vertical">
+                android:layout_height="match_parent"
+                android:weightSum="1">
 
                 <TextView
-                    android:text="Score"
-                    android:layout_width="wrap_content"
+                    android:text="Score :"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="clip_horizontal"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="20sp"
-                    android:textStyle="normal|bold" />
+                    android:textAlignment="center" />
 
                 <TextView
-                    android:text="0"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/score_text_view"
-                    android:gravity="clip_horizontal"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="17sp" />
+                    android:id="@+id/tv_score"
+                    android:textAlignment="center" />
 
                 <Button
                     android:text="Discard"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/discard_button" />
+                    android:id="@+id/btn_discard"
+                    android:elevation="0dp"
+                    android:textSize="12sp" />
 
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_weight="0.73"></LinearLayout>
+
+                <Button
+                    android:text="Yaniv !"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_Yaniv" />
             </LinearLayout>
 
-            <GridLayout
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_height="match_parent"
-                android:id="@+id/hand_layout">
+                android:layout_width="12dp"></LinearLayout>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/playingcard_card_back_blue"
-                    android:id="@+id/card_stub_image_view"
-                    android:padding="10dp"
-                    android:adjustViewBounds="true" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.95"
+                android:id="@+id/ll_hand"
+                android:orientation="horizontal">
 
-            </GridLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
