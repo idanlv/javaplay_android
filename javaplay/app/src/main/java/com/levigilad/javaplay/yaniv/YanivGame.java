@@ -7,6 +7,7 @@ import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
+import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -137,12 +138,15 @@ public class YanivGame extends GameOfCards {
      */
     public boolean isSequence(DeckOfCards cardSeries) {
         LinkedList<PlayingCard> cards = cardSeries.getCards();
+        PlayingCardSuits cardsSuit;
 
         int previousValue = -1;
 
         if (cards.size() < MIN_SEQUENCE_LENGTH) {
             return false;
         }
+
+        cardsSuit = cards.peek().getSuit();
 
         Collections.sort(cards, new Comparator<PlayingCard>() {
             @Override
@@ -159,8 +163,8 @@ public class YanivGame extends GameOfCards {
             }
             // You can place a joker inside your sequence and it will act as the next number in
             // series
-            else if ((currentValue == PlayingCardRanks.JOKER.getNumericValue()) ||
-                    (currentValue == previousValue + 1)) {
+            else if (((currentValue == PlayingCardRanks.JOKER.getNumericValue()) ||
+                    (currentValue == previousValue + 1)) && cardsSuit == card.getSuit()) {
                 previousValue++;
             }
             // Current number does not continue the sequence
