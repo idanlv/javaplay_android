@@ -1,0 +1,99 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    tools:context="com.levigilad.javaplay.tictactoe.TicTacToeGameFragment">
+
+    <TableLayout
+        android:id="@+id/table_layout_board"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/moveTextView"
+        android:layout_gravity="center">
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:height="100dp"
+                android:text="@string/tictactoe_empty_cell"
+                android:width="100dp" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tictactoe_empty_cell"
+                android:height="100dp"
+                android:width="100dp" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tictactoe_empty_cell"
+                android:height="100dp"
+                android:width="100dp" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tictactoe_empty_cell"
+                android:height="100dp"
+                android:width="100dp" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tictactoe_empty_cell"
+                android:height="100dp"
+                android:width="100dp" />
+            <Button
+                android:id="@+id/button6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tictactoe_empty_cell"
+                android:height="100dp"
+                android:width="100dp" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:id="@+id/button7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tictactoe_empty_cell"
+                android:height="100dp"
+                android:width="100dp" />
+            <Button
+                android:id="@+id/button8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tictactoe_empty_cell"
+                android:height="100dp"
+                android:width="100dp" />
+            <Button
+                android:id="@+id/button9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tictactoe_empty_cell"
+                android:height="100dp"
+                android:width="100dp" />
+        </TableRow>
+    </TableLayout>
+
+
+</FrameLayout>
