@@ -163,8 +163,8 @@ public class YanivGame extends GameOfCards {
             }
             // You can place a joker inside your sequence and it will act as the next number in
             // series
-            else if (((currentValue == PlayingCardRanks.JOKER.getNumericValue()) ||
-                    (currentValue == previousValue + 1)) && cardsSuit == card.getSuit()) {
+            else if (currentValue == PlayingCardRanks.JOKER.getNumericValue() ||
+                    (currentValue == previousValue + 1 && cardsSuit == card.getSuit())) {
                 previousValue++;
             }
             // Current number does not continue the sequence
