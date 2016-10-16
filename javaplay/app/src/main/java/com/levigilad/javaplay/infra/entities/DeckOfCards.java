@@ -58,6 +58,14 @@ public class DeckOfCards implements IJsonSerializable {
     }
 
     /**
+     * Removes a specific card from deck by index
+     * @param index index of card to remove
+     */
+    public void removeCardByIndex(int index){
+        _cards.remove(index);
+    }
+
+    /**
      * Returns deck size
      * @return deck size
      */
@@ -75,11 +83,19 @@ public class DeckOfCards implements IJsonSerializable {
     }
 
     /**
-     * Adds a card into deck
+     * Adds a card to top of deck
      * @param card card to add
      */
     public void addCardToTop(PlayingCard card) {
         _cards.addFirst(card);
+    }
+
+    /**
+     * Adds a card to bottom of deck
+     * @param card card to add
+     */
+    public void addCardToBottom(PlayingCard card) {
+        _cards.addLast(card);
     }
 
     /**
@@ -177,5 +193,13 @@ public class DeckOfCards implements IJsonSerializable {
      */
     public LinkedList<PlayingCard> getCards() {
         return new LinkedList<>(this._cards);
+    }
+
+    /**
+     * Sort the current deck
+     */
+    public void sort() {
+        Collections.sort(_cards);
+
     }
 }
