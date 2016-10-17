@@ -31,7 +31,13 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
+/*
+  TODO: 1) Convert to fragment
+        2) Convert to turn based game
+        3) Play with others
+        4) QA
+        5) Check royal's hang
+  */
 public class YanivPlayFragment extends PlayFragment {
     /**
      * Constants
@@ -132,6 +138,9 @@ public class YanivPlayFragment extends PlayFragment {
         });
 
         // Start
+        mFreshDeckCards = new DeckOfCards();
+        mFreshDeckCards = mGame.generateDeck(4);
+
         setDemoCards();
         setCardsInHandView();
         setCardsInDiscardView();
@@ -216,7 +225,6 @@ public class YanivPlayFragment extends PlayFragment {
             img.setImageDrawable(getCardAsDrawable(playingCard));
 
             img.setId(i);
-
 
             img.setLayoutParams(new LinearLayout.LayoutParams(
                     dpToPx(CARD_WIDTH_DP),dpToPx(CARD_HEIGHT_DP)));
@@ -369,9 +377,6 @@ public class YanivPlayFragment extends PlayFragment {
         mDiscardedCards.addCardToTop(dpc3);
         mDiscardedCards.addCardToTop(dpc4);
         mDiscardedCards.addCardToTop(dpc5);
-
-        mFreshDeckCards = new DeckOfCards();
-        mFreshDeckCards = mGame.generateDeck(4);
 
     }
 
