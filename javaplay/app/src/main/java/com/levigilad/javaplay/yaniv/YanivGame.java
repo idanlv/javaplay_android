@@ -134,7 +134,6 @@ public class YanivGame extends GameOfCards {
      * @return True or False
      */
     public boolean isSequence(DeckOfCards cardSeries) {
-        PlayingCardSuits cardsSuit;
         Iterator<PlayingCard> it;
         PlayingCard playingCard = null;
         int jokerCount = 0;
