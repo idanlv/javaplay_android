@@ -8,15 +8,20 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.levigilad.javaplay.infra.enums.GameOptions;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
 import com.levigilad.javaplay.yaniv.YanivPlayFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -24,8 +29,11 @@ public class GameOptionsActivity extends BaseGameActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
         OnFragmentInteractionListener {
 
-    private static final int RC_SELECT_PLAYERS = 5001;
     private static final String GAME_ID = "GameId";
+
+    private static final int RC_SELECT_PLAYERS = 5001;
+    private final static int RC_LOOK_AT_MATCHES = 10001;
+    private static final String TAG = "GameOptionsActivity";
 
     private String mGameId;
 
@@ -99,6 +107,28 @@ public class GameOptionsActivity extends BaseGameActivity implements
 
 
             replaceFragment(fragment);
+        } else if (request == RC_LOOK_AT_MATCHES) {
+            // Returning from the 'Select Match' dialog
+
+            if (response != Activity.RESULT_OK) {
+                // user canceled
+                return;
+            }
+
+            TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
+
+            if (match != null) {
+                try {
+                    JSONObject turnData = new JSONObject(new String(match.getData()));
+                    mGameId = turnData.getString("game_id");
+
+                    // initiate fragment game with data
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Log.d(TAG, "Match = " + match);
         } else {
             mHelper.onActivityResult(request, response, data);
         }
@@ -109,7 +139,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
         GameOptions option = GameOptions.values()[position];
 
         switch (option) {
-            case PLAY: {
+            case GAMES: {
                 if (mStarted) {
                     Intent intent = Games.TurnBasedMultiplayer
                             .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
@@ -126,8 +156,11 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 AchievementsFragment fragment = AchievementsFragment.newInstance(mGameId);
                 replaceFragment(fragment);
             }
-            case INSTRUCTIONS: {
-                break;
+            case INBOX: {
+                if (isSignedIn()) {
+                    Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
+                    startActivityForResult(intent, RC_LOOK_AT_MATCHES);
+                }
             }
         }
     }

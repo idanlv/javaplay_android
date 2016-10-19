@@ -14,8 +14,10 @@ public abstract class Turn implements IJsonSerializable {
     private static final String TAG = "Turn";
 
     private int mTurnCounter;
+    private String mGameId;
 
-    public Turn() {
+    public Turn(String gameId) {
+        mGameId = gameId;
         mTurnCounter = 1;
     }
 
@@ -27,6 +29,7 @@ public abstract class Turn implements IJsonSerializable {
     public JSONObject toJson() throws JSONException {
         JSONObject retVal = new JSONObject();
         retVal.put("turnCounter", this.mTurnCounter);
+        retVal.put("game_id", this.mGameId);
 
         return retVal;
     }
@@ -38,6 +41,7 @@ public abstract class Turn implements IJsonSerializable {
      */
     public void fromJson(JSONObject object) throws JSONException {
         this.mTurnCounter = object.getInt("turnCounter");
+        this.mGameId = object.getString("game_id");
     }
 
     /**
