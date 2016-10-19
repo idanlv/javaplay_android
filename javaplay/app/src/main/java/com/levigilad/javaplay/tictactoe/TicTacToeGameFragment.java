@@ -192,7 +192,11 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
             setEnabledRecursively(mTableLayoutBoard, false);
 
-            finishTurn(mMatch.getMatchId(), null, mTurnData.export());
+            if (TicTacToeGame.isWin(mTurnData.getBoard(), mCurrentPlayerSymbol)) {
+                finishMatch(mMatch.getMatchId(), mTurnData.export());
+            } else {
+                finishTurn(mMatch.getMatchId(), null, mTurnData.export());
+            }
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
         }

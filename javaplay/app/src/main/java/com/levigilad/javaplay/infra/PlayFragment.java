@@ -187,6 +187,10 @@ public abstract class PlayFragment extends BaseGameFragment {
                 });
     }
 
+    protected void finishMatch(String matchId, byte[] turnData) {
+        Games.TurnBasedMultiplayer.finishMatch(getApiClient(), matchId, turnData);
+    }
+
     protected abstract void startMatch(TurnBasedMatch match);
 
     protected abstract void updateMatch(TurnBasedMatch match);
