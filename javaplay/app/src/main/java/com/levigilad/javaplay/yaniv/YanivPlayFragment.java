@@ -54,23 +54,23 @@ public class YanivPlayFragment extends PlayFragment {
     /**
      * Members
      */
-    YanivGame mGame;
-    DeckOfCards mPlayersHand;
-    DeckOfCards mDiscardedCards;
-    DeckOfCards mFreshDeckCards;
-    boolean mGetNewCard;
+    private YanivGame mGame;
+    private DeckOfCards mPlayersHand;
+    private DeckOfCards mDiscardedCards;
+    private DeckOfCards mFreshDeckCards;
+    private boolean mGetNewCard;
 
 
     /**
      * Designer
      */
-    ImageView mDeckIV;
-    Button mDiscardBtn;
-    Button mYanivBtn;
-    LinearLayout mHandLL;
-    LinearLayout mDiscardedCardsLL;
-    ListView mPlayersCardCountLV;
-    TextView mScoreTV;
+    private ImageView mDeckIV;
+    private Button mDiscardBtn;
+    private Button mYanivBtn;
+    private LinearLayout mHandLL;
+    private LinearLayout mDiscardedCardsLL;
+    private ListView mPlayersCardCountLV;
+    private TextView mScoreTV;
 
     /**
      * Required empty constructor
@@ -343,6 +343,12 @@ public class YanivPlayFragment extends PlayFragment {
         return drawable;
     }
 
+    //TODO : check if should be moved to another util class
+    /**
+     * Converts dp to px
+     * @param dp size
+     * @return size in px
+     */
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics =
                 getActivity().getApplicationContext().getResources().getDisplayMetrics();

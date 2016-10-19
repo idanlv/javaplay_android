@@ -34,7 +34,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-;    private boolean mStarted = false;
+    private boolean mStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

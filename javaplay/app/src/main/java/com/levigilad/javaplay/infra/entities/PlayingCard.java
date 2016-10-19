@@ -11,11 +11,17 @@ import org.json.JSONObject;
  * This class represents a game card
  */
 public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
-    // Consts
+    /**
+     * Constants
+    */
+
     public static final String CARD_VALUE = "card_value";
     public static final String CARD_SYMBOL = "card_symbol";
 
-    // Members
+    /**
+     * Members
+    */
+
     private PlayingCardRanks mRank;
     private PlayingCardSuits mSuit;
 
@@ -75,7 +81,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
 
     /**
      * * Generate a json representation of the card
-     * @return
+     * @return card as json object
      * @throws JSONException
      */
     @Override
@@ -101,7 +107,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     /**
      * This method compares between two given cards
      * @param another compared to card
-     * @return
+     * @return the difference between cards values
      */
     @Override
     public int compareTo(PlayingCard another) {

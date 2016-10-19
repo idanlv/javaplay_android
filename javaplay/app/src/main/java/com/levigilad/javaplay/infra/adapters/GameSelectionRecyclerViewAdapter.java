@@ -13,10 +13,6 @@ import com.levigilad.javaplay.infra.interfaces.OnItemClickListener;
 
 import java.util.ArrayList;
 
-/**
- * Created by User on 08/10/2016.
- */
-
 public class GameSelectionRecyclerViewAdapter extends
         RecyclerView.Adapter<GameSelectionRecyclerViewAdapter.GameHolder> {
     private static final String TAG = "GameSelectionView";
@@ -57,8 +53,7 @@ public class GameSelectionRecyclerViewAdapter extends
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragement_game_selection, parent, false);
 
-        GameHolder gameHolder = new GameHolder(view);
-        return gameHolder;
+        return (new GameHolder(view));
     }
 
     @Override

@@ -5,14 +5,9 @@ import android.content.Context;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.Game;
 
-/**
- * Created by User on 15/10/2016.
- */
-
 public class TicTacToeGame extends Game {
     /**
      * Constructor
-     *
      */
     public TicTacToeGame(Context context) {
         super(context.getString(R.string.tictactoe_game_id),
