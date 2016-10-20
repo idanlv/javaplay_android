@@ -138,9 +138,9 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 PlayFragment fragment = null;
 
                 if (mGameId.equals(getString(R.string.yaniv_game_id))) {
-                    fragment = YanivPlayFragment.newInstance(match.getMatchId());
+                    fragment = YanivPlayFragment.newInstance(match);
                 } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
-                    fragment = TicTacToeGameFragment.newInstance(match.getMatchId());
+                    fragment = TicTacToeGameFragment.newInstance(match);
                 }
 
                 mListener = fragment;
@@ -178,10 +178,12 @@ public class GameOptionsActivity extends BaseGameActivity implements
             case ACHIEVEMENTS: {
                 AchievementsFragment fragment = AchievementsFragment.newInstance(mGameId);
                 replaceFragment(fragment);
+                break;
             }
             case INBOX: {
                 Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
                 startActivityForResult(intent, RC_LOOK_AT_MATCHES);
+                break;
             }
         }
     }

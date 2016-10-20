@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.PlayFragment;
 
@@ -55,10 +56,10 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         return fragment;
     }
 
-    public static TicTacToeGameFragment newInstance(String matchId) {
+    public static TicTacToeGameFragment newInstance(TurnBasedMatch match) {
         TicTacToeGameFragment fragment = new TicTacToeGameFragment();
         Bundle args = new Bundle();
-        args.putString(MATCH_ID, matchId);
+        args.putParcelable(MATCH_ID, match);
         fragment.setArguments(args);
         return fragment;
     }

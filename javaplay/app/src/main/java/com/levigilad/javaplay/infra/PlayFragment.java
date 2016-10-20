@@ -37,7 +37,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
 
     private Game _game;
 
-    private String mMatchId;
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
 
@@ -53,9 +52,9 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         if (getArguments() != null) {
             Bundle bundle = getArguments();
 
-            mMatchId = bundle.getString(MATCH_ID);
+            mMatch = bundle.getParcelable(MATCH_ID);
 
-            if (mMatchId == null) {
+            if (mMatch== null) {
                 mInvitees = getArguments().getStringArrayList(INVITEES);
                 mAutoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
             }
@@ -63,7 +62,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     }
 
     public void onSignInSucceeded() {
-        if (mMatchId == null) {
+        if (mMatch == null) {
             TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
                     .addInvitedPlayers(mInvitees)
                     .setAutoMatchCriteria(mAutoMatchCriteria)
@@ -79,13 +78,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                         }
                     });
         } else {
-            Games.TurnBasedMultiplayer.loadMatch(getApiClient(), mMatchId)
-                    .setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
-                        @Override
-                        public void onResult(@NonNull TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
-                            processResult(loadMatchResult);
-                        }
-                    });
+            handleMatchUpdate();
         }
     }
 
@@ -165,13 +158,20 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         // This indicates that the game has already started and the game data is already initialized,
         // Therefore, we need to make sure your game does not reinitialize the data
         else {
-            try {
-                mTurnData.update(mMatch.getData());
-                updateView();
+            handleMatchUpdate();
+        }
+    }
+
+    private void handleMatchUpdate() {
+        try {
+            mTurnData.update(mMatch.getData());
+            updateView();
+
+            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
                 startTurn();
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -186,12 +186,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
             askForRematch();
         }
 
-        try {
-            mTurnData.update(mMatch.getData());
-            updateView();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        handleMatchUpdate();
     }
 
     private void processResult(TurnBasedMultiplayer.LoadMatchResult result) {
@@ -201,16 +196,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
             return;
         }
 
-        try {
-            mTurnData.update(mMatch.getData());
-            updateView();
-
-            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                startTurn();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        handleMatchUpdate();
     }
 
     protected void processResult(TurnBasedMultiplayer.CancelMatchResult result) {
@@ -301,16 +287,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     public void onTurnBasedMatchReceived(TurnBasedMatch match) {
         mMatch = match;
 
-        try {
-            mTurnData.update(mMatch.getData());
-            updateView();
-
-            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                startTurn();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        handleMatchUpdate();
     }
 
     protected abstract byte[] startMatch();

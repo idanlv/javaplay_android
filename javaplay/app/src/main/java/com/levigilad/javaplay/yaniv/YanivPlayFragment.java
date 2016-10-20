@@ -95,10 +95,10 @@ public class YanivPlayFragment extends PlayFragment {
         return fragment;
     }
 
-    public static YanivPlayFragment newInstance(String matchId) {
+    public static YanivPlayFragment newInstance(TurnBasedMatch match) {
         YanivPlayFragment fragment = new YanivPlayFragment();
         Bundle args = new Bundle();
-        args.putString(MATCH_ID, matchId);
+        args.putParcelable(MATCH_ID, match);
         fragment.setArguments(args);
         return fragment;
     }
