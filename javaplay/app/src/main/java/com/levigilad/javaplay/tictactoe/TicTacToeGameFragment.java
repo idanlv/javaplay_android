@@ -11,12 +11,15 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.PlayFragment;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TicTacToeGameFragment extends PlayFragment implements View.OnClickListener {
     private static final String TAG = "TicTacToeGameFragment";
@@ -107,22 +110,16 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
     @Override
     protected void updateMatch() {
-        try {
-            mTurnData.update(mMatch.getData());
+        if (mCurrentPlayerSymbol == null) {
+            String participantId = getCurrentParticipantId();
+            mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).getParticipantSymbol(participantId);
 
-            if (mCurrentPlayerSymbol == null) {
-                String participantId = getCurrentParticipantId();
-                mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).getParticipantSymbol(participantId);
-
-                if (mCurrentPlayerSymbol == TicTacToeSymbol.NONE) {
-                    mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
-                }
+            if (mCurrentPlayerSymbol == TicTacToeSymbol.NONE) {
+                mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
             }
-
-            setEnabledRecursively(mTableLayoutBoard, true);
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
+
+        setEnabledRecursively(mTableLayoutBoard, true);
     }
 
     @Override
@@ -210,11 +207,34 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             setEnabledRecursively(mTableLayoutBoard, false);
 
             if (TicTacToeGame.isWin(((TicTacToeTurn)mTurnData).getBoard(), mCurrentPlayerSymbol)) {
-                finishMatch(mTurnData.export());
+                String winnerParticipantId = getCurrentParticipantId();
+
+                List<ParticipantResult> results = new LinkedList<>();
+
+                results.add(new ParticipantResult(
+                        winnerParticipantId, ParticipantResult.MATCH_RESULT_WIN,
+                        ParticipantResult.PLACING_UNINITIALIZED));
+
+                for (String participantId : mMatch.getParticipantIds()) {
+                    if (!participantId.equals(winnerParticipantId)) {
+                        results.add(new ParticipantResult(
+                                participantId, ParticipantResult.MATCH_RESULT_LOSS,
+                                ParticipantResult.PLACING_UNINITIALIZED));
+                    }
+                }
+
+                finishMatch(results);
             } else if (TicTacToeGame.isTie(((TicTacToeTurn)mTurnData).getBoard())) {
-                finishMatch(mTurnData.export());
+                List<ParticipantResult> results = new LinkedList<>();
+
+                for (String participantId : mMatch.getParticipantIds()) {
+                    results.add(new ParticipantResult(
+                            participantId, ParticipantResult.MATCH_RESULT_LOSS,
+                            ParticipantResult.PLACING_UNINITIALIZED));
+                }
+                finishMatch(results);
             } else {
-                finishTurn(getNextParticipantId(), mTurnData.export());
+                finishTurn(getNextParticipantId());
             }
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());

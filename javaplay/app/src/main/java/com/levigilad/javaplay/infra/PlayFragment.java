@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
+import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
@@ -19,6 +20,7 @@ import com.levigilad.javaplay.infra.entities.Turn;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class PlayFragment extends BaseGameFragment {
     private static final String TAG = "PlayFragment";
@@ -150,9 +152,14 @@ public abstract class PlayFragment extends BaseGameFragment {
         // This indicates that the game data is uninitialized because no player has taken a turn yet
         // Therefore, current player is the first one to take a turn in the match
         if (mMatch.getData() == null) {
-            byte[] turnData = startMatch();
-            String nextParticipantId = getNextParticipantId();
-            finishTurn(nextParticipantId, turnData);
+            try {
+                mTurnData.update(startMatch());
+
+                String nextParticipantId = getNextParticipantId();
+                finishTurn(nextParticipantId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         // This indicates that the game has already started and the game data is already initialized,
         // Therefore, we need to make sure your game does not reinitialize the data
@@ -227,20 +234,29 @@ public abstract class PlayFragment extends BaseGameFragment {
         // TODO
     }
 
-    protected void finishTurn(String participantId, byte[] turnData) {
-        updateView();
+    protected void finishTurn(String participantId) {
+        try {
+            updateView();
 
-        Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(), turnData, participantId)
-                .setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-                    @Override
-                    public void onResult(@NonNull TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
-                        processResult(updateMatchResult);
-                    }
-                });
+            Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(), mTurnData.export(), participantId)
+                    .setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+                        @Override
+                        public void onResult(@NonNull TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
+                            processResult(updateMatchResult);
+                        }
+                    });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    protected void finishMatch(byte[] turnData) {
-        Games.TurnBasedMultiplayer.finishMatch(getApiClient(), mMatch.getMatchId(), turnData);
+    protected void finishMatch(List<ParticipantResult> results) {
+        try {
+            Games.TurnBasedMultiplayer.finishMatch(getApiClient(), mMatch.getMatchId(),
+                    mTurnData.export(), results);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
