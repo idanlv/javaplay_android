@@ -22,7 +22,6 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     private static final String TAG = "TicTacToeGameFragment";
 
     private TicTacToeSymbol mCurrentPlayerSymbol;
-    private TicTacToeTurn mTurnData = null;
 
     /**
      * Designer
@@ -31,6 +30,8 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
     public TicTacToeGameFragment() {
         super();
+
+        this.mTurnData = new TicTacToeTurn();
     }
 
     /**
@@ -86,8 +87,6 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     @Override
     public void onStart() {
         super.onStart();
-
-        mTurnData = new TicTacToeTurn();
     }
 
     @Override
@@ -96,7 +95,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             String playerId = Games.Players.getCurrentPlayerId(getApiClient());
             String participantId = mMatch.getParticipantId(playerId);
 
-            mCurrentPlayerSymbol = mTurnData.addParticipant(participantId);
+            mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
 
             return mTurnData.export();
         } catch (Exception ex) {
@@ -113,10 +112,10 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
             if (mCurrentPlayerSymbol == null) {
                 String participantId = getCurrentParticipantId();
-                mCurrentPlayerSymbol = mTurnData.getParticipantSymbol(participantId);
+                mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).getParticipantSymbol(participantId);
 
                 if (mCurrentPlayerSymbol == TicTacToeSymbol.NONE) {
-                    mCurrentPlayerSymbol = mTurnData.addParticipant(participantId);
+                    mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
                 }
             }
 
@@ -127,40 +126,33 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     @Override
-    protected void updateView(byte[] turnData) {
-        try {
-            mTurnData.update(turnData);
+    protected void updateView() {
+        Board board = ((TicTacToeTurn)mTurnData).getBoard();
 
-            Board board = mTurnData.getBoard();
+        for (int i = 0; i < board.ROWS; i++) {
+            TableRow row = (TableRow) mTableLayoutBoard.getChildAt(i);
 
-            for (int i = 0; i < board.ROWS; i++) {
-                TableRow row = (TableRow) mTableLayoutBoard.getChildAt(i);
+            for (int j = 0; j < board.COLUMNS; j++) {
+                Button cell = (Button) row.getChildAt(j);
 
-                for (int j = 0; j < board.COLUMNS; j++) {
-                    Button cell = (Button) row.getChildAt(j);
+                String text;
 
-                    String text;
-
-                    switch (board.getCell(i, j)) {
-                        case X: {
-                            text = TicTacToeSymbol.X.name();
-                            break;
-                        }
-                        case O: {
-                            text = TicTacToeSymbol.O.name();
-                            break;
-                        }
-                        default: {
-                            text = getString(R.string.tictactoe_empty_cell);
-                        }
+                switch (board.getCell(i, j)) {
+                    case X: {
+                        text = TicTacToeSymbol.X.name();
+                        break;
                     }
-
-                    cell.setText(text);
+                    case O: {
+                        text = TicTacToeSymbol.O.name();
+                        break;
+                    }
+                    default: {
+                        text = getString(R.string.tictactoe_empty_cell);
+                    }
                 }
-            }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+                cell.setText(text);
+            }
         }
     }
 
@@ -213,13 +205,13 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
     public void btnCell_OnClick(int row, int column) {
         try {
-            mTurnData.getBoard().setCell(mCurrentPlayerSymbol, row, column);
+            ((TicTacToeTurn)mTurnData).getBoard().setCell(mCurrentPlayerSymbol, row, column);
 
             setEnabledRecursively(mTableLayoutBoard, false);
 
-            if (TicTacToeGame.isWin(mTurnData.getBoard(), mCurrentPlayerSymbol)) {
+            if (TicTacToeGame.isWin(((TicTacToeTurn)mTurnData).getBoard(), mCurrentPlayerSymbol)) {
                 finishMatch(mTurnData.export());
-            } else if (TicTacToeGame.isTie(mTurnData.getBoard())) {
+            } else if (TicTacToeGame.isTie(((TicTacToeTurn)mTurnData).getBoard())) {
                 finishMatch(mTurnData.export());
             } else {
                 finishTurn(getNextParticipantId(), mTurnData.export());

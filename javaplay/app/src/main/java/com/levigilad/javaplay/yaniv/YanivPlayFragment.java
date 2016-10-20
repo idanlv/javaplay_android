@@ -180,7 +180,7 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     @Override
-    protected void updateView(byte[] turnData) {
+    protected void updateView() {
 
     }
 
