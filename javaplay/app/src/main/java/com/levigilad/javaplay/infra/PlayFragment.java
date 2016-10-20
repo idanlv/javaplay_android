@@ -9,7 +9,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
-import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
@@ -17,13 +16,14 @@ import com.google.basegameutils.games.GameHelper;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.entities.Turn;
+import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PlayFragment extends BaseGameFragment {
+public abstract class PlayFragment extends BaseGameFragment implements OnTurnBasedMatchReceivedListener {
     private static final String TAG = "PlayFragment";
 
     protected static final String INVITEES = "INVITEES";
@@ -296,6 +296,21 @@ public abstract class PlayFragment extends BaseGameFragment {
     protected String getCurrentParticipantId() {
         String playerId = Games.Players.getCurrentPlayerId(getApiClient());
         return mMatch.getParticipantId(playerId);
+    }
+
+    public void onTurnBasedMatchReceived(TurnBasedMatch match) {
+        mMatch = match;
+
+        try {
+            mTurnData.update(mMatch.getData());
+            updateView();
+
+            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                startTurn();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     protected abstract byte[] startMatch();

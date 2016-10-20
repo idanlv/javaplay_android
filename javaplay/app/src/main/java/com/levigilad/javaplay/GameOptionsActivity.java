@@ -9,15 +9,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
+import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.enums.GameOptions;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
+import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
 import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
 import com.levigilad.javaplay.yaniv.YanivPlayFragment;
 
@@ -28,7 +30,8 @@ import java.util.ArrayList;
 
 public class GameOptionsActivity extends BaseGameActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
-        OnFragmentInteractionListener {
+        OnFragmentInteractionListener,
+        OnTurnBasedMatchUpdateReceivedListener  {
 
     private static final String GAME_ID = "GameId";
 
@@ -37,6 +40,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
     private static final String TAG = "GameOptionsActivity";
 
     private String mGameId;
+    private OnTurnBasedMatchReceivedListener mListener = null;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -110,13 +114,15 @@ public class GameOptionsActivity extends BaseGameActivity implements
             autoMatchCriteria = null;
         }
 
-        Fragment fragment = null;
+        PlayFragment fragment = null;
 
         if (mGameId.equals(getString(R.string.yaniv_game_id))) {
             fragment = YanivPlayFragment.newInstance(invitees, autoMatchCriteria);
         } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
             fragment = TicTacToeGameFragment.newInstance(invitees, autoMatchCriteria);
         }
+
+        mListener = fragment;
 
         replaceFragment(fragment);
     }
@@ -129,13 +135,15 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 JSONObject turnData = new JSONObject(new String(match.getData()));
                 mGameId = turnData.getString("game_id");
 
-                Fragment fragment = null;
+                PlayFragment fragment = null;
 
                 if (mGameId.equals(getString(R.string.yaniv_game_id))) {
                     fragment = YanivPlayFragment.newInstance(match.getMatchId());
                 } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
                     fragment = TicTacToeGameFragment.newInstance(match.getMatchId());
                 }
+
+                mListener = fragment;
 
                 replaceFragment(fragment);
             } catch (JSONException e) {
@@ -195,10 +203,23 @@ public class GameOptionsActivity extends BaseGameActivity implements
     @Override
     public void onSignInSucceeded() {
         // TODO
+        Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
         //TODO
+    }
+
+    @Override
+    public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
+        if (mListener != null) {
+            mListener.onTurnBasedMatchReceived(turnBasedMatch);
+        }
+    }
+
+    @Override
+    public void onTurnBasedMatchRemoved(String s) {
+        Log.i(TAG, "onTurnBasedMatchRemoved");
     }
 }
