@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
@@ -42,8 +43,6 @@ public class GameOptionsActivity extends BaseGameActivity implements
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-;    private boolean mStarted = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +68,6 @@ public class GameOptionsActivity extends BaseGameActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-
-        mStarted = true;
     }
 
     @Override
@@ -83,30 +80,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 return;
             }
 
-            // Get the invitee list.
-            final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-
-            // Get auto-match criteria.
-            Bundle autoMatchCriteria = null;
-            int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-            int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-            if (minAutoMatchPlayers > 0) {
-                autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
-                        minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            } else {
-                autoMatchCriteria = null;
-            }
-
-            Fragment fragment = null;
-
-            if (mGameId.equals(getString(R.string.yaniv_game_id))) {
-                fragment = YanivPlayFragment.newInstance(invitees, autoMatchCriteria);
-            } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
-                fragment = TicTacToeGameFragment.newInstance(invitees, autoMatchCriteria);
-            }
-
-
-            replaceFragment(fragment);
+            startNewGame(data);
         } else if (request == RC_LOOK_AT_MATCHES) {
             // Returning from the 'Select Match' dialog
 
@@ -115,36 +89,68 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 return;
             }
 
-            TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
-
-            if (match != null) {
-                try {
-                    JSONObject turnData = new JSONObject(new String(match.getData()));
-                    mGameId = turnData.getString("game_id");
-
-                    // initiate fragment game with data
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.d(TAG, "Match = " + match);
+            returnToGame(data);
         } else {
             mHelper.onActivityResult(request, response, data);
         }
     }
 
+    private void startNewGame(Intent data) {
+        // Get the invitee list.
+        final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+
+        // Get auto-match criteria.
+        Bundle autoMatchCriteria = null;
+        int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+        int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+        if (minAutoMatchPlayers > 0) {
+            autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
+                    minAutoMatchPlayers, maxAutoMatchPlayers, 0);
+        } else {
+            autoMatchCriteria = null;
+        }
+
+        Fragment fragment = null;
+
+        if (mGameId.equals(getString(R.string.yaniv_game_id))) {
+            fragment = YanivPlayFragment.newInstance(invitees, autoMatchCriteria);
+        } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
+            fragment = TicTacToeGameFragment.newInstance(invitees, autoMatchCriteria);
+        }
+
+        replaceFragment(fragment);
+    }
+
+    private void returnToGame(Intent data) {
+        TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
+
+        if ((match != null) && (match.getData().length > 0)) {
+            try {
+                JSONObject turnData = new JSONObject(new String(match.getData()));
+                mGameId = turnData.getString("game_id");
+
+                // initiate fragment game with data
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Log.d(TAG, "Match = " + match);
+    }
+
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        if (!isSignedIn()) {
+            return;
+        }
+
         GameOptions option = GameOptions.values()[position];
 
         switch (option) {
             case GAMES: {
-                if (mStarted) {
-                    Intent intent = Games.TurnBasedMultiplayer
-                            .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
-                    startActivityForResult(intent, RC_SELECT_PLAYERS);
-                }
+                Intent intent = Games.TurnBasedMultiplayer
+                        .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
+                startActivityForResult(intent, RC_SELECT_PLAYERS);
                 break;
             }
             case LEADERBOARD: {
@@ -157,10 +163,8 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 replaceFragment(fragment);
             }
             case INBOX: {
-                if (isSignedIn()) {
-                    Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
-                    startActivityForResult(intent, RC_LOOK_AT_MATCHES);
-                }
+                Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
+                startActivityForResult(intent, RC_LOOK_AT_MATCHES);
             }
         }
     }

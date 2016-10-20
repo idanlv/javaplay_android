@@ -26,7 +26,7 @@ public class YanivTurn extends Turn {
     private boolean mInitializeDone;
 
     public YanivTurn() {
-        super();
+        super("Yaniv");
 
         mAvailableDeck = new DeckOfCards();
         mDiscardedDeck = new DeckOfCards();

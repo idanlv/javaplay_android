@@ -22,7 +22,7 @@ public class TicTacToeTurn extends Turn {
     private HashMap<String, TicTacToeSymbol> mParticipants;
 
     public TicTacToeTurn() {
-        super();
+        super("Tic Tac Toe");
 
         mBoard = new Board();
         mParticipants = new HashMap<>();
