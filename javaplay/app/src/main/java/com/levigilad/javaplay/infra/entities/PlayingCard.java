@@ -61,10 +61,6 @@ public class PlayingCard implements IJsonSerializable, Comparable {
         return this.mSuit;
     }
 
-    public int getDrawableId() {
-        return 0;
-    }
-
     /**
      * Validates card was initialized properly
      * @param rank Card numeric rank
@@ -112,7 +108,7 @@ public class PlayingCard implements IJsonSerializable, Comparable {
         if (another instanceof PlayingCard) {
             PlayingCard anotherCard = (PlayingCard)another;
 
-            return this.getRank().compareTo(anotherCard.getRank());
+            return this.getRank().getNumericValue() - anotherCard.getRank().getNumericValue();
         }
 
         throw new ClassCastException(
