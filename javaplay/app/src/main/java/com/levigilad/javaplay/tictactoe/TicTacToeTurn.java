@@ -10,10 +10,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-/**
- * Created by User on 15/10/2016.
- */
-
 public class TicTacToeTurn extends Turn {
     private static final String BOARD = "Board";
     private static final String PARTICIPANTS = "Participants";

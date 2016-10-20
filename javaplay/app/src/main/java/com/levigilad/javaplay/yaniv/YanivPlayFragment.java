@@ -31,7 +31,13 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
+/*
+  TODO: 1) Convert to fragment
+        2) Convert to turn based game
+        3) Play with others
+        4) QA
+        5) Check royal's hang
+  */
 public class YanivPlayFragment extends PlayFragment {
     /**
      * Constants
@@ -48,23 +54,23 @@ public class YanivPlayFragment extends PlayFragment {
     /**
      * Members
      */
-    YanivGame mGame;
-    DeckOfCards mPlayersHand;
-    DeckOfCards mDiscardedCards;
-    DeckOfCards mFreshDeckCards;
-    boolean mGetNewCard;
+    private YanivGame mGame;
+    private DeckOfCards mPlayersHand;
+    private DeckOfCards mDiscardedCards;
+    private DeckOfCards mFreshDeckCards;
+    private boolean mGetNewCard;
 
 
     /**
      * Designer
      */
-    ImageView mDeckIV;
-    Button mDiscardBtn;
-    Button mYanivBtn;
-    LinearLayout mHandLL;
-    LinearLayout mDiscardedCardsLL;
-    ListView mPlayersCardCountLV;
-    TextView mScoreTV;
+    private ImageView mDeckIV;
+    private Button mDiscardBtn;
+    private Button mYanivBtn;
+    private LinearLayout mHandLL;
+    private LinearLayout mDiscardedCardsLL;
+    private ListView mPlayersCardCountLV;
+    private TextView mScoreTV;
 
     /**
      * Required empty constructor
@@ -132,6 +138,9 @@ public class YanivPlayFragment extends PlayFragment {
         });
 
         // Start
+        mFreshDeckCards = new DeckOfCards();
+        mFreshDeckCards = mGame.generateDeck(4);
+
         setDemoCards();
         setCardsInHandView();
         setCardsInDiscardView();
@@ -216,7 +225,6 @@ public class YanivPlayFragment extends PlayFragment {
             img.setImageDrawable(getCardAsDrawable(playingCard));
 
             img.setId(i);
-
 
             img.setLayoutParams(new LinearLayout.LayoutParams(
                     dpToPx(CARD_WIDTH_DP),dpToPx(CARD_HEIGHT_DP)));
@@ -335,6 +343,12 @@ public class YanivPlayFragment extends PlayFragment {
         return drawable;
     }
 
+    //TODO : check if should be moved to another util class
+    /**
+     * Converts dp to px
+     * @param dp size
+     * @return size in px
+     */
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics =
                 getActivity().getApplicationContext().getResources().getDisplayMetrics();
@@ -369,9 +383,6 @@ public class YanivPlayFragment extends PlayFragment {
         mDiscardedCards.addCardToTop(dpc3);
         mDiscardedCards.addCardToTop(dpc4);
         mDiscardedCards.addCardToTop(dpc5);
-
-        mFreshDeckCards = new DeckOfCards();
-        mFreshDeckCards = mGame.generateDeck(4);
 
     }
 

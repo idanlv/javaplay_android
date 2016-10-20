@@ -9,10 +9,7 @@ import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * This class represents Yaniv game logic
@@ -137,7 +134,6 @@ public class YanivGame extends GameOfCards {
      * @return True or False
      */
     public boolean isSequence(DeckOfCards cardSeries) {
-        PlayingCardSuits cardsSuit;
         Iterator<PlayingCard> it;
         PlayingCard playingCard = null;
         int jokerCount = 0;

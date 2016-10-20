@@ -14,10 +14,6 @@ import com.levigilad.javaplay.infra.interfaces.OnItemClickListener;
 
 import java.util.ArrayList;
 
-/**
- * Created by User on 08/10/2016.
- */
-
 public class AchievementsRecyclerViewAdapter extends
         RecyclerView.Adapter<AchievementsRecyclerViewAdapter.AchievementHolder> {
     private static final String TAG = "GameAchievementsView";
@@ -60,8 +56,7 @@ public class AchievementsRecyclerViewAdapter extends
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_achievement_view, parent, false);
 
-        AchievementHolder achievementHolder = new AchievementHolder(view);
-        return achievementHolder;
+        return (new AchievementHolder(view));
     }
 
     @Override

@@ -1,9 +1,5 @@
 package com.levigilad.javaplay.tictactoe;
 
-/**
- * Created by User on 15/10/2016.
- */
-
 public class Board {
     public static final int COLUMNS = 3;
     public static final int ROWS = 3;

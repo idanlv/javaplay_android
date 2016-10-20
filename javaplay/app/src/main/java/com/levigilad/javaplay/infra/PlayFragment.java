@@ -17,10 +17,6 @@ import com.levigilad.javaplay.infra.entities.Game;
 
 import java.util.ArrayList;
 
-/**
- * Created by User on 08/10/2016.
- */
-
 public abstract class PlayFragment extends BaseGameFragment {
     private static final String TAG = "PlayFragment";
 

@@ -10,10 +10,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.basegameutils.games.GameHelper;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 
-/**
- * Created by User on 08/10/2016.
- */
-
 public abstract class BaseGameFragment extends Fragment implements GameHelper.GameHelperListener {
     private static final String TAG = "BaseGameFragment";
     private static final String GAME_ID = "GameId";

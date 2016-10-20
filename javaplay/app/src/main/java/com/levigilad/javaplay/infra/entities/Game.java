@@ -1,7 +1,5 @@
 package com.levigilad.javaplay.infra.entities;
 
-import android.content.res.Resources;
-
 import java.io.Serializable;
 
 /**

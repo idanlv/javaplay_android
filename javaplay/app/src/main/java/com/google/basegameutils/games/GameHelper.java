@@ -277,7 +277,10 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
 
         if (0 != (mRequestedClients & CLIENT_PLUS)) {
             builder.addApi(Auth.GOOGLE_SIGN_IN_API);
-            builder.addScope(Plus.SCOPE_PLUS_LOGIN);
+            // http://android-developers.blogspot.co.il/2016/01/play-games-permissions-are-changing-in.html
+            // Removed the following Deprecated code :
+            //builder.addScope(Plus.SCOPE_PLUS_LOGIN);
+
         }
 
         if (0 != (mRequestedClients & CLIENT_SNAPSHOT)) {
@@ -496,7 +499,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         if (!mGoogleApiClient.isConnected()) {
             Log.w(TAG, "Warning: getRequests() should only be called "
                     + "when signed in, "
-                    + "that is, after getting onSignInSuceeded()");
+                    + "that is, after getting onSignInSucceeded()");
         }
         return mRequests;
     }
@@ -528,7 +531,10 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         // then disconnecting
         if (0 != (mRequestedClients & CLIENT_PLUS)) {
             debugLog("Clearing default account on PlusClient.");
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            //Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            // Replaced the above (deprecated code) with the following :
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+
         }
 
         // For the games client, signing out means calling signOut and

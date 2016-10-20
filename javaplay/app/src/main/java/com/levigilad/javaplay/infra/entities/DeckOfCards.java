@@ -14,8 +14,8 @@ import java.util.LinkedList;
  * This class represents a deck of cards
  */
 public class DeckOfCards implements IJsonSerializable {
-    // Consts
-    public static final String DECK = "deck";
+    // Constants
+    private static final String DECK = "deck";
 
     // Members
     private LinkedList<PlayingCard> _cards;
@@ -75,7 +75,7 @@ public class DeckOfCards implements IJsonSerializable {
 
     /**
      * Get playing card by index
-     * @param index
+     * @param index of the card in the deck
      * @return PlayingCard by index
      */
     public PlayingCard get(int index) {
@@ -200,6 +200,5 @@ public class DeckOfCards implements IJsonSerializable {
      */
     public void sort() {
         Collections.sort(_cards);
-
     }
 }
