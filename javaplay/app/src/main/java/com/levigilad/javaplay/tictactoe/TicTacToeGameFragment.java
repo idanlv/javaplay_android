@@ -266,7 +266,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                         child.setEnabled(enabled);
                     }
                 } else {
-
+                    child.setEnabled(enabled);
                 }
             }
         }
