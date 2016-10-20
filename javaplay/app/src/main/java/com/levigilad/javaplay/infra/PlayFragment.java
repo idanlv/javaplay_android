@@ -259,6 +259,11 @@ public abstract class PlayFragment extends BaseGameFragment {
         }
     }
 
+    protected String getCurrentParticipantId() {
+        String playerId = Games.Players.getCurrentPlayerId(getApiClient());
+        return mMatch.getParticipantId(playerId);
+    }
+
     protected abstract byte[] startMatch();
 
     protected abstract void updateMatch();

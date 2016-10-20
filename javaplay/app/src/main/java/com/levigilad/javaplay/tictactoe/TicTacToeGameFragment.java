@@ -1,7 +1,6 @@
 package com.levigilad.javaplay.tictactoe;
 
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.PlayFragment;
 
@@ -110,17 +108,22 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
     @Override
     protected void updateMatch() {
-        if (mCurrentPlayerSymbol == null) {
-            String participantId = Games.Players.getCurrentPlayer(getApiClient()).getPlayerId();
+        try {
+            mTurnData.update(mMatch.getData());
 
-            mCurrentPlayerSymbol = mTurnData.getParticipant(participantId);
+            if (mCurrentPlayerSymbol == null) {
+                String participantId = getCurrentParticipantId();
+                mCurrentPlayerSymbol = mTurnData.getParticipantSymbol(participantId);
 
-            if (mCurrentPlayerSymbol == TicTacToeSymbol.NONE) {
-                mCurrentPlayerSymbol = mTurnData.addParticipant(participantId);
+                if (mCurrentPlayerSymbol == TicTacToeSymbol.NONE) {
+                    mCurrentPlayerSymbol = mTurnData.addParticipant(participantId);
+                }
             }
-        }
 
-        setEnabledRecursively(mTableLayoutBoard, true);
+            setEnabledRecursively(mTableLayoutBoard, true);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -39,9 +39,9 @@ public class TicTacToeTurn extends Turn {
     public TicTacToeSymbol addParticipant(String participantId) {
         TicTacToeSymbol participantSymbol = TicTacToeSymbol.NONE;
 
-        if (mParticipants.get(TicTacToeSymbol.X) == NO_PARTICIPANT) {
+        if (mParticipants.get(TicTacToeSymbol.X).equals(NO_PARTICIPANT)) {
             participantSymbol = TicTacToeSymbol.X;
-        } else if (mParticipants.get(TicTacToeSymbol.O) == NO_PARTICIPANT) {
+        } else if (mParticipants.get(TicTacToeSymbol.O).equals(NO_PARTICIPANT)) {
             participantSymbol = TicTacToeSymbol.O;
         }
 
@@ -50,7 +50,7 @@ public class TicTacToeTurn extends Turn {
         return participantSymbol;
     }
 
-    public TicTacToeSymbol getParticipant(String participantId) {
+    public TicTacToeSymbol getParticipantSymbol(String participantId) {
         for (TicTacToeSymbol symbol : mParticipants.keySet()) {
             if (mParticipants.get(symbol).equals(participantId)) {
                 return symbol;
