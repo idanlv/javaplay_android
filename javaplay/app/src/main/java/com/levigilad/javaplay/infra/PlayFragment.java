@@ -236,7 +236,12 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected void finishMatch(List<ParticipantResult> results) {
         try {
             Games.TurnBasedMultiplayer.finishMatch(getApiClient(), mMatch.getMatchId(),
-                    mTurnData.export(), results);
+                    mTurnData.export(), results).setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+                @Override
+                public void onResult(@NonNull TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
+                    processResult(updateMatchResult);
+                }
+            });;
         } catch (JSONException e) {
             e.printStackTrace();
         }
