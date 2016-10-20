@@ -22,6 +22,7 @@ public abstract class PlayFragment extends BaseGameFragment {
 
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTOMATCH";
+    protected static final String MATCH_ID = "MATCH_ID";
 
     private static final int REQUESTED_CLIENTS = GameHelper.CLIENT_GAMES;
     private static final int RC_SELECT_PLAYERS = 5001;
@@ -29,6 +30,9 @@ public abstract class PlayFragment extends BaseGameFragment {
     private ArrayList<String> _invitees;
     private Bundle _autoMatchCriteria;
     private Game _game;
+    private String _matchId;
+
+    protected TurnBasedMatch mMatch;
 
     public PlayFragment() {
         super(REQUESTED_CLIENTS);
@@ -40,26 +44,42 @@ public abstract class PlayFragment extends BaseGameFragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            _invitees = getArguments().getStringArrayList(INVITEES);
-            _autoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
+            Bundle bundle = getArguments();
+
+            _matchId = bundle.getString(MATCH_ID);
+
+            if (_matchId == null) {
+                _invitees = getArguments().getStringArrayList(INVITEES);
+                _autoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
+            }
         }
     }
 
     public void onSignInSucceeded() {
-        TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-                .addInvitedPlayers(_invitees)
-                .setAutoMatchCriteria(_autoMatchCriteria)
-                .build();
+        if (_matchId == null) {
+            TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+                    .addInvitedPlayers(_invitees)
+                    .setAutoMatchCriteria(_autoMatchCriteria)
+                    .build();
 
-        // Create and start the match.
-        Games.TurnBasedMultiplayer
-                .createMatch(getApiClient(), tbmc)
-                .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-                    @Override
-                    public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
-                        processResult(initiateMatchResult);
-                    }
-                });
+            // Create and start the match.
+            Games.TurnBasedMultiplayer
+                    .createMatch(getApiClient(), tbmc)
+                    .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+                        @Override
+                        public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+                            processResult(initiateMatchResult);
+                        }
+                    });
+        } else {
+            Games.TurnBasedMultiplayer.loadMatch(getApiClient(), _matchId)
+                    .setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
+                        @Override
+                        public void onResult(@NonNull TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
+                            processResult(loadMatchResult);
+                        }
+                    });
+        }
     }
 
     /**
@@ -116,21 +136,23 @@ public abstract class PlayFragment extends BaseGameFragment {
 
 
     public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-        TurnBasedMatch match = result.getMatch();
+        mMatch = result.getMatch();
 
-        if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+        if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
             return;
         }
 
         // This indicates that the game data is uninitialized because no player has taken a turn yet
         // Therefore, current player is the first one to take a turn in the match
-        if (match.getData() == null) {
-            startMatch(match);
+        if (mMatch.getData() == null) {
+            byte[] turnData = startMatch(mMatch);
+            String nextParticipantId = getNextParticipantId();
+            finishTurn(nextParticipantId, turnData);
         }
         // This indicates that the game has already started and the game data is already initialized,
         // Therefore, we need to make sure your game does not reinitialize the data
         else {
-            updateMatch(match);
+            updateMatch(mMatch);
         }
     }
 
@@ -150,7 +172,20 @@ public abstract class PlayFragment extends BaseGameFragment {
         } else {
             updateView(match.getData());
         }
+    }
 
+    private void processResult(TurnBasedMultiplayer.LoadMatchResult result) {
+        TurnBasedMatch match = result.getMatch();
+
+        if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+            return;
+        }
+
+        if (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+            updateMatch(match);
+        } else {
+            updateView(match.getData());
+        }
     }
 
     protected void processResult(TurnBasedMultiplayer.CancelMatchResult result) {
@@ -171,10 +206,10 @@ public abstract class PlayFragment extends BaseGameFragment {
         // TODO
     }
 
-    protected void finishTurn(String matchId, String participantId, byte[] turnData) {
+    protected void finishTurn(String participantId, byte[] turnData) {
         updateView(turnData);
 
-        Games.TurnBasedMultiplayer.takeTurn(getApiClient(), matchId, turnData, participantId)
+        Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(), turnData, participantId)
                 .setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
                     @Override
                     public void onResult(@NonNull TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
@@ -183,11 +218,48 @@ public abstract class PlayFragment extends BaseGameFragment {
                 });
     }
 
-    protected void finishMatch(String matchId, byte[] turnData) {
-        Games.TurnBasedMultiplayer.finishMatch(getApiClient(), matchId, turnData);
+    protected void finishMatch(byte[] turnData) {
+        Games.TurnBasedMultiplayer.finishMatch(getApiClient(), mMatch.getMatchId(), turnData);
     }
 
-    protected abstract void startMatch(TurnBasedMatch match);
+    /**
+     * Get the next participant. In this function, we assume that we are
+     * round-robin, with all known players going before all automatch players.
+     * This is not a requirement; players can go in any order. However, you can
+     * take turns in any order.
+     *
+     * @return participantId of next player, or null if automatching
+     */
+    public String getNextParticipantId() {
+
+        String playerId = Games.Players.getCurrentPlayerId(getApiClient());
+        String myParticipantId = mMatch.getParticipantId(playerId);
+
+        ArrayList<String> participantIds = mMatch.getParticipantIds();
+
+        int desiredIndex = -1;
+
+        for (int i = 0; i < participantIds.size(); i++) {
+            if (participantIds.get(i).equals(myParticipantId)) {
+                desiredIndex = i + 1;
+            }
+        }
+
+        if (desiredIndex < participantIds.size()) {
+            return participantIds.get(desiredIndex);
+        }
+
+        if (mMatch.getAvailableAutoMatchSlots() <= 0) {
+            // You've run out of automatch slots, so we start over.
+            return participantIds.get(0);
+        } else {
+            // You have not yet fully automatched, so null will find a new
+            // person to play against.
+            return null;
+        }
+    }
+
+    protected abstract byte[] startMatch(TurnBasedMatch match);
 
     protected abstract void updateMatch(TurnBasedMatch match);
 

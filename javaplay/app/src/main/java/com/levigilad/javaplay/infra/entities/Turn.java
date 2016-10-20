@@ -18,7 +18,7 @@ public abstract class Turn implements IJsonSerializable {
 
     public Turn(String gameId) {
         mGameId = gameId;
-        mTurnCounter = 1;
+        mTurnCounter = 0;
     }
 
     /**

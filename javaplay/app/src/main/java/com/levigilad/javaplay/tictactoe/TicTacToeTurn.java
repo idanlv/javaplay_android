@@ -8,20 +8,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class TicTacToeTurn extends Turn {
     private static final String BOARD = "Board";
     private static final String PARTICIPANTS = "Participants";
+    private static final String NO_PARTICIPANT = "";
 
     private Board mBoard;
-    private HashMap<String, TicTacToeSymbol> mParticipants;
+    private HashMap<TicTacToeSymbol, String> mParticipants;
 
     public TicTacToeTurn() {
         super("Tic Tac Toe");
 
         mBoard = new Board();
         mParticipants = new HashMap<>();
+        mParticipants.put(TicTacToeSymbol.X, NO_PARTICIPANT);
+        mParticipants.put(TicTacToeSymbol.O, NO_PARTICIPANT);
     }
 
     public void setBoard(Board updatedBoard) {
@@ -32,8 +36,28 @@ public class TicTacToeTurn extends Turn {
         return this.mBoard;
     }
 
-    public void addParticipant(String participantId, TicTacToeSymbol symbol) {
-        mParticipants.put(participantId, symbol);
+    public TicTacToeSymbol addParticipant(String participantId) {
+        TicTacToeSymbol participantSymbol = TicTacToeSymbol.NONE;
+
+        if (mParticipants.get(TicTacToeSymbol.X) == NO_PARTICIPANT) {
+            participantSymbol = TicTacToeSymbol.X;
+        } else if (mParticipants.get(TicTacToeSymbol.O) == NO_PARTICIPANT) {
+            participantSymbol = TicTacToeSymbol.O;
+        }
+
+        mParticipants.put(participantSymbol, participantId);
+
+        return participantSymbol;
+    }
+
+    public TicTacToeSymbol getParticipant(String participantId) {
+        for (TicTacToeSymbol symbol : mParticipants.keySet()) {
+            if (mParticipants.get(symbol).equals(participantId)) {
+                return symbol;
+            }
+        }
+
+        return TicTacToeSymbol.NONE;
     }
 
     /**
@@ -45,8 +69,13 @@ public class TicTacToeTurn extends Turn {
     public JSONObject toJson() throws JSONException {
         JSONObject gameData = super.toJson();
 
-        gameData.put(PARTICIPANTS, mParticipants);
-        gameData.put(BOARD, mBoard);
+        JSONObject participants = new JSONObject();
+        for (TicTacToeSymbol symbol : mParticipants.keySet()) {
+            participants.put(symbol.name(), mParticipants.get(symbol));
+        }
+
+        gameData.put(PARTICIPANTS, participants);
+        gameData.put(BOARD, mBoard.toJson());
 
         return gameData;
     }
@@ -58,8 +87,18 @@ public class TicTacToeTurn extends Turn {
      */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
-        //this.mParticipants = object.getJSONObject(PARTICIPANTS);
-        //this.mBoard = object.getJSONObject(BOARD);
+        JSONObject participants = object.getJSONObject(PARTICIPANTS);
+
+        mParticipants = new HashMap<>();
+
+        Iterator<String> iterator = participants.keys();
+
+        while (iterator.hasNext()){
+            TicTacToeSymbol symbol = TicTacToeSymbol.valueOf(iterator.next());
+            mParticipants.put(symbol, participants.getString(symbol.name()));
+        }
+
+        this.mBoard.fromJson(object.getJSONObject(BOARD));
 
         super.fromJson(object);
     }

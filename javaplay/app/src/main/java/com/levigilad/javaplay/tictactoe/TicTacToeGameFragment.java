@@ -1,6 +1,7 @@
 package com.levigilad.javaplay.tictactoe;
 
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +25,6 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
     private TicTacToeSymbol mCurrentPlayerSymbol;
     private TicTacToeTurn mTurnData = null;
-    private TurnBasedMatch mMatch;
 
     /**
      * Designer
@@ -41,13 +41,20 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
      *
      * @return A new instance of fragment YanivPlayFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static TicTacToeGameFragment newInstance(ArrayList<String> invitees,
                                                     Bundle autoMatchCriteria) {
         TicTacToeGameFragment fragment = new TicTacToeGameFragment();
         Bundle args = new Bundle();
         args.putStringArrayList(INVITEES, invitees);
         args.putBundle(AUTO_MATCH, autoMatchCriteria);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static TicTacToeGameFragment newInstance(String matchId) {
+        TicTacToeGameFragment fragment = new TicTacToeGameFragment();
+        Bundle args = new Bundle();
+        args.putString(MATCH_ID, matchId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,25 +86,42 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     @Override
-    protected void startMatch(TurnBasedMatch match) {
+    public void onStart() {
+        super.onStart();
+
+        mTurnData = new TicTacToeTurn();
+    }
+
+    @Override
+    protected byte[] startMatch(TurnBasedMatch match) {
         try {
-            String participantId = Games.Players.getCurrentPlayer(getApiClient()).getPlayerId();
+            String playerId = Games.Players.getCurrentPlayerId(getApiClient());
+            String participantId = mMatch.getParticipantId(playerId);
 
-            mCurrentPlayerSymbol = TicTacToeSymbol.X;
-            mMatch = match;
+            mCurrentPlayerSymbol = mTurnData.addParticipant(participantId);
 
-            mTurnData = new TicTacToeTurn();
-            mTurnData.addParticipant(participantId, mCurrentPlayerSymbol);
-
-            setEnabledRecursively(mTableLayoutBoard, true);
+            return mTurnData.export();
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
         }
+
+        return null;
     }
 
     @Override
     protected void updateMatch(TurnBasedMatch match) {
         mMatch = match;
+
+        if (mCurrentPlayerSymbol == null) {
+            String participantId = Games.Players.getCurrentPlayer(getApiClient()).getPlayerId();
+
+            mCurrentPlayerSymbol = mTurnData.getParticipant(participantId);
+
+            if (mCurrentPlayerSymbol == TicTacToeSymbol.NONE) {
+                mCurrentPlayerSymbol = mTurnData.addParticipant(participantId);
+            }
+        }
+
         setEnabledRecursively(mTableLayoutBoard, true);
     }
 
@@ -128,7 +152,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                         default: {
                             text = getString(R.string.tictactoe_empty_cell);
                         }
-                    };
+                    }
 
                     cell.setText(text);
                 }
@@ -193,9 +217,11 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             setEnabledRecursively(mTableLayoutBoard, false);
 
             if (TicTacToeGame.isWin(mTurnData.getBoard(), mCurrentPlayerSymbol)) {
-                finishMatch(mMatch.getMatchId(), mTurnData.export());
+                finishMatch(mTurnData.export());
+            } else if (TicTacToeGame.isTie(mTurnData.getBoard())) {
+                finishMatch(mTurnData.export());
             } else {
-                finishTurn(mMatch.getMatchId(), null, mTurnData.export());
+                finishTurn(getNextParticipantId(), mTurnData.export());
             }
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());

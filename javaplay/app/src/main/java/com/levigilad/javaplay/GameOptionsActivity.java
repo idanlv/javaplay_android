@@ -124,12 +124,20 @@ public class GameOptionsActivity extends BaseGameActivity implements
     private void returnToGame(Intent data) {
         TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
-        if ((match != null) && (match.getData().length > 0)) {
+        if ((match != null) && (match.getData() != null)) {
             try {
                 JSONObject turnData = new JSONObject(new String(match.getData()));
                 mGameId = turnData.getString("game_id");
 
-                // initiate fragment game with data
+                Fragment fragment = null;
+
+                if (mGameId.equals(getString(R.string.yaniv_game_id))) {
+                    fragment = YanivPlayFragment.newInstance(match.getMatchId());
+                } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
+                    fragment = TicTacToeGameFragment.newInstance(match.getMatchId());
+                }
+
+                replaceFragment(fragment);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -80,4 +80,20 @@ public class TicTacToeGame extends Game {
 
         return false;
     }
+
+    public static boolean isTie(Board board) {
+        return !isWin(board, TicTacToeSymbol.X) && !isWin(board, TicTacToeSymbol.O) && isFull(board);
+    }
+
+    private static boolean isFull(Board board) {
+        for (int i = 0; i < Board.COLUMNS; i++) {
+            for (int j = 0; j < Board.ROWS; j++) {
+                if (board.getCell(j, i) == TicTacToeSymbol.NONE) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
