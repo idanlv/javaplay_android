@@ -178,10 +178,15 @@ public abstract class PlayFragment extends BaseGameFragment {
             askForRematch();
         }
 
-        if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-            updateMatch();
-        } else {
+        try {
+            mTurnData.update(mMatch.getData());
             updateView();
+
+            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                updateMatch();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -194,11 +199,10 @@ public abstract class PlayFragment extends BaseGameFragment {
 
         try {
             mTurnData.update(mMatch.getData());
+            updateView();
 
             if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
                 updateMatch();
-            } else {
-                updateView();
             }
         } catch (JSONException e) {
             e.printStackTrace();
