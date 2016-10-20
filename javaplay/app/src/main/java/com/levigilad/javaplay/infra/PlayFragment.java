@@ -241,7 +241,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 public void onResult(@NonNull TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
                     processResult(updateMatchResult);
                 }
-            });;
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
