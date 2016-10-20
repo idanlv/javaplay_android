@@ -170,12 +170,12 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     @Override
-    protected byte[] startMatch(TurnBasedMatch match) {
+    protected byte[] startMatch() {
         return null;
     }
 
     @Override
-    protected void updateMatch(TurnBasedMatch match) {
+    protected void updateMatch() {
 
     }
 

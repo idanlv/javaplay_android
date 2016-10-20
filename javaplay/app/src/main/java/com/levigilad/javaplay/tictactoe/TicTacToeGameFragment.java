@@ -93,7 +93,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     @Override
-    protected byte[] startMatch(TurnBasedMatch match) {
+    protected byte[] startMatch() {
         try {
             String playerId = Games.Players.getCurrentPlayerId(getApiClient());
             String participantId = mMatch.getParticipantId(playerId);
@@ -109,9 +109,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     @Override
-    protected void updateMatch(TurnBasedMatch match) {
-        mMatch = match;
-
+    protected void updateMatch() {
         if (mCurrentPlayerSymbol == null) {
             String participantId = Games.Players.getCurrentPlayer(getApiClient()).getPlayerId();
 

@@ -145,46 +145,46 @@ public abstract class PlayFragment extends BaseGameFragment {
         // This indicates that the game data is uninitialized because no player has taken a turn yet
         // Therefore, current player is the first one to take a turn in the match
         if (mMatch.getData() == null) {
-            byte[] turnData = startMatch(mMatch);
+            byte[] turnData = startMatch();
             String nextParticipantId = getNextParticipantId();
             finishTurn(nextParticipantId, turnData);
         }
         // This indicates that the game has already started and the game data is already initialized,
         // Therefore, we need to make sure your game does not reinitialize the data
         else {
-            updateMatch(mMatch);
+            updateMatch();
         }
     }
 
     protected void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-        TurnBasedMatch match = result.getMatch();
+        mMatch = result.getMatch();
 
-        if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+        if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
             return;
         }
 
-        if (match.canRematch()) {
+        if (mMatch.canRematch()) {
             askForRematch();
         }
 
-        if (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-            updateMatch(match);
+        if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+            updateMatch();
         } else {
-            updateView(match.getData());
+            updateView(mMatch.getData());
         }
     }
 
     private void processResult(TurnBasedMultiplayer.LoadMatchResult result) {
-        TurnBasedMatch match = result.getMatch();
+        mMatch = result.getMatch();
 
-        if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+        if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
             return;
         }
 
-        if (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-            updateMatch(match);
+        if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+            updateMatch();
         } else {
-            updateView(match.getData());
+            updateView(mMatch.getData());
         }
     }
 
@@ -197,9 +197,9 @@ public abstract class PlayFragment extends BaseGameFragment {
     }
 
     protected void processResult(TurnBasedMultiplayer.LeaveMatchResult result) {
-        TurnBasedMatch match = result.getMatch();
+        mMatch = result.getMatch();
 
-        if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+        if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
             return;
         }
 
@@ -259,9 +259,9 @@ public abstract class PlayFragment extends BaseGameFragment {
         }
     }
 
-    protected abstract byte[] startMatch(TurnBasedMatch match);
+    protected abstract byte[] startMatch();
 
-    protected abstract void updateMatch(TurnBasedMatch match);
+    protected abstract void updateMatch();
 
     protected abstract void updateView(byte[] turnData);
 
