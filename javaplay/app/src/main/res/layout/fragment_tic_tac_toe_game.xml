@@ -5,6 +5,14 @@
     android:layout_gravity="center"
     tools:context="com.levigilad.javaplay.tictactoe.TicTacToeGameFragment">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tic_tac_toe_instructions_text_view"
+        android:layout_gravity="center|top"
+        android:text="@string/tictactoe_waiting_for_other_player"
+        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
     <TableLayout
         android:id="@+id/table_layout_board"
         android:layout_width="wrap_content"

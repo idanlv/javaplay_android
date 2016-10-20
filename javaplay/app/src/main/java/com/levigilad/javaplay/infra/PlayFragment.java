@@ -9,6 +9,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
+import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
@@ -30,7 +31,6 @@ public abstract class PlayFragment extends BaseGameFragment {
     protected static final String MATCH_ID = "MATCH_ID";
 
     private static final int REQUESTED_CLIENTS = GameHelper.CLIENT_GAMES;
-    private static final int RC_SELECT_PLAYERS = 5001;
 
     private ArrayList<String> mInvitees;
     private Bundle mAutoMatchCriteria;
@@ -153,7 +153,8 @@ public abstract class PlayFragment extends BaseGameFragment {
         // Therefore, current player is the first one to take a turn in the match
         if (mMatch.getData() == null) {
             try {
-                mTurnData.update(startMatch());
+                byte[] turnData = startMatch();
+                mTurnData.update(turnData);
 
                 String nextParticipantId = getNextParticipantId();
                 finishTurn(nextParticipantId);
@@ -167,7 +168,7 @@ public abstract class PlayFragment extends BaseGameFragment {
             try {
                 mTurnData.update(mMatch.getData());
                 updateView();
-                updateMatch();
+                startTurn();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -188,10 +189,6 @@ public abstract class PlayFragment extends BaseGameFragment {
         try {
             mTurnData.update(mMatch.getData());
             updateView();
-
-            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                updateMatch();
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -209,7 +206,7 @@ public abstract class PlayFragment extends BaseGameFragment {
             updateView();
 
             if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                updateMatch();
+                startTurn();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -303,7 +300,7 @@ public abstract class PlayFragment extends BaseGameFragment {
 
     protected abstract byte[] startMatch();
 
-    protected abstract void updateMatch();
+    protected abstract void startTurn();
 
     protected abstract void updateView();
 

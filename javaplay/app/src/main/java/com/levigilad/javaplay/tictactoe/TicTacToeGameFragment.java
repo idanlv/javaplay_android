@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
@@ -30,6 +31,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
      * Designer
      */
     private TableLayout mTableLayoutBoard;
+    private TextView mInstructionsTextView;
 
     public TicTacToeGameFragment() {
         super();
@@ -84,6 +86,9 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             }
         }
 
+        mInstructionsTextView =
+                (TextView)parentView.findViewById(R.id.tic_tac_toe_instructions_text_view);
+
         setEnabledRecursively(mTableLayoutBoard, false);
     }
 
@@ -100,6 +105,8 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
             mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
 
+            mInstructionsTextView.setText(getString(R.string.tictactoe_waiting_for_other_player));
+
             return mTurnData.export();
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
@@ -109,7 +116,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     @Override
-    protected void updateMatch() {
+    protected void startTurn() {
         if (mCurrentPlayerSymbol == null) {
             String participantId = getCurrentParticipantId();
             mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).getParticipantSymbol(participantId);
@@ -118,6 +125,8 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
             }
         }
+
+        mInstructionsTextView.setText(getString(R.string.tictactoe_play_your_turn));
 
         setEnabledRecursively(mTableLayoutBoard, true);
     }
@@ -235,6 +244,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 finishMatch(results);
             } else {
                 finishTurn(getNextParticipantId());
+                mInstructionsTextView.setText(getString(R.string.waiting_for_players));
             }
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
@@ -248,7 +258,15 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             if (child instanceof ViewGroup) {
                 setEnabledRecursively((ViewGroup) child, enabled);
             } else {
-                child.setEnabled(enabled);
+                if (enabled && (child instanceof Button)) {
+                    Button btn = (Button) child;
+
+                    if (btn.getText().equals("")) {
+                        child.setEnabled(enabled);
+                    }
+                } else {
+
+                }
             }
         }
     }

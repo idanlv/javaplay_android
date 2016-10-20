@@ -175,7 +175,7 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     @Override
-    protected void updateMatch() {
+    protected void startTurn() {
 
     }
 

@@ -156,6 +156,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
 
         switch (option) {
             case GAMES: {
+                // TODO: change to const
                 Intent intent = Games.TurnBasedMultiplayer
                         .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
                 startActivityForResult(intent, RC_SELECT_PLAYERS);

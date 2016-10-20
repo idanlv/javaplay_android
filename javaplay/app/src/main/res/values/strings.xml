@@ -60,6 +60,11 @@
     <string name="tictactoe_leaderboard_id">ReplaceMe</string>
     <string name="tictactoe_description">ReplaceMe</string>
     <string name="tictactoe_empty_cell"></string>
+    <string name="tictactoe_waiting_for_other_player">Waiting for other player</string>
+    <string name="tictactoe_play_your_turn">Play your turn</string>
+    <string name="tic_tac_toe_first_win">CgkIyuG_9qMQEAIQCg</string>
+    <string name="tic_tac_toe_first_tie">CgkIyuG_9qMQEAIQCw</string>
+
 
 
     <!-- Google Play API status code errors -->
