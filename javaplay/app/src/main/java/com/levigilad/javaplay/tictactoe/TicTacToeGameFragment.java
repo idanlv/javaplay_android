@@ -240,7 +240,11 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                             participantId, ParticipantResult.MATCH_RESULT_LOSS,
                             ParticipantResult.PLACING_UNINITIALIZED));
                 }
+
                 finishMatch(results);
+
+                Games.Achievements.unlockImmediate(getApiClient(),
+                        getString(R.string.achievement_first_tic_tac_toe_tie));
             } else {
                 finishTurn(getNextParticipantId());
                 mInstructionsTextView.setText(getString(R.string.games_waiting_for_player_turn));
