@@ -11,12 +11,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.levigilad.javaplay.infra.PlayFragment;
+import com.levigilad.javaplay.infra.entities.Playground;
 import com.levigilad.javaplay.infra.enums.GameOptions;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
@@ -35,9 +37,11 @@ public class GameOptionsActivity extends BaseGameActivity implements
 
     private static final String GAME_ID = "GameId";
 
+    private static final String TAG = "GameOptionsActivity";
     private static final int RC_SELECT_PLAYERS = 5001;
     private final static int RC_LOOK_AT_MATCHES = 10001;
-    private static final String TAG = "GameOptionsActivity";
+    private static final int RC_LOOK_AT_LEADERBOARD = 11001;
+    private static final int RC_LOOK_AT_ACHIEVEMENTS = 12001;
 
     private String mGameId;
     private OnTurnBasedMatchReceivedListener mListener = null;
@@ -94,6 +98,12 @@ public class GameOptionsActivity extends BaseGameActivity implements
             }
 
             returnToGame(data);
+
+            // TODO: Handle rematch
+        } else if (request == RC_LOOK_AT_LEADERBOARD) {
+            // TODO: Handle errors
+        } else if (request == RC_LOOK_AT_ACHIEVEMENTS) {
+            // TODO: Handle errors
         } else {
             mHelper.onActivityResult(request, response, data);
         }
@@ -171,13 +181,14 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 break;
             }
             case LEADERBOARD: {
-                LeaderboardFragment fragment = LeaderboardFragment.newInstance(mGameId);
-                replaceFragment(fragment);
-                break;
+                Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
+                startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
+;                break;
             }
             case ACHIEVEMENTS: {
-                AchievementsFragment fragment = AchievementsFragment.newInstance(mGameId);
-                replaceFragment(fragment);
+                Intent intent = Games.Achievements.getAchievementsIntent(getApiClient());
+                startActivityForResult(intent, RC_LOOK_AT_ACHIEVEMENTS);
+
                 break;
             }
             case INBOX: {

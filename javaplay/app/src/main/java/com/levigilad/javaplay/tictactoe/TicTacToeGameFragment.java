@@ -17,8 +17,6 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.PlayFragment;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,7 +104,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
             mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
 
-            mInstructionsTextView.setText(getString(R.string.tictactoe_waiting_for_other_player));
+            mInstructionsTextView.setText(getString(R.string.games_waiting_for_player_turn));
 
             return mTurnData.export();
         } catch (Exception ex) {
@@ -127,7 +125,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             }
         }
 
-        mInstructionsTextView.setText(getString(R.string.tictactoe_play_your_turn));
+        mInstructionsTextView.setText(getString(R.string.games_play_your_turn));
 
         setEnabledRecursively(mTableLayoutBoard, true);
     }
@@ -234,6 +232,13 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 }
 
                 finishMatch(results);
+
+                Games.Achievements.unlockImmediate(getApiClient(),
+                        getString(R.string.achievement_first_tic_tac_toe_win));
+
+                Games.Achievements.incrementImmediate(getApiClient(),
+                        getString(R.string.achievement_3_tic_tac_toe_wins), 1);
+
             } else if (TicTacToeGame.isTie(((TicTacToeTurn)mTurnData).getBoard())) {
                 List<ParticipantResult> results = new LinkedList<>();
 
@@ -245,7 +250,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 finishMatch(results);
             } else {
                 finishTurn(getNextParticipantId());
-                mInstructionsTextView.setText(getString(R.string.waiting_for_players));
+                mInstructionsTextView.setText(getString(R.string.games_waiting_for_player_turn));
             }
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
@@ -262,7 +267,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 if (enabled && (child instanceof Button)) {
                     Button btn = (Button) child;
 
-                    if (btn.getText().equals("")) {
+                    if (btn.getText().equals(getString(R.string.tictactoe_empty_cell))) {
                         child.setEnabled(enabled);
                     }
                 } else {
