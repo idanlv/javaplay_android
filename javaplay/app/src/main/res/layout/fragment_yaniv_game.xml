@@ -26,10 +26,10 @@
             <ImageView
                 android:src="@drawable/playingcard_card_back_red"
                 android:id="@+id/iv_deck"
-                android:contentDescription="Deck"
                 android:layout_height="100dp"
                 android:adjustViewBounds="true"
-                android:layout_width="70dp" />
+                android:layout_width="70dp"
+                android:contentDescription="@string/deck_view_description" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -66,7 +66,7 @@
                 android:weightSum="1">
 
                 <TextView
-                    android:text="Score :"
+                    android:text="@string/score"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center" />
@@ -78,7 +78,7 @@
                     android:textAlignment="center" />
 
                 <Button
-                    android:text="Discard"
+                    android:text="@string/discard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_discard"
@@ -92,7 +92,7 @@
                     android:layout_weight="0.73"></LinearLayout>
 
                 <Button
-                    android:text="Yaniv !"
+                    android:text="@string/declare_yaniv_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_Yaniv" />
