@@ -303,18 +303,18 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     private void askForRematch() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 
-        alertDialogBuilder.setMessage("Do you want a rematch?");
+        alertDialogBuilder.setMessage(getString(R.string.rematch_question));
 
         alertDialogBuilder
                 .setCancelable(false)
-                .setPositiveButton("Sure, rematch!",
+                .setPositiveButton(getString(R.string.rematch_yes),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 rematch();
                             }
                         })
-                .setNegativeButton("No.",
+                .setNegativeButton(getString(R.string.rematch_no),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {

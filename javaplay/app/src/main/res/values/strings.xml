@@ -51,7 +51,9 @@
     <!-- Games -->
     <string name="games_waiting_for_player_turn">Waiting for other player to play</string>
     <string name="games_play_your_turn">Play your turn</string>
-
+    <string name="rematch_question">Do you want a rematch?</string>
+    <string name="rematch_yes">Sure, rematch!</string>
+    <string name="rematch_no">No.</string>
 
     <!-- Yaniv -->
     <string name="yaniv_game_id">Yaniv</string>
@@ -85,4 +87,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="connect">Connect</string>
     <string name="play">Play</string>
+
 </resources>
