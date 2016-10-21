@@ -40,8 +40,9 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
 
-    public PlayFragment() {
+    public PlayFragment(Turn turnData) {
         super(REQUESTED_CLIENTS);
+        mTurnData = turnData;
     }
 
 

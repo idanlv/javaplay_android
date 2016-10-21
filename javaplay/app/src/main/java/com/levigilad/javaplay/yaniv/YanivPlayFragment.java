@@ -76,7 +76,7 @@ public class YanivPlayFragment extends PlayFragment {
      * Required empty constructor
      */
     public YanivPlayFragment() {
-        super();
+        super(new YanivTurn());
     }
 
     /**
@@ -162,21 +162,6 @@ public class YanivPlayFragment extends PlayFragment {
         initializeView(view);
 
         return view;
-    }
-
-    @Override
-    protected void startMatch() {
-
-    }
-
-    @Override
-    protected void startTurn() {
-
-    }
-
-    @Override
-    protected void updateView() {
-
     }
 
     private void discard() {
@@ -386,6 +371,21 @@ public class YanivPlayFragment extends PlayFragment {
         mDiscardedCards.addCardToTop(dpc3);
         mDiscardedCards.addCardToTop(dpc4);
         mDiscardedCards.addCardToTop(dpc5);
+
+    }
+
+    @Override
+    protected void startMatch() {
+
+    }
+
+    @Override
+    protected void startTurn() {
+
+    }
+
+    @Override
+    protected void updateView() {
 
     }
 
