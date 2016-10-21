@@ -166,29 +166,12 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 updateView();
             }
 
-            switch (mMatch.getTurnStatus()) {
-                case TurnBasedMatch.MATCH_TURN_STATUS_COMPLETE: {
-                    if (mMatch.canRematch()) {
-                        askForRematch();
-                    }
-                    break;
-                }
-                case TurnBasedMatch.MATCH_TURN_STATUS_INVITED: {
-                    // TODO: is there something else needed here? When does this happen?
-                    break;
-                }
-                case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN: {
-                    // TODO: is needed?
-                    break;
-                }
-                case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN: {
-                    mTurnData.increaseTurnCounter();
-                    startTurn();
-                    break;
-                }
+            if (mMatch.canRematch()) {
+                askForRematch();
+            } else if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                mTurnData.increaseTurnCounter();
+                startTurn();
             }
-
-
 
         } catch (JSONException e) {
             e.printStackTrace();
