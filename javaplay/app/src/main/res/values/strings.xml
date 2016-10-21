@@ -48,19 +48,27 @@
 
     <string name="action_settings">Settings</string>
 
+    <!-- Games -->
+    <string name="games_waiting_for_player_turn">Waiting for other player to play</string>
+    <string name="games_play_your_turn">Play your turn</string>
+    <string name="rematch_question">Do you want a rematch?</string>
+    <string name="rematch_yes">Sure, rematch!</string>
+    <string name="rematch_no">No.</string>
+
     <!-- Yaniv -->
     <string name="yaniv_game_id">Yaniv</string>
     <string name="yaniv_leaderboard_id">CgkIyuG_9qMQEAIQCA</string>
     <string name="yaniv_description">Bla bla bla</string>
-    <string name="yaniv_first_win_achievement_id"></string>
-    <string name="yaniv_3_in_a_row_achievement_id"></string>
+    <string name="achievement_first_yaniv_win">CgkIyuG_9qMQEAIQCQ</string>
 
     <!-- Tic Tac Toe -->
     <string name="tictactoe_game_id">Tic Tac Toe</string>
-    <string name="tictactoe_leaderboard_id">ReplaceMe</string>
+    <string name="tictactoe_leaderboard_id">CgkIyuG_9qMQEAIQDA</string>
     <string name="tictactoe_description">ReplaceMe</string>
     <string name="tictactoe_empty_cell"></string>
-
+    <string name="achievement_first_tic_tac_toe_win">CgkIyuG_9qMQEAIQCg</string>
+    <string name="achievement_first_tic_tac_toe_tie">CgkIyuG_9qMQEAIQCw</string>
+    <string name="achievement_3_tic_tac_toe_wins">CgkIyuG_9qMQEAIQDQ</string>
 
     <!-- Google Play API status code errors -->
     <string name="status_multiplayer_error_no_internet_no_cache">The device was unable to retrieve any data from the network and has no data cached locally</string>
@@ -79,4 +87,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="connect">Connect</string>
     <string name="play">Play</string>
+
 </resources>

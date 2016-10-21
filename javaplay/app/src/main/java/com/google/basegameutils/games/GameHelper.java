@@ -710,8 +710,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
 
         if (connectionHint != null) {
             debugLog("onConnected: connection hint provided. Checking for invite.");
-            Invitation inv = connectionHint
-                    .getParcelable(Multiplayer.EXTRA_INVITATION);
+            Invitation inv = connectionHint.getParcelable(Multiplayer.EXTRA_INVITATION);
             if (inv != null && inv.getInvitationId() != null) {
                 // retrieve and cache the invitation ID
                 debugLog("onConnected: connection hint has a room invite!");
@@ -720,8 +719,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
             }
 
             // Do we have any requests pending?
-            mRequests = Games.Requests
-                    .getGameRequestsFromBundle(connectionHint);
+            mRequests = Games.Requests.getGameRequestsFromBundle(connectionHint);
             if (!mRequests.isEmpty()) {
                 // We have requests in onConnected's connectionHint.
                 debugLog("onConnected: connection hint has " + mRequests.size()
@@ -729,8 +727,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
             }
 
             debugLog("onConnected: connection hint provided. Checking for TBMP game.");
-            mTurnBasedMatch = connectionHint
-                    .getParcelable(Multiplayer.EXTRA_TURN_BASED_MATCH);
+            mTurnBasedMatch = connectionHint.getParcelable(Multiplayer.EXTRA_TURN_BASED_MATCH);
         }
 
         // we're good to go

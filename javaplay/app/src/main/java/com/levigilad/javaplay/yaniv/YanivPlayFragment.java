@@ -95,6 +95,14 @@ public class YanivPlayFragment extends PlayFragment {
         return fragment;
     }
 
+    public static YanivPlayFragment newInstance(TurnBasedMatch match) {
+        YanivPlayFragment fragment = new YanivPlayFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(MATCH_ID, match);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     // Like the onCreate in Activity
     private void initializeView(View parentView) {
 
@@ -157,22 +165,17 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     @Override
-    protected void askForRematch() {
+    protected void startMatch() {
 
     }
 
     @Override
-    protected void startMatch(TurnBasedMatch match) {
+    protected void startTurn() {
 
     }
 
     @Override
-    protected void updateMatch(TurnBasedMatch match) {
-
-    }
-
-    @Override
-    protected void updateView(byte[] turnData) {
+    protected void updateView() {
 
     }
 

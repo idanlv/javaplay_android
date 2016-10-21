@@ -36,15 +36,15 @@ public class GameOptionsAdapter extends ArrayAdapter<String>{
                 drawable_id = R.drawable.game_leaderboards;
                 break;
             }
-            case INSTRUCTIONS: {
-                drawable_id = R.drawable.game_instructions;
+            case INBOX: {
+                drawable_id = R.drawable.game_invitation;
                 break;
             }
             case ACHIEVEMENTS: {
                 drawable_id = R.drawable.game_achievments;
                 break;
             }
-            case PLAY: {
+            case GAMES: {
                 drawable_id = R.drawable.game_play;
                 break;
             }
