@@ -1,6 +1,7 @@
 package com.levigilad.javaplay.tictactoe;
 
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -73,6 +74,9 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     private void initializeView(View parentView) {
+        // Fragment locked in portrait screen orientation
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+
         mTableLayoutBoard = (TableLayout) parentView.findViewById(R.id.table_layout_board);
         mTableLayoutBoard.setEnabled(false);
 
