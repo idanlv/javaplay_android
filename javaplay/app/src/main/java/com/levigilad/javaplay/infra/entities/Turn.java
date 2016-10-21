@@ -64,4 +64,8 @@ public abstract class Turn implements IJsonSerializable {
 
         fromJson(turnData);
     }
+
+    public void increaseTurnCounter() {
+        mTurnCounter++;
+    }
 }

@@ -11,14 +11,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.levigilad.javaplay.infra.PlayFragment;
-import com.levigilad.javaplay.infra.entities.Playground;
 import com.levigilad.javaplay.infra.enums.GameOptions;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
@@ -97,7 +95,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 return;
             }
 
-            returnToGame(data);
+            enterExistingGame(data);
 
             // TODO: Handle rematch
         } else if (request == RC_LOOK_AT_LEADERBOARD) {
@@ -137,27 +135,31 @@ public class GameOptionsActivity extends BaseGameActivity implements
         replaceFragment(fragment);
     }
 
-    private void returnToGame(Intent data) {
+    private void enterExistingGame(Intent data) {
         TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
-        if ((match != null) && (match.getData() != null)) {
-            try {
-                JSONObject turnData = new JSONObject(new String(match.getData()));
-                mGameId = turnData.getString("game_id");
+        if (match != null) {
+            if (match.getData() != null) {
+                try {
+                    JSONObject turnData = new JSONObject(new String(match.getData()));
+                    mGameId = turnData.getString("game_id");
 
-                PlayFragment fragment = null;
+                    PlayFragment fragment = null;
 
-                if (mGameId.equals(getString(R.string.yaniv_game_id))) {
-                    fragment = YanivPlayFragment.newInstance(match);
-                } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
-                    fragment = TicTacToeGameFragment.newInstance(match);
+                    if (mGameId.equals(getString(R.string.yaniv_game_id))) {
+                        fragment = YanivPlayFragment.newInstance(match);
+                    } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
+                        fragment = TicTacToeGameFragment.newInstance(match);
+                    }
+
+                    mListener = fragment;
+
+                    replaceFragment(fragment);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-
-                mListener = fragment;
-
-                replaceFragment(fragment);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else {
+                // TODO: rematch?
             }
         }
 

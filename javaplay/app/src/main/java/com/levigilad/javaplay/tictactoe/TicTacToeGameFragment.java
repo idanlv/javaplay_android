@@ -97,7 +97,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     @Override
-    protected byte[] startMatch() {
+    protected void startMatch() {
         try {
             String playerId = Games.Players.getCurrentPlayerId(getApiClient());
             String participantId = mMatch.getParticipantId(playerId);
@@ -105,13 +105,9 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
 
             mInstructionsTextView.setText(getString(R.string.games_waiting_for_player_turn));
-
-            return mTurnData.export();
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
         }
-
-        return null;
     }
 
     @Override
@@ -159,11 +155,6 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 cell.setText(text);
             }
         }
-    }
-
-    @Override
-    protected void askForRematch() {
-
     }
 
     @Override

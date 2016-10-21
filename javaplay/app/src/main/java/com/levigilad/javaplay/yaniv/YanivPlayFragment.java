@@ -165,13 +165,8 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     @Override
-    protected void askForRematch() {
+    protected void startMatch() {
 
-    }
-
-    @Override
-    protected byte[] startMatch() {
-        return null;
     }
 
     @Override

@@ -145,15 +145,10 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         // This indicates that the game data is uninitialized because no player has taken a turn yet
         // Therefore, current player is the first one to take a turn in the match
         if (mMatch.getData() == null) {
-            try {
-                byte[] turnData = startMatch();
-                mTurnData.update(turnData);
+            startMatch();
 
-                String nextParticipantId = getNextParticipantId();
-                finishTurn(nextParticipantId);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            String nextParticipantId = getNextParticipantId();
+            finishTurn(nextParticipantId);
         }
         // This indicates that the game has already started and the game data is already initialized,
         // Therefore, we need to make sure your game does not reinitialize the data
@@ -164,12 +159,35 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
 
     private void handleMatchUpdate() {
         try {
-            mTurnData.update(mMatch.getData());
-            updateView();
-
-            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                startTurn();
+            if (mMatch.getData() != null) {
+                mTurnData.update(mMatch.getData());
             }
+
+            switch (mMatch.getTurnStatus()) {
+                case TurnBasedMatch.MATCH_TURN_STATUS_COMPLETE: {
+                    if (mMatch.canRematch()) {
+                        askForRematch();
+                    }
+                    break;
+                }
+                case TurnBasedMatch.MATCH_TURN_STATUS_INVITED: {
+                    updateView();
+                    // TODO: is there something else needed here? When does this happen?
+                    break;
+                }
+                case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN: {
+                    updateView();
+                    break;
+                }
+                case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN: {
+                    mTurnData.increaseTurnCounter();
+                    startTurn();
+                    break;
+                }
+            }
+
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -180,10 +198,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
 
         if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
             return;
-        }
-
-        if (mMatch.canRematch()) {
-            askForRematch();
         }
 
         handleMatchUpdate();
@@ -295,11 +309,13 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         handleMatchUpdate();
     }
 
-    protected abstract byte[] startMatch();
+    protected abstract void startMatch();
 
     protected abstract void startTurn();
 
     protected abstract void updateView();
 
-    protected abstract void askForRematch();
+    private void askForRematch() {
+        // TODO: Implement
+    }
 }
