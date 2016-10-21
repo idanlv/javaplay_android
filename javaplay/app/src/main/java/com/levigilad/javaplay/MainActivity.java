@@ -103,7 +103,7 @@ public class MainActivity extends BaseGameActivity implements View.OnClickListen
     }
 
     private void btnPlay_OnClick() {
-        Intent i = new Intent(this, GameSelectionActivity.class);
+        Intent i = new Intent(this, GameOptionsActivity.class);
         startActivity(i);
     }
 

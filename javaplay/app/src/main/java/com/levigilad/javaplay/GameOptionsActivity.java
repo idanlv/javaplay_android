@@ -19,6 +19,7 @@ import com.google.basegameutils.games.BaseGameActivity;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.enums.GameOptions;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
+import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
 import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
 import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
 import com.levigilad.javaplay.yaniv.YanivPlayFragment;
@@ -31,7 +32,8 @@ import java.util.ArrayList;
 public class GameOptionsActivity extends BaseGameActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
         OnFragmentInteractionListener,
-        OnTurnBasedMatchUpdateReceivedListener  {
+        OnTurnBasedMatchUpdateReceivedListener,
+        OnGameSelectedListener{
 
     private static final String GAME_ID = "GameId";
 
@@ -68,7 +70,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        setTitle(mGameId);
+        setTitle(getString(R.string.app_name));
     }
 
     @Override
@@ -86,6 +88,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 return;
             }
 
+            setTitle(mGameId);
             startNewGame(data);
         } else if (request == RC_LOOK_AT_MATCHES) {
             // Returning from the 'Select Match' dialog
@@ -95,6 +98,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 return;
             }
 
+            setTitle(mGameId);
             enterExistingGame(data);
 
             // TODO: Handle rematch
@@ -176,16 +180,15 @@ public class GameOptionsActivity extends BaseGameActivity implements
 
         switch (option) {
             case GAMES: {
-                // TODO: change to const
-                Intent intent = Games.TurnBasedMultiplayer
-                        .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
-                startActivityForResult(intent, RC_SELECT_PLAYERS);
+                GamePossibilitiesFragment fragment = GamePossibilitiesFragment.newInstance();
+                setTitle(getString(R.string.pick_a_game));
+                replaceFragment(fragment);
                 break;
             }
             case LEADERBOARD: {
                 Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
                 startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
-;                break;
+                break;
             }
             case ACHIEVEMENTS: {
                 Intent intent = Games.Achievements.getAchievementsIntent(getApiClient());
@@ -236,5 +239,14 @@ public class GameOptionsActivity extends BaseGameActivity implements
     @Override
     public void onTurnBasedMatchRemoved(String s) {
         Log.i(TAG, "onTurnBasedMatchRemoved");
+    }
+
+    @Override
+    public void onGameSelected(String gameId) {
+        mGameId = gameId;
+
+        Intent intent = Games.TurnBasedMultiplayer
+                .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
+        startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 }
