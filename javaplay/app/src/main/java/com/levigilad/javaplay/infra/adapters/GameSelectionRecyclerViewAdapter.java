@@ -51,7 +51,7 @@ public class GameSelectionRecyclerViewAdapter extends
     @Override
     public GameHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragement_game_item, parent, false);
+                .inflate(R.layout.fragement_game_possibility, parent, false);
 
         return (new GameHolder(view));
     }
