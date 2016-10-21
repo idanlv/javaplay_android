@@ -10,12 +10,18 @@ import org.json.JSONObject;
 /**
  * This class represents a game card
  */
-public class PlayingCard implements IJsonSerializable, Comparable {
-    // Consts
+public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
+    /**
+     * Constants
+    */
+
     public static final String CARD_VALUE = "card_value";
     public static final String CARD_SYMBOL = "card_symbol";
 
-    // Members
+    /**
+     * Members
+    */
+
     private PlayingCardRanks mRank;
     private PlayingCardSuits mSuit;
 
@@ -75,7 +81,7 @@ public class PlayingCard implements IJsonSerializable, Comparable {
 
     /**
      * * Generate a json representation of the card
-     * @return
+     * @return card as json object
      * @throws JSONException
      */
     @Override
@@ -101,18 +107,10 @@ public class PlayingCard implements IJsonSerializable, Comparable {
     /**
      * This method compares between two given cards
      * @param another compared to card
-     * @return
+     * @return the difference between cards values
      */
     @Override
-    public int compareTo(Object another) {
-        if (another instanceof PlayingCard) {
-            PlayingCard anotherCard = (PlayingCard)another;
-
-            return this.getRank().getNumericValue() - anotherCard.getRank().getNumericValue();
-        }
-
-        throw new ClassCastException(
-                String.format("Comparing type (0) to PlayingCard is not supported",
-                        another.getClass().getName()));
+    public int compareTo(PlayingCard another) {
+        return this.getRank().getNumericValue() - another.getRank().getNumericValue();
     }
 }

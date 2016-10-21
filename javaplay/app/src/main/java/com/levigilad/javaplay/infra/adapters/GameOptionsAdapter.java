@@ -9,14 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.levigilad.javaplay.R;;
+import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.enums.GameOptions;
 
 import java.util.ArrayList;
-
-/**
- * Created by User on 08/10/2016.
- */
 
 public class GameOptionsAdapter extends ArrayAdapter<String>{
 
@@ -40,15 +36,15 @@ public class GameOptionsAdapter extends ArrayAdapter<String>{
                 drawable_id = R.drawable.game_leaderboards;
                 break;
             }
-            case INSTRUCTIONS: {
-                drawable_id = R.drawable.game_instructions;
+            case INBOX: {
+                drawable_id = R.drawable.game_invitation;
                 break;
             }
             case ACHIEVEMENTS: {
                 drawable_id = R.drawable.game_achievments;
                 break;
             }
-            case PLAY: {
+            case GAMES: {
                 drawable_id = R.drawable.game_play;
                 break;
             }

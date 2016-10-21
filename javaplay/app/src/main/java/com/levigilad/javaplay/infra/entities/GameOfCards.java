@@ -14,6 +14,9 @@ public abstract class GameOfCards extends Game {
 
     /**
      * Constructor
+     * @param gameId
+     * @param description
+     * @param leaderboardId
      * @param maxNumOfPlayers
      * @param initialNumOfPlayerCards
      */
