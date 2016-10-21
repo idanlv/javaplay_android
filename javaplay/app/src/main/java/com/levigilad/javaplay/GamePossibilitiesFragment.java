@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.levigilad.javaplay.infra.adapters.GameSelectionRecyclerViewAdapter;
 import com.levigilad.javaplay.infra.entities.Playground;
+import com.levigilad.javaplay.infra.interfaces.NavigationDrawerCallbacks;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
 import com.levigilad.javaplay.infra.interfaces.OnItemClickListener;
 
@@ -67,7 +68,7 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
         super.onAttach(context);
 
         if (!(context instanceof OnGameSelectedListener)) {
-            //TODO: throw new InvalidClassException("Activity must implement OnGameSelectedListener");
+            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }
     }
 

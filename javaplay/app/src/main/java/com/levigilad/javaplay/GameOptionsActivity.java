@@ -18,6 +18,7 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.enums.GameOptions;
+import com.levigilad.javaplay.infra.interfaces.NavigationDrawerCallbacks;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
 import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
@@ -30,7 +31,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class GameOptionsActivity extends BaseGameActivity implements
-        NavigationDrawerFragment.NavigationDrawerCallbacks,
+        NavigationDrawerCallbacks,
         OnFragmentInteractionListener,
         OnTurnBasedMatchUpdateReceivedListener,
         OnGameSelectedListener{
@@ -68,7 +69,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                (DrawerLayout) findViewById(R.id.drawer_layout), GameOptions.GAMES.ordinal());
 
         setTitle(getString(R.string.app_name));
     }
@@ -173,16 +174,14 @@ public class GameOptionsActivity extends BaseGameActivity implements
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         if (!isSignedIn()) {
+            showGamePossibilities();
             return;
         }
-
         GameOptions option = GameOptions.values()[position];
 
         switch (option) {
             case GAMES: {
-                GamePossibilitiesFragment fragment = GamePossibilitiesFragment.newInstance();
-                setTitle(getString(R.string.pick_a_game));
-                replaceFragment(fragment);
+                showGamePossibilities();
                 break;
             }
             case LEADERBOARD: {
@@ -202,6 +201,12 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 break;
             }
         }
+    }
+
+    private void showGamePossibilities() {
+        GamePossibilitiesFragment fragment = GamePossibilitiesFragment.newInstance();
+        setTitle(getString(R.string.pick_a_game));
+        replaceFragment(fragment);
     }
 
     private void replaceFragment(Fragment fragment) {
