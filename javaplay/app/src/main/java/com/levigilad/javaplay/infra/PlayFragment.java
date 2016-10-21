@@ -37,13 +37,12 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     private ArrayList<String> mInvitees;
     private Bundle mAutoMatchCriteria;
 
-    private Game _game;
-
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
 
-    public PlayFragment() {
+    public PlayFragment(Turn turnData) {
         super(REQUESTED_CLIENTS);
+        mTurnData = turnData;
     }
 
 
