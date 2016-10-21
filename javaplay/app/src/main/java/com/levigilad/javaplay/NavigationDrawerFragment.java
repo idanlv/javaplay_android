@@ -19,9 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.levigilad.javaplay.infra.adapters.GameOptionsAdapter;
+import com.levigilad.javaplay.infra.enums.GameOptions;
+import com.levigilad.javaplay.infra.interfaces.NavigationDrawerCallbacks;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -111,8 +112,11 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
      *
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
+     * @param startPosition The initial position for drawer
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout) {
+    public void setUp(int fragmentId, DrawerLayout drawerLayout, int startPosition) {
+        mCurrentSelectedPosition = startPosition;
+
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
@@ -254,15 +258,5 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
-    }
-
-    /**
-     * Callbacks interface that all activities using this fragment must implement.
-     */
-    public interface NavigationDrawerCallbacks {
-        /**
-         * Called when an item in the navigation drawer is selected.
-         */
-        void onNavigationDrawerItemSelected(int position);
     }
 }
