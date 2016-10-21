@@ -14,9 +14,6 @@ import com.levigilad.javaplay.R;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by btco on 2/10/14.
- */
 class GameHelperUtils {
     public static final int R_UNKNOWN_ERROR = 0;
     public static final int R_SIGN_IN_FAILED = 1;
@@ -90,7 +87,7 @@ class GameHelperUtils {
     static void printMisconfiguredDebugInfo(Context ctx) {
         Log.w("GameHelper", "****");
         Log.w("GameHelper", "****");
-        Log.w("GameHelper", "**** APP NOT CORRECTLY CONFIGURED TO USE GOOGLE PLAY GAME SERVICES");
+        Log.w("GameHelper", "**** APP NOT CORRECTLY CONFIGURED TO USE GOOGLE GAMES GAME SERVICES");
         Log.w("GameHelper", "**** This is usually caused by one of these reasons:");
         Log.w("GameHelper", "**** (1) Your package name and certificate fingerprint do not match");
         Log.w("GameHelper", "****     the client ID you registered in Developer Console.");

@@ -277,7 +277,10 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
 
         if (0 != (mRequestedClients & CLIENT_PLUS)) {
             builder.addApi(Auth.GOOGLE_SIGN_IN_API);
-            builder.addScope(Plus.SCOPE_PLUS_LOGIN);
+            // http://android-developers.blogspot.co.il/2016/01/play-games-permissions-are-changing-in.html
+            // Removed the following Deprecated code :
+            //builder.addScope(Plus.SCOPE_PLUS_LOGIN);
+
         }
 
         if (0 != (mRequestedClients & CLIENT_SNAPSHOT)) {
@@ -496,7 +499,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         if (!mGoogleApiClient.isConnected()) {
             Log.w(TAG, "Warning: getRequests() should only be called "
                     + "when signed in, "
-                    + "that is, after getting onSignInSuceeded()");
+                    + "that is, after getting onSignInSucceeded()");
         }
         return mRequests;
     }
@@ -528,7 +531,10 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         // then disconnecting
         if (0 != (mRequestedClients & CLIENT_PLUS)) {
             debugLog("Clearing default account on PlusClient.");
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            //Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            // Replaced the above (deprecated code) with the following :
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+
         }
 
         // For the games client, signing out means calling signOut and
@@ -704,8 +710,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
 
         if (connectionHint != null) {
             debugLog("onConnected: connection hint provided. Checking for invite.");
-            Invitation inv = connectionHint
-                    .getParcelable(Multiplayer.EXTRA_INVITATION);
+            Invitation inv = connectionHint.getParcelable(Multiplayer.EXTRA_INVITATION);
             if (inv != null && inv.getInvitationId() != null) {
                 // retrieve and cache the invitation ID
                 debugLog("onConnected: connection hint has a room invite!");
@@ -714,8 +719,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
             }
 
             // Do we have any requests pending?
-            mRequests = Games.Requests
-                    .getGameRequestsFromBundle(connectionHint);
+            mRequests = Games.Requests.getGameRequestsFromBundle(connectionHint);
             if (!mRequests.isEmpty()) {
                 // We have requests in onConnected's connectionHint.
                 debugLog("onConnected: connection hint has " + mRequests.size()
@@ -723,8 +727,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
             }
 
             debugLog("onConnected: connection hint provided. Checking for TBMP game.");
-            mTurnBasedMatch = connectionHint
-                    .getParcelable(Multiplayer.EXTRA_TURN_BASED_MATCH);
+            mTurnBasedMatch = connectionHint.getParcelable(Multiplayer.EXTRA_TURN_BASED_MATCH);
         }
 
         // we're good to go
