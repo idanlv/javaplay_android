@@ -34,7 +34,7 @@
     <string name="waiting_for_players">Waiting for players to join</string>
 
 
-    <string name="game_description_stub">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquam pellentesque sem eu varius. Integer sed fermentum metus, ut sagittis velit. Quisque nisl nisl, posuere nec vulputate et, scelerisque quis eros. Morbi iaculis hendrerit ante, vulputate pulvinar nunc lacinia sed. Duis porttitor magna est, a mattis ex facilisis quis. Suspendisse potenti. Nunc vel turpis ante. Praesent id dignissim lectus, in sodales ex. Vestibulum tellus est, convallis id nisl vel, ornare semper lorem. Suspendisse potenti. Mauris auctor lectus quis rhoncus maximus. Praesent vel consequat metus. Sed quis mi quis lorem egestas semper. Etiam a lacus nulla.</string>
+    <string name="game_description_stub">Game_Description</string>
     <string name="title_activity_game_options">GameOptionsActivity</string>
 
     <string name="title_section1">Section 1</string>
@@ -57,8 +57,12 @@
 
     <!-- Yaniv -->
     <string name="yaniv_game_id">Yaniv</string>
+    <string name="yaniv_description">Play Yaniv card game</string>
+    <string name="deck_view_description">Draw New Card</string>
+    <string name="discard">Discard</string>
+    <string name="score">Score :</string>
+    <string name="declare_yaniv_text">Yaniv !</string>
     <string name="yaniv_leaderboard_id">CgkIyuG_9qMQEAIQCA</string>
-    <string name="yaniv_description">Bla bla bla</string>
     <string name="achievement_first_yaniv_win">CgkIyuG_9qMQEAIQCQ</string>
 
     <!-- Tic Tac Toe -->
