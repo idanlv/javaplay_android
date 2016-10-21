@@ -1,5 +1,7 @@
 package com.levigilad.javaplay.infra;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -161,6 +163,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         try {
             if (mMatch.getData() != null) {
                 mTurnData.update(mMatch.getData());
+                updateView();
             }
 
             switch (mMatch.getTurnStatus()) {
@@ -171,12 +174,11 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                     break;
                 }
                 case TurnBasedMatch.MATCH_TURN_STATUS_INVITED: {
-                    updateView();
                     // TODO: is there something else needed here? When does this happen?
                     break;
                 }
                 case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN: {
-                    updateView();
+                    // TODO: is needed?
                     break;
                 }
                 case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN: {
@@ -316,6 +318,39 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected abstract void updateView();
 
     private void askForRematch() {
-        // TODO: Implement
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
+
+        alertDialogBuilder.setMessage("Do you want a rematch?");
+
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Sure, rematch!",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                rematch();
+                            }
+                        })
+                .setNegativeButton("No.",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+
+        alertDialogBuilder.show();
+    }
+
+    private void rematch() {
+        if (mMatch.canRematch()) {
+            Games.TurnBasedMultiplayer.rematch(getApiClient(), mMatch.getMatchId()).setResultCallback(
+                    new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+                        @Override
+                        public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
+                            processResult(result);
+                        }
+                    });
+            mMatch = null;
+        }
     }
 }
