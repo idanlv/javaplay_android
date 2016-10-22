@@ -11,8 +11,14 @@ import java.util.ArrayList;
  * This class represents a Singleton of a Playground
  */
 public class Playground {
+    /**
+     * Constant
+     */
     private static final String TAG = Playground.class.getName();
 
+    /**
+     * Members
+     */
     private static Playground mInstance = null;
     private ArrayList<Game> mGames = new ArrayList<>();
 
@@ -51,6 +57,11 @@ public class Playground {
         return this.mGames;
     }
 
+    /**
+     * Retrieves a game by id
+     * @param gameId Game's id
+     * @return If game id exist, return game object. Otherwise, null.
+     */
     public Game getGame(String gameId) {
         for (Game game : this.mGames) {
             if (game.getGameId().equals(gameId)) {

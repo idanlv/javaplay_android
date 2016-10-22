@@ -31,28 +31,35 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * This activity represents all game options
+ */
 public class GameOptionsActivity extends BaseGameActivity implements
         NavigationDrawerCallbacks,
         OnFragmentInteractionListener,
         OnTurnBasedMatchUpdateReceivedListener,
         OnGameSelectedListener{
-
-    private static final String GAME_ID = "GameId";
-
+    /**
+     * Constants
+     */
     private static final String TAG = "GameOptionsActivity";
+    private static final String GAME_ID = "GameId";
     private static final int RC_SELECT_PLAYERS = 5001;
-    private final static int RC_LOOK_AT_MATCHES = 10001;
+    private static final int RC_LOOK_AT_MATCHES = 10001;
     private static final int RC_LOOK_AT_LEADERBOARD = 11001;
     private static final int RC_LOOK_AT_ACHIEVEMENTS = 12001;
 
+    /**
+     * Members
+     */
     private String mGameId;
     private OnTurnBasedMatchReceivedListener mListener = null;
-
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
+    /**
+     * On Create
+     * @param savedInstanceState instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,33 +68,36 @@ public class GameOptionsActivity extends BaseGameActivity implements
         mGameId = getIntent().getStringExtra(GAME_ID);
 
         if (savedInstanceState == null) {
-            // Only create fragment if activity is started for the first time
+            // Only create this fragment if activity is started for the first time
             showGamePossibilities();
         } else {
             // do nothing - fragment is recreated automatically
         }
 
-
         initializeViews();
     }
 
+    /**
+     * Initializes view
+     */
     private void initializeViews() {
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
+        mNavigationDrawerFragment.setup(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         setTitle(getString(R.string.app_name));
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
+    /**
+     * On Activity Result
+     * @param request Request code
+     * @param response Response
+     * @param data Intent
+     */
     @Override
     public void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
@@ -99,7 +109,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
             }
 
             setTitle(mGameId);
-            startNewGame(data);
+            startNewMatch(data);
         } else if (request == RC_LOOK_AT_MATCHES) {
             // Returning from the 'Select Match' dialog
 
@@ -109,19 +119,23 @@ public class GameOptionsActivity extends BaseGameActivity implements
             }
 
             setTitle(mGameId);
-            enterExistingGame(data);
+            loadExistingMatch(data);
 
             // TODO: Handle rematch
         } else if (request == RC_LOOK_AT_LEADERBOARD) {
-            // TODO: Handle errors
+            mHelper.onActivityResult(request, response, data);
         } else if (request == RC_LOOK_AT_ACHIEVEMENTS) {
-            // TODO: Handle errors
+            mHelper.onActivityResult(request, response, data);
         } else {
             mHelper.onActivityResult(request, response, data);
         }
     }
 
-    private void startNewGame(Intent data) {
+    /**
+     * Starts a new match
+     * @param data data for match
+     */
+    private void startNewMatch(Intent data) {
         // Get the invitee list.
         final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
 
@@ -149,7 +163,11 @@ public class GameOptionsActivity extends BaseGameActivity implements
         replaceFragment(fragment);
     }
 
-    private void enterExistingGame(Intent data) {
+    /**
+     * Loads an existing match
+     * @param data data for match
+     */
+    private void loadExistingMatch(Intent data) {
         TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
         if (match != null) {
@@ -170,16 +188,22 @@ public class GameOptionsActivity extends BaseGameActivity implements
 
                     replaceFragment(fragment);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    // We shouldn't reach this on production version
+                    Log.e(TAG, e.getMessage());
                 }
             } else {
                 // TODO: rematch?
             }
+
+            Log.d(TAG, "Match = " + match);
         }
 
-        Log.d(TAG, "Match = " + match);
     }
 
+    /**
+     * Handles selection of items in drawer
+     * @param position The position of the selected item
+     */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         if (!isSignedIn()) {
@@ -195,7 +219,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 showGamePossibilities();
                 break;
             }
-            case LEADERBOARD: {
+            case LEADERBOARDS: {
                 Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
                 startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
                 break;
@@ -214,12 +238,19 @@ public class GameOptionsActivity extends BaseGameActivity implements
         }
     }
 
+    /**
+     * Show game possibilities fragment
+     */
     private void showGamePossibilities() {
         GamePossibilitiesFragment fragment = GamePossibilitiesFragment.newInstance();
         setTitle(getString(R.string.pick_a_game));
         replaceFragment(fragment);
     }
 
+    /**
+     * Replaces the fragment in the view
+     * @param fragment new fragment
+     */
     private void replaceFragment(Fragment fragment) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
@@ -229,22 +260,35 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 .commit();
     }
 
+    /**
+     * Handles failed sign in
+     */
     @Override
     public void onSignInFailed() {
         reconnectClient();
     }
 
+    /**
+     * Handles successful sign in
+     */
     @Override
     public void onSignInSucceeded() {
-        // TODO
         Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
     }
 
+    /**
+     * Handles fragment interaction
+     * @param uri
+     */
     @Override
     public void onFragmentInteraction(Uri uri) {
         //TODO
     }
 
+    /**
+     * Handles match updates events
+     * @param turnBasedMatch updated match
+     */
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
         if (mListener != null) {
@@ -252,11 +296,19 @@ public class GameOptionsActivity extends BaseGameActivity implements
         }
     }
 
+    /**
+     * Handles match remove events
+     * @param matchId removed match id
+     */
     @Override
-    public void onTurnBasedMatchRemoved(String s) {
+    public void onTurnBasedMatchRemoved(String matchId) {
         Log.i(TAG, "onTurnBasedMatchRemoved");
     }
 
+    /**
+     * Handles game selected events
+     * @param gameId The id of the game
+     */
     @Override
     public void onGameSelected(String gameId) {
         mGameId = gameId;

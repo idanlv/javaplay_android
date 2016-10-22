@@ -6,88 +6,45 @@ import java.io.Serializable;
  * This enum provides value options for game card
  */
 public enum PlayingCardRanks implements Serializable {
-    ACE,
-    TWO,
-    THREE,
-    FOUR,
-    FIVE,
-    SIX,
-    SEVEN,
-    EIGHT,
-    NINE,
-    TEN,
-    JACK,
-    QUEEN,
-    KING,
-    JOKER;
+    ACE(1, "ace"),
+    TWO(2, "2"),
+    THREE(3, "3"),
+    FOUR(4, "4"),
+    FIVE(5, "5"),
+    SIX(6, "6"),
+    SEVEN(7, "7"),
+    EIGHT(8, "8"),
+    NINE(9, "9"),
+    TEN(10, "10"),
+    JACK(11, "jack"),
+    QUEEN(12, "queen"),
+    KING(13, "king"),
+    JOKER(0, "joker");
 
-    public int getNumericValue() {
-        switch (this) {
-            case ACE:
-                return 1;
-            case TWO:
-                return 2;
-            case THREE:
-                return 3;
-            case FOUR:
-                return 4;
-            case FIVE:
-                return 5;
-            case SIX:
-                return 6;
-            case SEVEN:
-                return 7;
-            case EIGHT:
-                return 8;
-            case NINE:
-                return 9;
-            case TEN:
-                return 10;
-            case JACK:
-                return 11;
-            case QUEEN:
-                return 12;
-            case KING:
-                return 13;
-            case JOKER:
-                return 0;
-        }
-
-        return 0;
+    /**
+     * Members
+     */
+    private int mNumericValue;
+    private String mName;
+;
+    PlayingCardRanks(int numbericValue, String name) {
+        this.mNumericValue = numbericValue;
+        this.mName = name;
     }
 
-    public String getNameString() {
-        switch (this) {
-            case ACE:
-                return "ace";
-            case TWO:
-                return "2";
-            case THREE:
-                return "3";
-            case FOUR:
-                return "4";
-            case FIVE:
-                return "5";
-            case SIX:
-                return "6";
-            case SEVEN:
-                return "7";
-            case EIGHT:
-                return "8";
-            case NINE:
-                return "9";
-            case TEN:
-                return "10";
-            case JACK:
-                return "jack";
-            case QUEEN:
-                return "queen";
-            case KING:
-                return "king";
-            case JOKER:
-                return "joker";
-        }
+    /**
+     * Getter
+     * @return Returns the numeric value of the rank
+     */
+    public int getNumericValue() {
+        return this.mNumericValue;
+    }
 
-        return "";
+    /**
+     * Getter
+     * @return; Returns the name of the rank
+     */
+    public String getName() {
+        return this.mName;
     }
 }

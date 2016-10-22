@@ -6,13 +6,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * This class represents a tic tac toe board game
+ */
 public class Board implements IJsonSerializable {
+    /**
+     * Constants
+     */
     public static final int COLUMNS = 3;
     public static final int ROWS = 3;
     private static final String BOARD = "Board";
 
+    /**
+     * Members
+     */
     private TicTacToeSymbol[][] mBoard;
 
+    /**
+     * Constructor: Creates an empty board
+     */
     public Board() {
         mBoard = new TicTacToeSymbol[ROWS][COLUMNS];
 
@@ -23,14 +35,31 @@ public class Board implements IJsonSerializable {
         }
     }
 
-    public void setCell(TicTacToeSymbol player, int row, int column) {
-        mBoard[row][column] = player;
+    /**
+     * Places the player's symbol on the board
+     * @param symbol symbol of the player
+     * @param row row in board
+     * @param column column in board
+     */
+    public void placePlayerOnBoard(TicTacToeSymbol symbol, int row, int column) {
+        mBoard[row][column] = symbol;
     }
 
-    public TicTacToeSymbol getCell(int row, int column) {
+    /**
+     * Returns the player on a specific board cell
+     * @param row row in board
+     * @param column column in board
+     * @return The symbol located in given position
+     */
+    public TicTacToeSymbol getPlayerOnBoard(int row, int column) {
         return mBoard[row][column];
     }
 
+    /**
+     * Generates a json representation of the board
+     * @return Json representation of the board
+     * @throws JSONException If the json wasn't created correctly
+     */
     @Override
     public JSONObject toJson() throws JSONException {
         JSONObject board = new JSONObject();
@@ -50,6 +79,11 @@ public class Board implements IJsonSerializable {
         return board;
     }
 
+    /**
+     * Updates board according to json
+     * @param object json representation of the board
+     * @throws JSONException If the json wasn't read correctly
+     */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
         JSONArray rowsArray = object.getJSONArray(BOARD);

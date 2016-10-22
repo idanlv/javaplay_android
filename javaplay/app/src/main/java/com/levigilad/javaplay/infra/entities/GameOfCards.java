@@ -10,15 +10,18 @@ import java.util.LinkedList;
  */
 public abstract class GameOfCards extends Game {
 
+    /**
+     * Members
+     */
     private int mInitialNumOfPlayerCards;
 
     /**
-     * Constructor
-     * @param gameId
-     * @param description
-     * @param leaderboardId
-     * @param maxNumOfPlayers
-     * @param initialNumOfPlayerCards
+     * Constructor: Creates a game of cards instance
+     * @param gameId The game name (used as id)
+     * @param description The description for the game
+     * @param leaderboardId The id of the leaderboard in google play services
+     * @param maxNumOfPlayers Maximum number of players in match
+     * @param initialNumOfPlayerCards Number of cards for each player
      */
     public GameOfCards(String gameId, String description, String leaderboardId,
                        int maxNumOfPlayers, int initialNumOfPlayerCards) {
@@ -26,8 +29,11 @@ public abstract class GameOfCards extends Game {
         mInitialNumOfPlayerCards = initialNumOfPlayerCards;
     }
 
+
     /**
      * Generates a new shuffled deck of cards
+     * @param numberOfDecks number of decks to make a shuffle deck from
+     * @param numberOfJokers number of jokers to add to the deck
      * @return New deck of cards
      */
     public DeckOfCards generateDeck(int numberOfDecks, int numberOfJokers) {
@@ -49,7 +55,7 @@ public abstract class GameOfCards extends Game {
             }
         }
 
-        // Add the jokers
+        // Add the jokers to the deck
         for (int i = 0; i < numberOfJokers; i++) {
             deck.addCardToTop(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
         }
@@ -57,23 +63,6 @@ public abstract class GameOfCards extends Game {
         deck.shuffle();
 
         return deck;
-    }
-
-    /**
-     * Generates a list of empty decks
-     * @param numberOfDecks Number of decks to generate
-     * @return List of decks
-     */
-    // TODO: check if needed
-    public LinkedList<DeckOfCards> generateEmptyDecks(int numberOfDecks) {
-        LinkedList<DeckOfCards> decks = new LinkedList<>();
-
-
-        for (int i = 0; i < numberOfDecks; i++) {
-            decks.add(new DeckOfCards());
-        }
-
-        return decks;
     }
 
     /**
