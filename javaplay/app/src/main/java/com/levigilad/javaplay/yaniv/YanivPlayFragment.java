@@ -320,7 +320,7 @@ public class YanivPlayFragment extends PlayFragment {
         Context context = getActivity().getApplicationContext();
 
         // Build card name
-        String shapeName = PLAYING_CARD_PREFIX + playingCard.getRank().getNameString().toLowerCase()
+        String shapeName = PLAYING_CARD_PREFIX + playingCard.getRank().getName().toLowerCase()
                 + playingCard.getSuit().name().toLowerCase().charAt(0);
 
         int shapeID = context.getResources()

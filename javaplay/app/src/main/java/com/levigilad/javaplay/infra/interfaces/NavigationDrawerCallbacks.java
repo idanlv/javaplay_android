@@ -10,6 +10,7 @@ package com.levigilad.javaplay.infra.interfaces;
 public interface NavigationDrawerCallbacks {
     /**
      * Called when an item in the navigation drawer is selected.
+     * @param position The position of the selected item
      */
     void onNavigationDrawerItemSelected(int position);
 }

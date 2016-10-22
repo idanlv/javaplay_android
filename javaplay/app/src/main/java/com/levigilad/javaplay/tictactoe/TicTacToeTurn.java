@@ -1,21 +1,27 @@
 package com.levigilad.javaplay.tictactoe;
 
-import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.Turn;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 
+/**
+ * This class represents a Tic Tac Toe turn
+ */
 public class TicTacToeTurn extends Turn {
+    /**
+     * Constants
+     */
     private static final String BOARD = "Board";
     private static final String PARTICIPANTS = "Participants";
     private static final String NO_PARTICIPANT = "";
 
+    /**
+     * Members
+     */
     private Board mBoard;
     private HashMap<TicTacToeSymbol, String> mParticipants;
 
@@ -87,6 +93,8 @@ public class TicTacToeTurn extends Turn {
      */
     @Override
     public void fromJson(JSONObject object) throws JSONException {
+        super.fromJson(object);
+
         JSONObject participants = object.getJSONObject(PARTICIPANTS);
 
         mParticipants = new HashMap<>();
@@ -100,6 +108,5 @@ public class TicTacToeTurn extends Turn {
 
         this.mBoard.fromJson(object.getJSONObject(BOARD));
 
-        super.fromJson(object);
     }
 }

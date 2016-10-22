@@ -28,7 +28,7 @@ public class GameOptionsAdapter extends ArrayAdapter<String>{
         super(context, resource, new ArrayList<String>(){
             {
                 for (GameOptions option : GameOptions.values()) {
-                    add(option.name().replace("_", " "));
+                    add(option.name());
                 }
             }});
     }
@@ -44,10 +44,12 @@ public class GameOptionsAdapter extends ArrayAdapter<String>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         String option = this.getItem(position);
+        // Assign when a non existing drawable id
         int drawable_id = 0;
 
-        switch (GameOptions.valueOf(option.replace(" ", "_"))) {
-            case LEADERBOARD: {
+        // Attach the relevant drawable
+        switch (GameOptions.valueOf(option)) {
+            case LEADERBOARDS: {
                 drawable_id = R.drawable.game_leaderboards;
                 break;
             }
