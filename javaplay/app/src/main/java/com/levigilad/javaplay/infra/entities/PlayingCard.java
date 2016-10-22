@@ -95,13 +95,13 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
 
     /**
      * Load card from given json format
-     * @param object Card in json format
+     * @param jsonObject Card in json format
      * @throws JSONException If the json object wasn't read correctly
      */
     @Override
-    public void fromJson(JSONObject object) throws JSONException {
-        this.mRank = (PlayingCardRanks)object.get(CARD_VALUE);
-        this.mSuit = (PlayingCardSuits)object.get(CARD_SYMBOL);
+    public void fromJson(JSONObject jsonObject) throws JSONException {
+        this.mRank = PlayingCardRanks.valueOf(jsonObject.getString(CARD_VALUE));
+        this.mSuit = PlayingCardSuits.valueOf(jsonObject.getString(CARD_SYMBOL));
     }
 
     /**

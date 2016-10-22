@@ -62,21 +62,21 @@ public class YanivTurn extends Turn {
 
     /**
      * Update data according to Json value
-     * @param object turn data
+     * @param jsonObject turn data
      * @throws JSONException
      */
     @Override
-    public void fromJson(JSONObject object) throws JSONException {
-        super.fromJson(object);
+    public void fromJson(JSONObject jsonObject) throws JSONException {
+        super.fromJson(jsonObject);
 
         this.mCurrPlayersHand = new DeckOfCards();
-        this.mCurrPlayersHand.fromJson(object.getJSONObject(CURRENT_PLAYRE_HAND));
+        this.mCurrPlayersHand.fromJson(jsonObject.getJSONObject(CURRENT_PLAYRE_HAND));
         this.mAvailableDiscardedCards = new DeckOfCards();
-        this.mAvailableDiscardedCards.fromJson(object.getJSONObject(AVAILABLE_DISCARDED_CARDS));
+        this.mAvailableDiscardedCards.fromJson(jsonObject.getJSONObject(AVAILABLE_DISCARDED_CARDS));
         this.mDiscardedCards = new DeckOfCards();
-        this.mDiscardedCards.fromJson(object.getJSONObject(DISCARDED_CARDS));
+        this.mDiscardedCards.fromJson(jsonObject.getJSONObject(DISCARDED_CARDS));
         this.mGlobalCardDeck = new DeckOfCards();
-        this.mGlobalCardDeck.fromJson(object.getJSONObject(GLOBAL_CARD_DECK));
+        this.mGlobalCardDeck.fromJson(jsonObject.getJSONObject(GLOBAL_CARD_DECK));
 
     }
 
@@ -84,19 +84,32 @@ public class YanivTurn extends Turn {
         return mCurrPlayersHand;
     }
 
+    public void setmCurrPlayersHand(DeckOfCards mCurrPlayersHand) {
+        this.mCurrPlayersHand = mCurrPlayersHand;
+    }
+
     public DeckOfCards getmAvailableDiscardedCards() {
         return mAvailableDiscardedCards;
+    }
+
+    public void setmAvailableDiscardedCards(DeckOfCards mAvailableDiscardedCards) {
+        this.mAvailableDiscardedCards = mAvailableDiscardedCards;
+    }
+
+
+    public DeckOfCards getmDiscardedCards() {
+        return mDiscardedCards;
     }
 
     public void setmDiscardedCards(DeckOfCards mDiscardedCards) {
         this.mDiscardedCards = mDiscardedCards;
     }
 
-    public DeckOfCards getmDiscardedCards() {
-        return mDiscardedCards;
-    }
-
     public DeckOfCards getmGlobalCardDeck() {
         return mGlobalCardDeck;
+    }
+
+    public void setmGlobalCardDeck(DeckOfCards mGlobalCardDeck) {
+        this.mGlobalCardDeck = mGlobalCardDeck;
     }
 }

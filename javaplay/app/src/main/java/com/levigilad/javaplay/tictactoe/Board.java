@@ -81,12 +81,12 @@ public class Board implements IJsonSerializable {
 
     /**
      * Updates board according to json
-     * @param object json representation of the board
+     * @param jsonObject json representation of the board
      * @throws JSONException If the json wasn't read correctly
      */
     @Override
-    public void fromJson(JSONObject object) throws JSONException {
-        JSONArray rowsArray = object.getJSONArray(BOARD);
+    public void fromJson(JSONObject jsonObject) throws JSONException {
+        JSONArray rowsArray = jsonObject.getJSONArray(BOARD);
 
         for (int i = 0; i < ROWS; i++) {
             JSONArray columnsArray = rowsArray.getJSONArray(i);

@@ -15,14 +15,16 @@ import java.util.Iterator;
  * This class represents Yaniv game logic
  */
 public class YanivGame extends GameOfCards {
-    
-    // Consts
+
+    /**
+     * Constant
+     */
     public static final int INITIAL_DEFAULT_CARD_COUNT = 5;
     private static final int MAX_DEFAULT_PLAYERS = 4;
-    private final int MAX_DEFAULT_YANIV_CARD_SCORE = 7;
-    private final int MIN_SEQUENCE_LENGTH = 3;
-    private final int MIN_DISCARDED_CARDS = 1;
-    private final int MIN_DUPLICATES_LENGTH = 2;
+    private static final int MAX_DEFAULT_YANIV_CARD_SCORE = 7;
+    private static final int MIN_SEQUENCE_LENGTH = 3;
+    private static final int MIN_DISCARDED_CARDS = 1;
+    private static final int MIN_DUPLICATES_LENGTH = 2;
 
     /**
      * Empty constructor
@@ -49,7 +51,7 @@ public class YanivGame extends GameOfCards {
      * @param deck player's deck
      * @return True or False
      */
-    public boolean canYaniv(DeckOfCards deck) {
+    public static boolean canYaniv(DeckOfCards deck) {
         return canYaniv(calculateDeckScore(deck));
     }
 
@@ -58,7 +60,7 @@ public class YanivGame extends GameOfCards {
      * @param playerScore Score
      * @return True or False
      */
-    public boolean canYaniv(int playerScore) {
+    public static boolean canYaniv(int playerScore) {
         return playerScore <= MAX_DEFAULT_YANIV_CARD_SCORE;
     }
 
@@ -68,7 +70,7 @@ public class YanivGame extends GameOfCards {
      * @param otherPlayerScore Score of the player who declared Yaniv
      * @return True or False
      */
-    public boolean isAssaf(DeckOfCards deck, int otherPlayerScore) {
+    public static boolean isAssaf(DeckOfCards deck, int otherPlayerScore) {
         int score = calculateDeckScore(deck);
 
         return (canYaniv(score) && (score <= otherPlayerScore));
@@ -79,7 +81,7 @@ public class YanivGame extends GameOfCards {
      * @param deck player's deck
      * @return Score
      */
-    public int calculateDeckScore(DeckOfCards deck) {
+    public static int calculateDeckScore(DeckOfCards deck) {
         int cardsTotalValue = 0;
 
         Iterator<PlayingCard> iterator = deck.iterator();
@@ -97,7 +99,7 @@ public class YanivGame extends GameOfCards {
      * @param discardCards cards
      * @return True or False
      */
-    public boolean isCardsDiscardValid(DeckOfCards discardCards) {
+    public static boolean isCardsDiscardValid(DeckOfCards discardCards) {
         return ((discardCards.size() == MIN_DISCARDED_CARDS)
                 || isSequence(discardCards)
                 || isDuplicates(discardCards));
@@ -108,7 +110,7 @@ public class YanivGame extends GameOfCards {
      * @param cards cards
      * @return True or False
      */
-    public boolean isDuplicates(DeckOfCards cards) {
+    public static boolean isDuplicates(DeckOfCards cards) {
 
         if (cards.size() < MIN_DUPLICATES_LENGTH) {
             return false;
@@ -133,7 +135,7 @@ public class YanivGame extends GameOfCards {
      * @param cardSeries cards
      * @return True or False
      */
-    public boolean isSequence(DeckOfCards cardSeries) {
+    public static boolean isSequence(DeckOfCards cardSeries) {
         Iterator<PlayingCard> it;
         PlayingCard playingCard = null;
         int jokerCount = 0;
@@ -188,9 +190,37 @@ public class YanivGame extends GameOfCards {
                 return false;
             }
         }
-
         // All is OK
         return true;
+    }
+
+    /**
+     * Get the available from a discard action
+     * @param cardsToDiscard as deck of cards to discard
+     * @return deck of cards with the available cards, or null if the discard is invalid
+     */
+    public static DeckOfCards getAvailableCardsFromDiscard(DeckOfCards cardsToDiscard){
+        DeckOfCards availableCards = null;
+
+        if (isCardsDiscardValid(cardsToDiscard)) {
+            availableCards = new DeckOfCards();
+
+            // Add permitted cards to the available cards deck
+            if (cardsToDiscard.size() == 1) {
+                availableCards.addCardToTop(cardsToDiscard.peek());
+            }
+            else if (isDuplicates(cardsToDiscard)) {
+                availableCards = new DeckOfCards(availableCards);
+            }
+            // Marked cards is sequence, add edges (isSequence = size >= 3)
+            else {
+                // Take first and last
+                availableCards.addCardToTop(cardsToDiscard.peek());
+                availableCards.addCardToTop(cardsToDiscard.getLast());
+            }
+        }
+
+        return availableCards;
     }
 
     /**
@@ -198,7 +228,7 @@ public class YanivGame extends GameOfCards {
      * @param card as PlayingCard
      * @return int value as Yaniv card value
      */
-    public int getYanivCardValue(PlayingCard card) {
+    public static int getYanivCardValue(PlayingCard card) {
         switch (card.getRank()) {
             case TEN:
             case JACK:

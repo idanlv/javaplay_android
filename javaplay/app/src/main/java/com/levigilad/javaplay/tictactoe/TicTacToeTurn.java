@@ -88,14 +88,14 @@ public class TicTacToeTurn extends Turn {
 
     /**
      * Update data according to Json value
-     * @param object turn data
+     * @param jsonObject turn data
      * @throws JSONException
      */
     @Override
-    public void fromJson(JSONObject object) throws JSONException {
-        super.fromJson(object);
+    public void fromJson(JSONObject jsonObject) throws JSONException {
+        super.fromJson(jsonObject);
 
-        JSONObject participants = object.getJSONObject(PARTICIPANTS);
+        JSONObject participants = jsonObject.getJSONObject(PARTICIPANTS);
 
         mParticipants = new HashMap<>();
 
@@ -106,7 +106,7 @@ public class TicTacToeTurn extends Turn {
             mParticipants.put(symbol, participants.getString(symbol.name()));
         }
 
-        this.mBoard.fromJson(object.getJSONObject(BOARD));
+        this.mBoard.fromJson(jsonObject.getJSONObject(BOARD));
 
     }
 }

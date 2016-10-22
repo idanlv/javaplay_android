@@ -49,12 +49,12 @@ public abstract class Turn implements IJsonSerializable {
 
     /**
      * Update data according to Json value
-     * @param object turn data
+     * @param jsonObject turn data
      * @throws JSONException If the json wasn't read correctly
      */
-    public void fromJson(JSONObject object) throws JSONException {
-        this.mTurnCounter = object.getInt(TURN_COUNTER);
-        this.mGameId = object.getString(GAME_ID);
+    public void fromJson(JSONObject jsonObject) throws JSONException {
+        this.mTurnCounter = jsonObject.getInt(TURN_COUNTER);
+        this.mGameId = jsonObject.getString(GAME_ID);
     }
 
     /**
