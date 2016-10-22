@@ -14,8 +14,16 @@ import com.levigilad.javaplay.infra.enums.GameOptions;
 
 import java.util.ArrayList;
 
+/**
+ * This class is in charge of creating a view for each game option
+ */
 public class GameOptionsAdapter extends ArrayAdapter<String>{
 
+    /**
+     * Constructor
+     * @param context The context in which we create the viewers
+     * @param resource The resource for the layout of each view
+     */
     public GameOptionsAdapter(Context context, int resource) {
         super(context, resource, new ArrayList<String>(){
             {
@@ -25,6 +33,13 @@ public class GameOptionsAdapter extends ArrayAdapter<String>{
             }});
     }
 
+    /**
+     * Creates a view object for given position
+     * @param position Item position
+     * @param convertView
+     * @param parent The parent view
+     * @return View for item
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
