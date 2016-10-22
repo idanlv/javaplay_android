@@ -21,10 +21,6 @@ android {
     }
 }
 
-
-
-
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'org.reflections:reflections:0.9.10'
