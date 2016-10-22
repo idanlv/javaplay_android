@@ -11,7 +11,6 @@ public class ActivityUtils {
     public static final String PLAYING_CARD_PREFIX = "playingcard_";
     public static final String DRAWABLE_TYPE_NAME = "drawable";
 
-    //TODO : check if should be moved to another util class
     /**
      * Converts dp to px
      * @param dp size
@@ -24,11 +23,10 @@ public class ActivityUtils {
         return px;
     }
 
-    //TODO : Consider moving to Playing Card
     public static Drawable getCardAsDrawable(PlayingCard playingCard, Context context) {
 
         // Build card name
-        String shapeName = PLAYING_CARD_PREFIX + playingCard.getRank().getNameString().toLowerCase()
+        String shapeName = PLAYING_CARD_PREFIX + playingCard.getRank().getName().toLowerCase()
                 + playingCard.getSuit().name().toLowerCase().charAt(0);
 
         int shapeID = context.getResources()
