@@ -195,7 +195,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
                 showGamePossibilities();
                 break;
             }
-            case LEADERBOARD: {
+            case LEADERBOARDS: {
                 Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
                 startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
                 break;
