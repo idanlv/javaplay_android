@@ -9,15 +9,15 @@ import org.json.JSONObject;
 public interface IJsonSerializable {
     /**
      * Provides Json representation of an object
-     * @return
-     * @throws JSONException
+     * @return A json representation of an object
+     * @throws JSONException if the json wasn't created correctly
      */
     JSONObject toJson() throws JSONException;
 
     /**
      * Initialize object according to Json representation
      * @param object
-     * @throws JSONException
+     * @throws JSONException if the json wasn't read correctly
      */
     void fromJson(JSONObject object) throws JSONException;
 }
