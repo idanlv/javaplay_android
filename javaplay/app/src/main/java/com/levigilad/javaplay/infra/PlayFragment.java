@@ -1,6 +1,8 @@
 package com.levigilad.javaplay.infra;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -44,6 +46,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     private Bundle mAutoMatchCriteria;
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
+    protected Context mAppContext;
 
     /**
      * Constructor: Creates a game fragment
@@ -73,6 +76,16 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 mAutoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
             }
         }
+    }
+
+    /**
+     * Set the caller Activity as context
+     * @param context Activity or fragment that current fragment was attached to
+     */
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mAppContext = context;
     }
 
     /**

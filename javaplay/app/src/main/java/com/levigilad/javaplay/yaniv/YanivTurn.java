@@ -13,13 +13,17 @@ import java.util.LinkedList;
  * This class represents Yaniv game turn data
  */
 public class YanivTurn extends Turn {
-    // Consts
+    /**
+     * Constants
+     */
     public static final String INITIALIZE_DONE = "initializeDone";
     public static final String AVAILABLE_DECK = "availableDeck";
     public static final String DISCARDED_DECK = "discardedDeck";
     public static final String AVAILABLE_CARDS = "availableCards";
 
-    // Members
+    /**
+     * Members
+     */
     private DeckOfCards mAvailableDeck;
     private DeckOfCards mDiscardedDeck;
     private LinkedList<Integer> mAvailableDiscardedCards;
