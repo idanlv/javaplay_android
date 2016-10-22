@@ -40,7 +40,8 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
+     * @param invitees invited participants
+     * @param autoMatchCriteria Auto matched users
      * @return A new instance of fragment YanivPlayFragment.
      */
     public static TicTacToeGameFragment newInstance(ArrayList<String> invitees,
@@ -53,6 +54,12 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         return fragment;
     }
 
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     * @param match Initial match instance
+     * @return A new instance of fragment YanivPlayFragment.
+     */
     public static TicTacToeGameFragment newInstance(TurnBasedMatch match) {
         TicTacToeGameFragment fragment = new TicTacToeGameFragment();
         Bundle args = new Bundle();
@@ -61,6 +68,13 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         return fragment;
     }
 
+    /**
+     * On Create View
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,6 +85,10 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         return view;
     }
 
+    /**
+     * Initializes viewer
+     * @param parentView layout view
+     */
     private void initializeView(View parentView) {
         // Fragment locked in portrait screen orientation
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
@@ -93,18 +111,14 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         setEnabledRecursively(mTableLayoutBoard, false);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
+    /**
+     * Starts a match
+     */
     @Override
     protected void startMatch() {
         try {
-            String playerId = Games.Players.getCurrentPlayerId(getApiClient());
-            String participantId = mMatch.getParticipantId(playerId);
-
-            mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
+            mCurrentPlayerSymbol =
+                    ((TicTacToeTurn)mTurnData).addParticipant(getCurrentParticipantId());
 
             mInstructionsTextView.setText(getString(R.string.games_waiting_for_player_turn));
         } catch (Exception ex) {
@@ -112,12 +126,19 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         }
     }
 
+    /**
+     * Starts a turn
+     */
     @Override
     protected void startTurn() {
+        // Generates user's symbol in case it doesn't exist
         if (mCurrentPlayerSymbol == null) {
             String participantId = getCurrentParticipantId();
+
+            // Trying to load user's symbol from turn data
             mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).getParticipantSymbol(participantId);
 
+            // User did not get a symbol yet, generating new symbol
             if (mCurrentPlayerSymbol == TicTacToeSymbol.NONE) {
                 mCurrentPlayerSymbol = ((TicTacToeTurn)mTurnData).addParticipant(participantId);
             }
@@ -128,6 +149,9 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         setEnabledRecursively(mTableLayoutBoard, true);
     }
 
+    /**
+     * Updates player's view according to turn data
+     */
     @Override
     protected void updateView() {
         Board board = ((TicTacToeTurn)mTurnData).getBoard();
@@ -159,6 +183,10 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         }
     }
 
+    /**
+     * Handles On Click events
+     * @param v viewer which was clicked on
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -201,6 +229,11 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         }
     }
 
+    /**
+     * Handles On Click events on board
+     * @param row row in board
+     * @param column column in board
+     */
     public void btnCell_OnClick(int row, int column) {
         try {
             ((TicTacToeTurn)mTurnData).getBoard().placePlayerOnBoard(mCurrentPlayerSymbol, row, column);
@@ -208,43 +241,9 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             setEnabledRecursively(mTableLayoutBoard, false);
 
             if (TicTacToeGame.isWin(((TicTacToeTurn)mTurnData).getBoard(), mCurrentPlayerSymbol)) {
-                String winnerParticipantId = getCurrentParticipantId();
-
-                List<ParticipantResult> results = new LinkedList<>();
-
-                results.add(new ParticipantResult(
-                        winnerParticipantId, ParticipantResult.MATCH_RESULT_WIN,
-                        ParticipantResult.PLACING_UNINITIALIZED));
-
-                for (String participantId : mMatch.getParticipantIds()) {
-                    if (!participantId.equals(winnerParticipantId)) {
-                        results.add(new ParticipantResult(
-                                participantId, ParticipantResult.MATCH_RESULT_LOSS,
-                                ParticipantResult.PLACING_UNINITIALIZED));
-                    }
-                }
-
-                finishMatch(results);
-
-                Games.Achievements.unlockImmediate(getApiClient(),
-                        getString(R.string.achievement_first_tic_tac_toe_win));
-
-                Games.Achievements.incrementImmediate(getApiClient(),
-                        getString(R.string.achievement_3_tic_tac_toe_wins), 1);
-
+                processWin();
             } else if (TicTacToeGame.isTie(((TicTacToeTurn)mTurnData).getBoard())) {
-                List<ParticipantResult> results = new LinkedList<>();
-
-                for (String participantId : mMatch.getParticipantIds()) {
-                    results.add(new ParticipantResult(
-                            participantId, ParticipantResult.MATCH_RESULT_LOSS,
-                            ParticipantResult.PLACING_UNINITIALIZED));
-                }
-
-                finishMatch(results);
-
-                Games.Achievements.unlockImmediate(getApiClient(),
-                        getString(R.string.achievement_first_tic_tac_toe_tie));
+                processTie();
             } else {
                 finishTurn(getNextParticipantId());
                 mInstructionsTextView.setText(getString(R.string.games_waiting_for_player_turn));
@@ -254,6 +253,63 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         }
     }
 
+    /**
+     * Processes a tie result
+     */
+    private void processTie() {
+        List<ParticipantResult> results = new LinkedList<>();
+
+        // Create tie result for all participants
+        for (String participantId : mMatch.getParticipantIds()) {
+            results.add(new ParticipantResult(
+                    participantId, ParticipantResult.MATCH_RESULT_LOSS,
+                    ParticipantResult.PLACING_UNINITIALIZED));
+        }
+
+        finishMatch(results);
+
+        // Unlock first tie
+        Games.Achievements.unlockImmediate(getApiClient(),
+                getString(R.string.achievement_first_tic_tac_toe_tie));
+    }
+
+    /**
+     * Processes a win result
+     */
+    private void processWin() {
+        String winnerParticipantId = getCurrentParticipantId();
+
+        List<ParticipantResult> results = new LinkedList<>();
+
+        results.add(new ParticipantResult(
+                winnerParticipantId, ParticipantResult.MATCH_RESULT_WIN,
+                ParticipantResult.PLACING_UNINITIALIZED));
+
+        // Create lose result for other participants
+        for (String participantId : mMatch.getParticipantIds()) {
+            if (!participantId.equals(winnerParticipantId)) {
+                results.add(new ParticipantResult(
+                        participantId, ParticipantResult.MATCH_RESULT_LOSS,
+                        ParticipantResult.PLACING_UNINITIALIZED));
+            }
+        }
+
+        finishMatch(results);
+
+        // Unlock first win
+        Games.Achievements.unlockImmediate(getApiClient(),
+                getString(R.string.achievement_first_tic_tac_toe_win));
+
+        // Unlock 3 wins
+        Games.Achievements.incrementImmediate(getApiClient(),
+                getString(R.string.achievement_3_tic_tac_toe_wins), 1);
+    }
+
+    /**
+     * Enables/Disables all inner views
+     * @param parentView parent view
+     * @param enabled Should enable or disable
+     */
     private void setEnabledRecursively(ViewGroup parentView, boolean enabled) {
         parentView.setEnabled(enabled);
         for (int i = 0; i < parentView.getChildCount(); i++) {
@@ -264,6 +320,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 if (enabled && (child instanceof Button)) {
                     Button btn = (Button) child;
 
+                    // Only enables empty cells
                     if (btn.getText().equals(getString(R.string.tictactoe_empty_cell))) {
                         child.setEnabled(enabled);
                     }
