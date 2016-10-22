@@ -10,9 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.levigilad.javaplay.infra.adapters.GameSelectionRecyclerViewAdapter;
+import com.levigilad.javaplay.infra.adapters.GamePossibilitiesRecyclerViewAdapter;
 import com.levigilad.javaplay.infra.entities.Playground;
-import com.levigilad.javaplay.infra.interfaces.NavigationDrawerCallbacks;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
 import com.levigilad.javaplay.infra.interfaces.OnItemClickListener;
 
@@ -52,7 +51,7 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerViewGameOptions.setLayoutManager(mLayoutManager);
 
-        mAdapter = new GameSelectionRecyclerViewAdapter(
+        mAdapter = new GamePossibilitiesRecyclerViewAdapter(
                 Playground.getInstance(getActivity()).getGames());
         mRecyclerViewGameOptions.setAdapter(mAdapter);
     }
@@ -60,7 +59,7 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
     @Override
     public void onResume() {
         super.onResume();
-        ((GameSelectionRecyclerViewAdapter) mAdapter).setOnClickListener(this);
+        ((GamePossibilitiesRecyclerViewAdapter) mAdapter).setOnClickListener(this);
     }
 
     @Override

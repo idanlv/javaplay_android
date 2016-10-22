@@ -4,5 +4,5 @@ public enum GameOptions {
     INBOX,
     GAMES,
     LEADERBOARD,
-    ACHIEVEMENTS
+    ACHIEVEMENTS;
 }
