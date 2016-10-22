@@ -74,6 +74,14 @@ public class DeckOfCards implements IJsonSerializable {
     }
 
     /**
+     * Clear all playing cards in the deck
+     */
+    public void clear() {
+        _cards.clear();
+    }
+
+
+    /**
      * Get playing card by index
      * @param index of the card in the deck
      * @return PlayingCard by index
