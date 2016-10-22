@@ -140,7 +140,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
                 String text;
 
-                switch (board.getCell(i, j)) {
+                switch (board.getPlayerOnBoard(i, j)) {
                     case X: {
                         text = TicTacToeSymbol.X.name();
                         break;
@@ -203,7 +203,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
     public void btnCell_OnClick(int row, int column) {
         try {
-            ((TicTacToeTurn)mTurnData).getBoard().setCell(mCurrentPlayerSymbol, row, column);
+            ((TicTacToeTurn)mTurnData).getBoard().placePlayerOnBoard(mCurrentPlayerSymbol, row, column);
 
             setEnabledRecursively(mTableLayoutBoard, false);
 
