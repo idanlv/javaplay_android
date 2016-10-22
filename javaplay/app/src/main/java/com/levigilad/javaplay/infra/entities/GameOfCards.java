@@ -30,19 +30,22 @@ public abstract class GameOfCards extends Game {
      * Generates a new shuffled deck of cards
      * @return New deck of cards
      */
-    public DeckOfCards generateDeck( int numberOfJokers) {
+    public DeckOfCards generateDeck(int numberOfDecks, int numberOfJokers) {
         DeckOfCards deck = new DeckOfCards();
 
-        // Create game deck
-        for (PlayingCardSuits symbol : PlayingCardSuits.values()) {
-            if (symbol == PlayingCardSuits.NONE) {
-                continue;
-            }
-            for (PlayingCardRanks value : PlayingCardRanks.values()) {
-                if (value == PlayingCardRanks.JOKER) {
+        // Generate n numbers of decks
+        for (int i = 0; i < numberOfDecks; i++) {
+            // Create a single game deck
+            for (PlayingCardSuits symbol : PlayingCardSuits.values()) {
+                if (symbol == PlayingCardSuits.NONE) {
                     continue;
                 }
-                deck.addCardToTop(new PlayingCard(value,symbol));
+                for (PlayingCardRanks value : PlayingCardRanks.values()) {
+                    if (value == PlayingCardRanks.JOKER) {
+                        continue;
+                    }
+                    deck.addCardToTop(new PlayingCard(value,symbol));
+                }
             }
         }
 

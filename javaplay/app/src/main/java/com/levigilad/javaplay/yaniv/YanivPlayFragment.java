@@ -5,7 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,9 +45,8 @@ public class YanivPlayFragment extends PlayFragment {
     private DeckOfCards mCurrPlayersHand;
     private DeckOfCards mAvailableDiscardedCards;
     private DeckOfCards mDiscardedCards;
-    private DeckOfCards mFreshDeckCards;
+    private DeckOfCards mGlobalCardDeck;
     private boolean mGetNewCard;
-
 
     /**
      * Designer
@@ -103,6 +101,7 @@ public class YanivPlayFragment extends PlayFragment {
 
         // Set members
         mGame = new YanivGame(getActivity().getApplicationContext());
+        mGlobalCardDeck = new DeckOfCards();
         mCurrPlayersHand = new DeckOfCards();
         mAvailableDiscardedCards = new DeckOfCards();
         mDiscardedCards = new DeckOfCards();
@@ -138,12 +137,12 @@ public class YanivPlayFragment extends PlayFragment {
         });
 
         // Start
-        mFreshDeckCards = new DeckOfCards();
-        mFreshDeckCards = mGame.generateDeck(4);
+        /*
 
         setDemoCards();
         setCardsInHandView();
         setCardsInDiscardView();
+        */
     }
 
     @Override
@@ -192,11 +191,9 @@ public class YanivPlayFragment extends PlayFragment {
     private void setCardsInHandView(){
         PlayingCard playingCard;
         Drawable drawable;
-        Context context;
         ImageView img;
         int i = 0;
 
-        context = getActivity().getApplicationContext();
         mYanivBtn.setEnabled(false);
         mHandLL.removeAllViews();
 
@@ -204,16 +201,16 @@ public class YanivPlayFragment extends PlayFragment {
 
         while (it.hasNext()) {
             playingCard = it.next();
-            img = new ImageView(context);
+            img = new ImageView(mAppContext);
 
-            drawable = ActivityUtils.getCardAsDrawable(playingCard, context);
+            drawable = ActivityUtils.getCardAsDrawable(playingCard, mAppContext);
             img.setImageDrawable(drawable);
 
             img.setId(i);
 
             img.setLayoutParams(new LinearLayout.LayoutParams(
-                    ActivityUtils.dpToPx(CARD_WIDTH_DP, context),
-                    ActivityUtils.dpToPx(CARD_HEIGHT_DP,context)));
+                    ActivityUtils.dpToPx(CARD_WIDTH_DP, mAppContext),
+                    ActivityUtils.dpToPx(CARD_HEIGHT_DP,mAppContext)));
             img.setAdjustViewBounds(true);
 
             img.setPadding(PADDING_AS_RECT_SIZE,
@@ -243,27 +240,25 @@ public class YanivPlayFragment extends PlayFragment {
     private void setCardsInDiscardView(){
         PlayingCard playingCard;
         Drawable drawable;
-        Context context;
         ImageView img;
         int i = 0;
 
-        context = getActivity().getApplicationContext();
         mDiscardedCardsLL.removeAllViews();
 
         Iterator<PlayingCard> it = mAvailableDiscardedCards.iterator();
 
         while (it.hasNext()) {
             playingCard = it.next();
-            img = new ImageView(context);
+            img = new ImageView(mAppContext);
 
-            drawable = ActivityUtils.getCardAsDrawable(playingCard,context);
+            drawable = ActivityUtils.getCardAsDrawable(playingCard,mAppContext);
             img.setImageDrawable(drawable);
 
             img.setId(i);
 
             img.setLayoutParams(new LinearLayout.LayoutParams(
-                    ActivityUtils.dpToPx(CARD_WIDTH_DP,context),
-                    ActivityUtils.dpToPx(CARD_HEIGHT_DP,context)));
+                    ActivityUtils.dpToPx(CARD_WIDTH_DP,mAppContext),
+                    ActivityUtils.dpToPx(CARD_HEIGHT_DP,mAppContext)));
             img.setAdjustViewBounds(true);
 
             img.setPadding(PADDING_AS_RECT_SIZE,
@@ -299,7 +294,7 @@ public class YanivPlayFragment extends PlayFragment {
 
     private void dealCardFromDeck(View v) {
         if (mGetNewCard) {
-            mCurrPlayersHand.addCardToBottom(mFreshDeckCards.pop());
+            mCurrPlayersHand.addCardToBottom(mGlobalCardDeck.pop());
             setCardsInHandView();
             mGetNewCard = false;
         }
@@ -351,6 +346,15 @@ public class YanivPlayFragment extends PlayFragment {
 
     @Override
     protected void startMatch() {
+        mGlobalCardDeck = mGame.generateDeck(2, 4);
+
+        // Get my cards from deck
+        for (int i = 0; i < mGame.getInitialNumOfPlayerCards(); i++){
+            mCurrPlayersHand.addCardToTop(mGlobalCardDeck.pop());
+        }
+
+        // Draw first card
+        mAvailableDiscardedCards.addCardToTop(mGlobalCardDeck.pop());
 
     }
 
@@ -361,7 +365,8 @@ public class YanivPlayFragment extends PlayFragment {
 
     @Override
     protected void updateView() {
-
+        setCardsInDiscardView();
+        setCardsInHandView();
     }
 
 }
