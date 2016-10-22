@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -59,6 +60,14 @@ public class GameOptionsActivity extends BaseGameActivity implements
 
         mGameId = getIntent().getStringExtra(GAME_ID);
 
+        if (savedInstanceState == null) {
+            // Only create fragment if activity is started for the first time
+            showGamePossibilities();
+        } else {
+            // do nothing - fragment is recreated automatically
+        }
+
+
         initializeViews();
     }
 
@@ -69,7 +78,7 @@ public class GameOptionsActivity extends BaseGameActivity implements
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout), GameOptions.GAMES.ordinal());
+                (DrawerLayout) findViewById(R.id.drawer_layout));
 
         setTitle(getString(R.string.app_name));
     }
@@ -174,9 +183,11 @@ public class GameOptionsActivity extends BaseGameActivity implements
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         if (!isSignedIn()) {
-            showGamePossibilities();
             return;
         }
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+
         GameOptions option = GameOptions.values()[position];
 
         switch (option) {
