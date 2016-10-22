@@ -112,7 +112,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout) {
+    public void setup(int fragmentId, DrawerLayout drawerLayout) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 

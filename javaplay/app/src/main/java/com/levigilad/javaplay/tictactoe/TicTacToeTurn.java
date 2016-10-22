@@ -94,7 +94,7 @@ public class TicTacToeTurn extends Turn {
     @Override
     public void fromJson(JSONObject object) throws JSONException {
         super.fromJson(object);
-        
+
         JSONObject participants = object.getJSONObject(PARTICIPANTS);
 
         mParticipants = new HashMap<>();
