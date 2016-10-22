@@ -16,7 +16,6 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.basegameutils.games.GameHelper;
 import com.levigilad.javaplay.R;
-import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.entities.Turn;
 import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
 
@@ -25,27 +24,41 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a fragment of a game
+ */
 public abstract class PlayFragment extends BaseGameFragment implements OnTurnBasedMatchReceivedListener {
+    /**
+     * Constants
+     */
     private static final String TAG = "PlayFragment";
-
+    private static final int REQUESTED_CLIENTS = GameHelper.CLIENT_GAMES;
     protected static final String INVITEES = "INVITEES";
-    protected static final String AUTO_MATCH = "AUTOMATCH";
+    protected static final String AUTO_MATCH = "AUTO_MATCH";
     protected static final String MATCH_ID = "MATCH_ID";
 
-    private static final int REQUESTED_CLIENTS = GameHelper.CLIENT_GAMES;
-
+    /**
+     * Members
+     */
     private ArrayList<String> mInvitees;
     private Bundle mAutoMatchCriteria;
-
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
 
+    /**
+     * Constructor: Creates a game fragment
+     * @param turnData A turn data to start with
+     */
     public PlayFragment(Turn turnData) {
         super(REQUESTED_CLIENTS);
         mTurnData = turnData;
     }
 
 
+    /**
+     * On Create
+     * @param savedInstanceState instance state
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +75,11 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         }
     }
 
+    /**
+     * Performs actions after a successful sign in
+     */
     public void onSignInSucceeded() {
+        // We're starting a new match
         if (mMatch == null) {
             TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
                     .addInvitedPlayers(mInvitees)
@@ -78,7 +95,8 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                             processResult(initiateMatchResult);
                         }
                     });
-        } else {
+        } // We have an existing game
+        else {
             handleMatchUpdate();
         }
     }
@@ -86,10 +104,9 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     /**
      * Returns false if something went wrong, probably. This should handle
      * more cases, and probably report more accurate results.
-     *
-     * @param match
-     * @param statusCode
-     * @return
+     * @param match match instance
+     * @param statusCode status code of result
+     * @return True if no error has occurred, otherwise false
      */
     private boolean checkStatusCode(TurnBasedMatch match, int statusCode) {
         switch (statusCode) {
@@ -99,7 +116,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 // This is OK; the action is stored by Google Play Services and will
                 // be dealt with later.
                 Toast.makeText(
-                        this.getActivity().getApplicationContext(),
+                        this.getActivity(),
                         "Stored action for later.  (Please remove this toast before release.)",
                         Toast.LENGTH_SHORT).show();
                 // NOTE: This toast is for informative reasons only; please remove
@@ -128,14 +145,16 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 break;
             default:
                 showErrorMessage(statusCode, R.string.unexpected_status);
-                Log.d(TAG, "Did not have warning or string to deal with: "
-                        + statusCode);
+                Log.d(TAG, "Did not have warning or string to deal with: " + statusCode);
         }
 
         return false;
     }
 
-
+    /**
+     * Performs initiate of a match
+     * @param result Initiate match result
+     */
     public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         mMatch = result.getMatch();
 
@@ -158,25 +177,11 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         }
     }
 
-    private void handleMatchUpdate() {
-        try {
-            if (mMatch.getData() != null) {
-                mTurnData.update(mMatch.getData());
-                updateView();
-            }
-
-            if (mMatch.canRematch()) {
-                askForRematch();
-            } else if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                mTurnData.increaseTurnCounter();
-                startTurn();
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Process update match result
+     * We reach this when we or any other participant updates the match
+     * @param result Update match result
+     */
     protected void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
         mMatch = result.getMatch();
 
@@ -187,39 +192,15 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         handleMatchUpdate();
     }
 
-    private void processResult(TurnBasedMultiplayer.LoadMatchResult result) {
-        mMatch = result.getMatch();
-
-        if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
-            return;
-        }
-
-        handleMatchUpdate();
-    }
-
-    protected void processResult(TurnBasedMultiplayer.CancelMatchResult result) {
-        if (!checkStatusCode(null, result.getStatus().getStatusCode())) {
-            return;
-        }
-
-        // TODO
-    }
-
-    protected void processResult(TurnBasedMultiplayer.LeaveMatchResult result) {
-        mMatch = result.getMatch();
-
-        if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
-            return;
-        }
-
-        // TODO
-    }
-
-    protected void finishTurn(String participantId) {
+    /**
+     * Finishes a turn and update Google Games
+     * @param nextParticipantId Next participant id
+     */
+    protected void finishTurn(String nextParticipantId) {
         try {
             updateView();
 
-            Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(), mTurnData.export(), participantId)
+            Games.TurnBasedMultiplayer.takeTurn(getApiClient(), mMatch.getMatchId(), mTurnData.export(), nextParticipantId)
                     .setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
                         @Override
                         public void onResult(@NonNull TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
@@ -227,10 +208,15 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                         }
                     });
         } catch (JSONException e) {
-            e.printStackTrace();
+            // This shouldn't be reached on production version
+            Log.e(TAG, e.getMessage());
         }
     }
 
+    /**
+     * Finishes a match and update Google Games
+     * @param results Game result for each participant
+     */
     protected void finishMatch(List<ParticipantResult> results) {
         try {
             Games.TurnBasedMultiplayer.finishMatch(getApiClient(), mMatch.getMatchId(),
@@ -241,7 +227,8 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 }
             });
         } catch (JSONException e) {
-            e.printStackTrace();
+            // This shouldn't be reached on production version
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -282,23 +269,55 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         }
     }
 
-    protected String getCurrentParticipantId() {
+    /**
+     * Returns the participant id for the current player
+     * @return Participant id
+     */
+    public String getCurrentParticipantId() {
         String playerId = Games.Players.getCurrentPlayerId(getApiClient());
         return mMatch.getParticipantId(playerId);
     }
 
+    /**
+     * This method is called whenever a match update is received
+     * @param match The updated match
+     */
     public void onTurnBasedMatchReceived(TurnBasedMatch match) {
         mMatch = match;
 
         handleMatchUpdate();
     }
 
-    protected abstract void startMatch();
+    /**
+     * Handle any match update that was received from Google Games
+     */
+    private void handleMatchUpdate() {
+        try {
+            if (mMatch.getData() != null) {
+                mTurnData.update(mMatch.getData());
+                updateView();
+            }
 
-    protected abstract void startTurn();
+            // Checks if the user can ask for a rematch.
+            // This can only happen when the game is completed
+            if (mMatch.canRematch()) {
+                askForRematch();
+            }
 
-    protected abstract void updateView();
+            // Start my turn
+            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                mTurnData.increaseTurnCounter();
+                startTurn();
+            }
+        } catch (JSONException e) {
+            // This shouldn't be reached on production version
+            Log.e(TAG, e.getMessage());
+        }
+    }
 
+    /**
+     * Asks the player if he wants to rematch and start rematch if user agrees
+     */
     private void askForRematch() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
 
@@ -323,6 +342,9 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         alertDialogBuilder.show();
     }
 
+    /**
+     * Start rematch for current match
+     */
     private void rematch() {
         if (mMatch.canRematch()) {
             Games.TurnBasedMultiplayer.rematch(getApiClient(), mMatch.getMatchId()).setResultCallback(
@@ -335,4 +357,19 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
             mMatch = null;
         }
     }
+
+    /**
+     * Starts a match
+     */
+    protected abstract void startMatch();
+
+    /**
+     * Starts a turn
+     */
+    protected abstract void startTurn();
+
+    /**
+     * Updates player's view according to turn data
+     */
+    protected abstract void updateView();
 }
