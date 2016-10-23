@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 
 import com.levigilad.javaplay.infra.entities.PlayingCard;
 
+/**
+ * Activity utils
+ */
 public class ActivityUtils {
 
     public static final String PLAYING_CARD_PREFIX = "playingcard_";

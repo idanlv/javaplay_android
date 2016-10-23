@@ -19,7 +19,6 @@ public class YanivTurn extends Turn {
      * Constants
      */
     public static final String GAME_NAME = "Yaniv";
-    public static final String INITIALIZE_DONE = "initializeDone";
     public static final String AVAILABLE_DISCARDED_CARDS = "mAvailableDiscardedCards";
     public static final String DISCARDED_CARDS = "mDiscardedCards";
     public static final String GLOBAL_CARD_DECK = "mGlobalCardDeck";
@@ -42,7 +41,7 @@ public class YanivTurn extends Turn {
         mPlayersHands = new HashMap<>();
     }
 
-    /**
+    /** TODO
      * Retrieve Json representation of object
      * @return Json
      * @throws JSONException
@@ -65,7 +64,7 @@ public class YanivTurn extends Turn {
         return gameData;
     }
 
-    /**
+    /** TODO
      * Update data according to Json value
      * @param jsonObject turn data
      * @throws JSONException
@@ -93,36 +92,36 @@ public class YanivTurn extends Turn {
         }
     }
 
-    public HashMap<String, DeckOfCards> getmPlayersHands() {
+    /**
+     * Get players hands
+     * @return players hands as HashMap
+     */
+    public HashMap<String, DeckOfCards> getPlayersHands() {
         return mPlayersHands;
     }
 
-    public void setmPlayersHands(HashMap<String, DeckOfCards> mPlayersHands) {
-        this.mPlayersHands = mPlayersHands;
-    }
-
-    public DeckOfCards getmAvailableDiscardedCards() {
+    /**
+     * Get available discarded cards
+     * @return get available discarded cards as DeckOfCards
+     */
+    public DeckOfCards getAvailableDiscardedCards() {
         return mAvailableDiscardedCards;
     }
 
-    public void setmAvailableDiscardedCards(DeckOfCards mAvailableDiscardedCards) {
-        this.mAvailableDiscardedCards = mAvailableDiscardedCards;
-    }
-
-
-    public DeckOfCards getmDiscardedCards() {
+    /**
+     * Get discarded cards
+     * @return get discarded cards as DeckOfCards
+     */
+    public DeckOfCards getDiscardedCards() {
         return mDiscardedCards;
     }
 
-    public void setmDiscardedCards(DeckOfCards mDiscardedCards) {
-        this.mDiscardedCards = mDiscardedCards;
-    }
-
-    public DeckOfCards getmGlobalCardDeck() {
+    /**
+     * Get global card deck
+     * @return get global card deck as DeckOfCards
+     */
+    public DeckOfCards getGlobalCardDeck() {
         return mGlobalCardDeck;
     }
 
-    public void setmGlobalCardDeck(DeckOfCards mGlobalCardDeck) {
-        this.mGlobalCardDeck = mGlobalCardDeck;
-    }
 }

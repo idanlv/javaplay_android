@@ -28,11 +28,9 @@ import java.util.Iterator;
 
 
 /* TODO :
-    1) Prevent Discard from accruing twice
-    2) calculateScore(Array deckofcards) - return array key value of player and score
-    3) convert players deck to array
-    4) make yaniv
-    5) cards history and scores
+    0) fix bugs
+    1) make yaniv
+    2) cards history and scores
 
     Flow :
     1) deal cards to all
@@ -40,7 +38,7 @@ import java.util.Iterator;
         0) yaniv - yes\no
         a) discard cards
         b) take cards
-        c) allowed discarted cards to next player
+        c) End Turn : allowed discarted cards to next player
 */
 public class YanivPlayFragment extends PlayFragment {
     /**
@@ -178,7 +176,7 @@ public class YanivPlayFragment extends PlayFragment {
         Iterator<PlayingCard> it;
 
         // Get marked cards to discarded deck
-        it = getmCurrPlayersHand().iterator();
+        it = getCurrPlayersHand().iterator();
         while (it.hasNext()) {
             playingCard = it.next();
             v = mHandLL.getChildAt(i);
@@ -196,7 +194,7 @@ public class YanivPlayFragment extends PlayFragment {
             it = mPlayersMarkedCards.iterator();
             while (it.hasNext()) {
                 playingCard = it.next();
-                getmCurrPlayersHand().removeCard(playingCard);
+                getCurrPlayersHand().removeCard(playingCard);
             }
 
             showCardsInHandView();
@@ -218,7 +216,7 @@ public class YanivPlayFragment extends PlayFragment {
         mHandLL.removeAllViews();
 
         // Draw cards
-        Iterator<PlayingCard> it = getmCurrPlayersHand().iterator();
+        Iterator<PlayingCard> it = getCurrPlayersHand().iterator();
         while (it.hasNext()) {
             playingCard = it.next();
             img = new ImageView(mAppContext);
@@ -252,7 +250,7 @@ public class YanivPlayFragment extends PlayFragment {
         }
 
         // Update my score
-        mScoreTV.setText("" + YanivGame.calculateDeckScore(getmCurrPlayersHand()));
+        mScoreTV.setText("" + YanivGame.calculateDeckScore(getCurrPlayersHand()));
     }
 
     /**
@@ -325,7 +323,7 @@ public class YanivPlayFragment extends PlayFragment {
     private void getCardFromAvailableDiscardedPile(View v) {
         PlayingCard playingCard;
         if (mGetNewCard) {
-            getmCurrPlayersHand().addCardToBottom(getAvailableDiscardedCards().get(v.getId()));
+            getCurrPlayersHand().addCardToBottom(getAvailableDiscardedCards().get(v.getId()));
 
             // Get unused cards to discarded pile
             Iterator<PlayingCard> it = getAvailableDiscardedCards().iterator();
@@ -347,13 +345,13 @@ public class YanivPlayFragment extends PlayFragment {
     private void drawCardFromDeck(View v) {
         if (mGetNewCard) {
             // If we have fresh cards, deal them
-            if (getmGlobalCardDeck().size() > 0) {
-                getmCurrPlayersHand().addCardToBottom(getmGlobalCardDeck().pop());
+            if (getGlobalCardDeck().size() > 0) {
+                getCurrPlayersHand().addCardToBottom(getGlobalCardDeck().pop());
             }
             // No cards in deck, add discarded cards to global and reshuffle
             else {
-                getmGlobalCardDeck().addAll(getDiscardedCards());
-                getmGlobalCardDeck().shuffle();
+                getGlobalCardDeck().addAll(getDiscardedCards());
+                getGlobalCardDeck().shuffle();
                 getDiscardedCards().clear();
             }
             mGetNewCard = false;
@@ -379,6 +377,7 @@ public class YanivPlayFragment extends PlayFragment {
 
         setPlayStatus(false);
         finishTurn(getNextParticipantId());
+        Log.i("EndOfTurn","Turn Ended");
     }
 
 
@@ -396,14 +395,14 @@ public class YanivPlayFragment extends PlayFragment {
     private void dealCards() {
         ArrayList<String> participantIds = mMatch.getParticipantIds();
 
-        getmGlobalCardDeck().replace(YanivGame.generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS));
+        getGlobalCardDeck().replace(YanivGame.generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS));
 
         for(String participant : participantIds) {
             DeckOfCards deck = new DeckOfCards();
 
             // Deal Hand to participant
             for (int i = 0; i < mGame.getInitialNumOfPlayerCards(); i++){
-                deck.addCardToTop(getmGlobalCardDeck().pop());
+                deck.addCardToTop(getGlobalCardDeck().pop());
             }
 
             // Save
@@ -411,7 +410,7 @@ public class YanivPlayFragment extends PlayFragment {
         }
 
         // Draw first card to available discarded cards
-        getAvailableDiscardedCards().addCardToTop(getmGlobalCardDeck().pop());
+        getAvailableDiscardedCards().addCardToTop(getGlobalCardDeck().pop());
     }
 
     /**
@@ -425,7 +424,7 @@ public class YanivPlayFragment extends PlayFragment {
         mDiscardBtn.setEnabled(enabled);
 
         // Set enabled only if allowed
-        if (enabled && YanivGame.canYaniv(getmCurrPlayersHand())) {
+        if (enabled && YanivGame.canYaniv(getCurrPlayersHand())) {
             mYanivBtn.setEnabled(true);
         } else {
             mYanivBtn.setEnabled(false);
@@ -462,19 +461,35 @@ public class YanivPlayFragment extends PlayFragment {
         showCardsInHandView();
     }
 
+    /**
+     * Get available discarded cards from YanivTurn
+     * @return get available discarded cards as DeckOfCards from YanivTurn
+     */
     private DeckOfCards getAvailableDiscardedCards() {
-        return ((YanivTurn)mTurnData).getmAvailableDiscardedCards();
+        return ((YanivTurn)mTurnData).getAvailableDiscardedCards();
     }
 
+    /**
+     * Get discarded cards from YanivTurn
+     * @return get discarded cards as DeckOfCards from YanivTurn
+     */
     private DeckOfCards getDiscardedCards() {
-        return ((YanivTurn)mTurnData).getmDiscardedCards();
+        return ((YanivTurn)mTurnData).getDiscardedCards();
     }
 
-    private DeckOfCards getmGlobalCardDeck() {
-        return ((YanivTurn)mTurnData).getmGlobalCardDeck();
+    /**
+     * Get global card deck from YanivTurn
+     * @return get global card deck as DeckOfCards from YanivTurn
+     */
+    private DeckOfCards getGlobalCardDeck() {
+        return ((YanivTurn)mTurnData).getGlobalCardDeck();
     }
 
-    private DeckOfCards getmCurrPlayersHand() {
-        return ((YanivTurn)mTurnData).getmPlayersHands().get(getCurrentParticipantId());
+    /**
+     * Get my current deck of cards from YanivTurn
+     * @return get my current deck of cards as DeckOfCards from YanivTurn
+     */
+    private DeckOfCards getCurrPlayersHand() {
+        return ((YanivTurn)mTurnData).getPlayersHands().get(getCurrentParticipantId());
     }
 }
