@@ -1,11 +1,9 @@
 package com.levigilad.javaplay.yaniv;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,51 +13,45 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
+import com.levigilad.javaplay.infra.ActivityUtils;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
-/*
-  TODO: 1) Convert to fragment
-        2) Convert to turn based game
-        3) Play with others
-        4) QA
-        5) Check royal's hang
-  */
+
+// TODO : Prevend Discard from accruing twice
 public class YanivPlayFragment extends PlayFragment {
     /**
      * Constants
      */
     private static final String TAG = "YanivPlayFragment";
-    private static final String PLAYING_CARD_PREFIX = "playingcard_";
-    private static final String DRAWABLE_TYPE_NAME = "drawable";
     private static final int CARD_WIDTH_DP = 70;
     private static final int CARD_HEIGHT_DP = 100;
     private static final int PADDING_AS_RECT_SIZE= 5;
     private static final float LIGHTED_IMAGE_VIEW_ALPHA = 1f;
     private static final float DIMMED_IMAGE_VIEW_ALPHA = 0.6f;
+    private static final int DEFAULT_NUMBER_OF_DECKS = 2;
+    private static final int DEFAULT_NUMBER_OF_JOKERS = 4;
+    private static final int MARKED_IMAGE_BACKGROUND = Color.BLUE;
 
     /**
      * Members
      */
     private YanivGame mGame;
-    private DeckOfCards mPlayersHand;
+    private DeckOfCards mCurrPlayersHand;
+    private DeckOfCards mAvailableDiscardedCards;
     private DeckOfCards mDiscardedCards;
-    private DeckOfCards mFreshDeckCards;
+    private DeckOfCards mGlobalCardDeck;
+    private DeckOfCards mPlayersMarkedCards;
     private boolean mGetNewCard;
-
 
     /**
      * Designer
@@ -106,17 +98,23 @@ public class YanivPlayFragment extends PlayFragment {
     // Like the onCreate in Activity
     private void initializeView(View parentView) {
 
+        // Set game Theme
         getActivity().setTheme(android.R.style.Theme_Material_NoActionBar_Fullscreen);
-        //! setContentView(R.layout.activity_main);
+
         // Fragment locked in landscape screen orientation
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
+        // Set members
+        YanivTurn turn = (YanivTurn)mTurnData; // Local var for YanivTurn
         mGame = new YanivGame(getActivity().getApplicationContext());
-        mPlayersHand = new DeckOfCards();
-        mDiscardedCards = new DeckOfCards();
+        mCurrPlayersHand = turn.getmCurrPlayersHand(); // use member by ref
+        mAvailableDiscardedCards = turn.getmAvailableDiscardedCards(); // use member by ref
+        mDiscardedCards = turn.getmDiscardedCards(); // use member by ref
+        mGlobalCardDeck = turn.getmGlobalCardDeck(); // use member by ref
+        mPlayersMarkedCards = new DeckOfCards();
         mGetNewCard = false;
 
-        // Hook Id's
+        // Hook id's
         mHandLL = (LinearLayout) parentView.findViewById(R.id.ll_hand);
         mDiscardedCardsLL = (LinearLayout) parentView.findViewById(R.id.ll_discarded);
         mDeckIV = (ImageView) parentView.findViewById(R.id.iv_deck);
@@ -129,7 +127,7 @@ public class YanivPlayFragment extends PlayFragment {
         mDeckIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dealCardFromDeck(v);
+                drawCardFromDeck(v);
             }
         });
         mDiscardBtn.setOnClickListener(new View.OnClickListener() {
@@ -144,14 +142,6 @@ public class YanivPlayFragment extends PlayFragment {
                 declareYaniv();
             }
         });
-
-        // Start
-        mFreshDeckCards = new DeckOfCards();
-        mFreshDeckCards = mGame.generateDeck(4);
-
-        setDemoCards();
-        setCardsInHandView();
-        setCardsInDiscardView();
     }
 
     @Override
@@ -164,58 +154,86 @@ public class YanivPlayFragment extends PlayFragment {
         return view;
     }
 
+    /**
+     * Clicked the discard button
+     */
     private void discard() {
-
         PlayingCard playingCard;
         View v;
         int i = 0;
-        DeckOfCards discardedCards = new DeckOfCards();
+
+        mPlayersMarkedCards.clear();
         Iterator<PlayingCard> it;
 
         // Get marked cards to discarded deck
-        it = mPlayersHand.iterator();
+        it = mCurrPlayersHand.iterator();
         while (it.hasNext()) {
             playingCard = it.next();
             v = mHandLL.getChildAt(i);
             if (v.isActivated()) {
-                discardedCards.addCardToTop(playingCard);
+                mPlayersMarkedCards.addCardToTop(playingCard);
             }
             i++;
         }
 
+        if (YanivGame.isCardsDiscardValid(mPlayersMarkedCards)) {
 
-        if (mGame.isCardsDiscardValid(discardedCards)) {
-            mGetNewCard = true;
-
-            // Remove discarded cards
-            it = discardedCards.iterator();
+            // Remove discarded cards from players hand
+            it = mPlayersMarkedCards.iterator();
             while (it.hasNext()) {
                 playingCard = it.next();
-                mPlayersHand.removeCard(playingCard);
+                mCurrPlayersHand.removeCard(playingCard);
             }
-            setCardsInHandView();
+
+            showCardsInHandView();
+            mGetNewCard = true;
+
         }
     }
-
-    private void setCardsInHandView(){
+    // TODO: write comment
+    private void playerEndOfTurn(){
         PlayingCard playingCard;
+        Iterator<PlayingCard> it;
+
+        // Move available discard to discard
+        it = mAvailableDiscardedCards.iterator();
+        while (it.hasNext()) {
+            playingCard = it.next();
+            mDiscardedCards.addCardToTop(playingCard);
+        }
+        mAvailableDiscardedCards.replace(
+                YanivGame.getAvailableCardsFromDiscard(mPlayersMarkedCards));
+    }
+
+    /**
+     * Show the cards in the players hand and set the listeners for the cards
+     */
+    private void showCardsInHandView(){
+        PlayingCard playingCard;
+        Drawable drawable;
         ImageView img;
         int i = 0;
 
+        // Disable Yaniv declaration options
         mYanivBtn.setEnabled(false);
+
+        // Clear all cards from view
         mHandLL.removeAllViews();
 
-        Iterator<PlayingCard> it = mPlayersHand.iterator();
-
+        // Draw cards
+        Iterator<PlayingCard> it = mCurrPlayersHand.iterator();
         while (it.hasNext()) {
             playingCard = it.next();
-            img = new ImageView(getActivity().getApplicationContext());
-            img.setImageDrawable(getCardAsDrawable(playingCard));
+            img = new ImageView(mAppContext);
+
+            drawable = ActivityUtils.getCardAsDrawable(playingCard, mAppContext);
+            img.setImageDrawable(drawable);
 
             img.setId(i);
 
             img.setLayoutParams(new LinearLayout.LayoutParams(
-                    dpToPx(CARD_WIDTH_DP),dpToPx(CARD_HEIGHT_DP)));
+                    ActivityUtils.dpToPx(CARD_WIDTH_DP, mAppContext),
+                    ActivityUtils.dpToPx(CARD_HEIGHT_DP,mAppContext)));
             img.setAdjustViewBounds(true);
 
             img.setPadding(PADDING_AS_RECT_SIZE,
@@ -227,7 +245,7 @@ public class YanivPlayFragment extends PlayFragment {
             img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    setMarkedImageView(v);
+                    playerCardOnClick(v);
                 }
             });
 
@@ -236,30 +254,55 @@ public class YanivPlayFragment extends PlayFragment {
             i++;
         }
 
-        mScoreTV.setText("" + mGame.calculateDeckScore(mPlayersHand));
-        if (mGame.canYaniv(mPlayersHand)) {
+        // Update my score and set yaniv button if allowed
+        mScoreTV.setText("" + mGame.calculateDeckScore(mCurrPlayersHand));
+        if (mGame.canYaniv(mCurrPlayersHand)) {
             mYanivBtn.setEnabled(true);
         }
     }
 
-    private void setCardsInDiscardView(){
+    /**
+     * Mark the card that was clicked
+     * @param v as clicked view
+     */
+    private void playerCardOnClick(View v) {
+        if (v.isActivated()) {
+            v.setAlpha(LIGHTED_IMAGE_VIEW_ALPHA);
+            v.setBackgroundColor(Color.TRANSPARENT);
+            v.setActivated(false);
+        } else {
+            v.setAlpha(DIMMED_IMAGE_VIEW_ALPHA);
+            v.setBackgroundColor(MARKED_IMAGE_BACKGROUND);
+            v.setActivated(true);
+        }
+    }
+
+    /**
+     * Show the available discarded cards and set the listeners
+     */
+    private void showCardsInDiscardView(){
         PlayingCard playingCard;
+        Drawable drawable;
         ImageView img;
         int i = 0;
 
+        // Clear all cards from view
         mDiscardedCardsLL.removeAllViews();
 
-        Iterator<PlayingCard> it = mDiscardedCards.iterator();
-
+        // Draw cards
+        Iterator<PlayingCard> it = mAvailableDiscardedCards.iterator();
         while (it.hasNext()) {
             playingCard = it.next();
-            img = new ImageView(getActivity().getApplicationContext());
-            img.setImageDrawable(getCardAsDrawable(playingCard));
+            img = new ImageView(mAppContext);
+
+            drawable = ActivityUtils.getCardAsDrawable(playingCard,mAppContext);
+            img.setImageDrawable(drawable);
 
             img.setId(i);
 
             img.setLayoutParams(new LinearLayout.LayoutParams(
-                    dpToPx(CARD_WIDTH_DP),dpToPx(CARD_HEIGHT_DP)));
+                    ActivityUtils.dpToPx(CARD_WIDTH_DP,mAppContext),
+                    ActivityUtils.dpToPx(CARD_HEIGHT_DP,mAppContext)));
             img.setAdjustViewBounds(true);
 
             img.setPadding(PADDING_AS_RECT_SIZE,
@@ -271,7 +314,7 @@ public class YanivPlayFragment extends PlayFragment {
             img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getCardFromDiscardedPile(v);
+                    getCardFromAvailableDiscardedPile(v);
                 }
             });
 
@@ -281,67 +324,53 @@ public class YanivPlayFragment extends PlayFragment {
         }
     }
 
-    private void setMarkedImageView(View v) {
-        if (v.isActivated()) {
-            v.setAlpha(LIGHTED_IMAGE_VIEW_ALPHA);
-            v.setBackgroundColor(Color.TRANSPARENT);
-            v.setActivated(false);
-        } else {
-            v.setAlpha(DIMMED_IMAGE_VIEW_ALPHA);
-            v.setBackgroundColor(Color.BLUE);
-            v.setActivated(true);
-        }
-    }
-
-    private void dealCardFromDeck(View v) {
-        if (mGetNewCard) {
-            mPlayersHand.addCardToBottom(mFreshDeckCards.pop());
-            setCardsInHandView();
-            mGetNewCard = false;
-        }
-    }
-
-    private void getCardFromDiscardedPile(View v) {
-        if (mGetNewCard) {
-            mPlayersHand.addCardToBottom(mDiscardedCards.get(v.getId()));
-            mDiscardedCards.removeCardByIndex(v.getId());
-            setCardsInDiscardView();
-            setCardsInHandView();
-            mGetNewCard = false;
-        }
-    }
-
-    private void declareYaniv() {
-        Log.println(Log.INFO,"yaniv","Yaniv !");
-    }
-
-    //TODO : Consider moving to Playing Card
-    private Drawable getCardAsDrawable(PlayingCard playingCard) {
-        Context context = getActivity().getApplicationContext();
-
-        // Build card name
-        String shapeName = PLAYING_CARD_PREFIX + playingCard.getRank().getNameString().toLowerCase()
-                + playingCard.getSuit().name().toLowerCase().charAt(0);
-
-        int shapeID = context.getResources()
-                .getIdentifier(shapeName,DRAWABLE_TYPE_NAME,context.getPackageName());
-
-        Drawable drawable = context.getResources().getDrawable(shapeID,null);
-
-        return drawable;
-    }
-
-    //TODO : check if should be moved to another util class
     /**
-     * Converts dp to px
-     * @param dp size
-     * @return size in px
+     * Get the selected card from available discarded pile
+     * @param v as the clicked view (card)
      */
-    public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics =
-                getActivity().getApplicationContext().getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
+    private void getCardFromAvailableDiscardedPile(View v) {
+        PlayingCard playingCard;
+        if (mGetNewCard) {
+            mCurrPlayersHand.addCardToBottom(mAvailableDiscardedCards.get(v.getId()));
+
+            // Get unused cards to discarded pile
+            Iterator<PlayingCard> it = mAvailableDiscardedCards.iterator();
+            while (it.hasNext()) {
+                playingCard = it.next();
+                mDiscardedCards.addCardToTop(playingCard);
+            }
+            mAvailableDiscardedCards.clear();
+
+            mGetNewCard = false;
+        }
+    }
+
+    /**
+     * Draw a new card from the global card deck
+     * @param v as the View clicked
+     */
+    private void drawCardFromDeck(View v) {
+        if (mGetNewCard) {
+            // If we have fresh cards, deal them
+            if (mGlobalCardDeck.size() > 0) {
+                mCurrPlayersHand.addCardToBottom(mGlobalCardDeck.pop());
+            }
+            // No cards in deck, add discarted cards to global and reshuffle
+            else {
+                mGlobalCardDeck.addAll(mDiscardedCards);
+                mGlobalCardDeck.shuffle();
+                mDiscardedCards.clear();
+            }
+            mGetNewCard = false;
+        }
+    }
+
+    /**
+     * Declare Yaniv and finish session
+     */
+    private void declareYaniv() {
+        //TODO : make somthing here
+        Log.i(TAG, "Yaniv !");
     }
 
     //TODO: Del demo for testing
@@ -352,11 +381,11 @@ public class YanivPlayFragment extends PlayFragment {
         PlayingCard pc4 = new PlayingCard(PlayingCardRanks.FOUR, PlayingCardSuits.CLUBS);
         PlayingCard pc5 = new PlayingCard(PlayingCardRanks.FIVE, PlayingCardSuits.CLUBS);
 
-        mPlayersHand.addCardToTop(pc1);
-        mPlayersHand.addCardToTop(pc2);
-        mPlayersHand.addCardToTop(pc3);
-        mPlayersHand.addCardToTop(pc4);
-        mPlayersHand.addCardToTop(pc5);
+        mCurrPlayersHand.addCardToTop(pc1);
+        mCurrPlayersHand.addCardToTop(pc2);
+        mCurrPlayersHand.addCardToTop(pc3);
+        mCurrPlayersHand.addCardToTop(pc4);
+        mCurrPlayersHand.addCardToTop(pc5);
 
         PlayingCard dpc1 = new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.HEARTS);
         PlayingCard dpc2 = new PlayingCard(PlayingCardRanks.TWO, PlayingCardSuits.HEARTS);
@@ -366,27 +395,51 @@ public class YanivPlayFragment extends PlayFragment {
         PlayingCard dpc4 = new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE);
         PlayingCard dpc5 = new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE);
 
-        mDiscardedCards.addCardToTop(dpc1);
-        mDiscardedCards.addCardToTop(dpc2);
-        mDiscardedCards.addCardToTop(dpc3);
-        mDiscardedCards.addCardToTop(dpc4);
-        mDiscardedCards.addCardToTop(dpc5);
+        mAvailableDiscardedCards.addCardToTop(dpc1);
+        mAvailableDiscardedCards.addCardToTop(dpc2);
+        mAvailableDiscardedCards.addCardToTop(dpc3);
+        mAvailableDiscardedCards.addCardToTop(dpc4);
+        mAvailableDiscardedCards.addCardToTop(dpc5);
 
     }
 
+    /**
+     * Generate the playing deck's for stat of game
+     */
+    private void startOfGame() {
+        mGlobalCardDeck = mGame.generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS);
+
+        // Get my cards from deck
+        for (int i = 0; i < mGame.getInitialNumOfPlayerCards(); i++){
+            mCurrPlayersHand.addCardToTop(mGlobalCardDeck.pop());
+        }
+
+        // Draw first card to available discarded cards
+        mAvailableDiscardedCards.addCardToTop(mGlobalCardDeck.pop());
+    }
+
+    /**
+     * Start of match
+     */
     @Override
     protected void startMatch() {
-
+        startOfGame();
     }
 
+    /**
+     * User take turn
+     */
     @Override
     protected void startTurn() {
 
     }
 
+    /**
+     * Update the user view
+     */
     @Override
     protected void updateView() {
-
+        showCardsInDiscardView();
+        showCardsInHandView();
     }
-
 }

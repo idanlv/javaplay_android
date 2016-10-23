@@ -21,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.levigilad.javaplay.infra.adapters.GameOptionsAdapter;
-import com.levigilad.javaplay.infra.enums.GameOptions;
 import com.levigilad.javaplay.infra.interfaces.NavigationDrawerCallbacks;
 
 /**
@@ -56,7 +55,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
     private ListView mDrawerListView;
     private View mFragmentContainerView;
 
-    private int mCurrentSelectedPosition = 0;
+    private int mCurrentSelectedPosition = -1;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
@@ -77,7 +76,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
             mFromSavedInstanceState = true;
         }
 
-        // Select either the default item (0) or the last selected item.
+        // Select the last selected item.
         selectItem(mCurrentSelectedPosition);
     }
 
@@ -112,11 +111,8 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
      *
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
-     * @param startPosition The initial position for drawer
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout, int startPosition) {
-        mCurrentSelectedPosition = startPosition;
-
+    public void setup(int fragmentId, DrawerLayout drawerLayout) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 

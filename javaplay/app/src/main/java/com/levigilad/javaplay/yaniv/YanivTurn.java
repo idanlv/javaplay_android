@@ -13,29 +13,33 @@ import java.util.LinkedList;
  * This class represents Yaniv game turn data
  */
 public class YanivTurn extends Turn {
-    // Consts
+    /**
+     * Constants
+     */
+    public static final String GAME_NAME = "Yaniv";
     public static final String INITIALIZE_DONE = "initializeDone";
-    public static final String AVAILABLE_DECK = "availableDeck";
-    public static final String DISCARDED_DECK = "discardedDeck";
-    public static final String AVAILABLE_CARDS = "availableCards";
+    public static final String CURRENT_PLAYRE_HAND = "mCurrPlayersHand";
+    public static final String AVAILABLE_DISCARDED_CARDS = "mAvailableDiscardedCards";
+    public static final String DISCARDED_CARDS = "mDiscardedCards";
+    public static final String GLOBAL_CARD_DECK = "mGlobalCardDeck";
 
-    // Members
-    private DeckOfCards mAvailableDeck;
-    private DeckOfCards mDiscardedDeck;
-    private LinkedList<Integer> mAvailableDiscardedCards;
+    /**
+     * Members
+     */
+    private DeckOfCards mCurrPlayersHand;
+    private DeckOfCards mAvailableDiscardedCards;
+    private DeckOfCards mDiscardedCards;
+    private DeckOfCards mGlobalCardDeck;
+
     private boolean mInitializeDone;
 
     public YanivTurn() {
-        super("Yaniv");
+        super(GAME_NAME);
 
-        mAvailableDeck = new DeckOfCards();
-        mDiscardedDeck = new DeckOfCards();
-        mAvailableDiscardedCards = new LinkedList<>();
-        mInitializeDone = false;
-    }
-
-    public void setAvailableDeck(DeckOfCards deck) {
-        mAvailableDeck = new DeckOfCards(deck);
+        mCurrPlayersHand = new DeckOfCards();
+        mAvailableDiscardedCards = new DeckOfCards();
+        mDiscardedCards = new DeckOfCards();
+        mGlobalCardDeck = new DeckOfCards();
     }
 
     /**
@@ -48,40 +52,64 @@ public class YanivTurn extends Turn {
         JSONObject gameData = super.toJson();
 
         gameData.put(INITIALIZE_DONE, this.mInitializeDone);
-        gameData.put(AVAILABLE_DECK, this.mAvailableDeck.toJson());
-        gameData.put(DISCARDED_DECK, this.mDiscardedDeck.toJson());
-
-        JSONArray availableArray = new JSONArray();
-
-        for (Integer location : this.mAvailableDiscardedCards) {
-            availableArray.put(availableArray);
-        }
-
-        gameData.put(AVAILABLE_CARDS, availableArray);
+        gameData.put(CURRENT_PLAYRE_HAND, this.mCurrPlayersHand.toJson());
+        gameData.put(AVAILABLE_DISCARDED_CARDS, this.mAvailableDiscardedCards.toJson());
+        gameData.put(DISCARDED_CARDS, this.mDiscardedCards.toJson());
+        gameData.put(GLOBAL_CARD_DECK, this.mGlobalCardDeck.toJson());
 
         return gameData;
     }
 
     /**
      * Update data according to Json value
-     * @param object turn data
+     * @param jsonObject turn data
      * @throws JSONException
      */
     @Override
-    public void fromJson(JSONObject object) throws JSONException {
-        this.mInitializeDone = object.getBoolean(INITIALIZE_DONE);
-        this.mAvailableDeck = new DeckOfCards();
-        this.mAvailableDeck.fromJson(object.getJSONObject(AVAILABLE_DECK));
-        this.mDiscardedDeck = new DeckOfCards();
-        this.mDiscardedDeck.fromJson(object.getJSONObject(DISCARDED_DECK));
+    public void fromJson(JSONObject jsonObject) throws JSONException {
+        super.fromJson(jsonObject);
 
-        this.mAvailableDiscardedCards = new LinkedList<>();
-        JSONArray availableArray = object.getJSONArray(AVAILABLE_CARDS);
+        this.mCurrPlayersHand = new DeckOfCards();
+        this.mCurrPlayersHand.fromJson(jsonObject.getJSONObject(CURRENT_PLAYRE_HAND));
+        this.mAvailableDiscardedCards = new DeckOfCards();
+        this.mAvailableDiscardedCards.fromJson(jsonObject.getJSONObject(AVAILABLE_DISCARDED_CARDS));
+        this.mDiscardedCards = new DeckOfCards();
+        this.mDiscardedCards.fromJson(jsonObject.getJSONObject(DISCARDED_CARDS));
+        this.mGlobalCardDeck = new DeckOfCards();
+        this.mGlobalCardDeck.fromJson(jsonObject.getJSONObject(GLOBAL_CARD_DECK));
 
-        for (int i = 0; i < availableArray.length(); i++) {
-            this.mAvailableDiscardedCards.add(availableArray.getInt(i));
-        }
+    }
 
-        super.fromJson(object);
+    public DeckOfCards getmCurrPlayersHand() {
+        return mCurrPlayersHand;
+    }
+
+    public void setmCurrPlayersHand(DeckOfCards mCurrPlayersHand) {
+        this.mCurrPlayersHand = mCurrPlayersHand;
+    }
+
+    public DeckOfCards getmAvailableDiscardedCards() {
+        return mAvailableDiscardedCards;
+    }
+
+    public void setmAvailableDiscardedCards(DeckOfCards mAvailableDiscardedCards) {
+        this.mAvailableDiscardedCards = mAvailableDiscardedCards;
+    }
+
+
+    public DeckOfCards getmDiscardedCards() {
+        return mDiscardedCards;
+    }
+
+    public void setmDiscardedCards(DeckOfCards mDiscardedCards) {
+        this.mDiscardedCards = mDiscardedCards;
+    }
+
+    public DeckOfCards getmGlobalCardDeck() {
+        return mGlobalCardDeck;
+    }
+
+    public void setmGlobalCardDeck(DeckOfCards mGlobalCardDeck) {
+        this.mGlobalCardDeck = mGlobalCardDeck;
     }
 }

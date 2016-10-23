@@ -6,13 +6,19 @@ import java.io.Serializable;
  * This abstract provides minimal Game functionality
  */
 public abstract class Game implements Serializable {
+    /**
+     * Constants
+     */
     private final String mGameId;
     private final String mLeaderboardId;
     private final String mDescription;
     private final int mMaxNumberOfPlayers;
 
     /**
-     * Constructor
+     * Constructor: Creates a game object
+     * @param gameId The game name (used as id)
+     * @param description The description for the game
+     * @param leaderboardId The id of the leaderboard in google play services
      * @param maxNumberOfPlayers Maximum number of players in match
      */
     public Game(String gameId, String description, String leaderboardId, int maxNumberOfPlayers) {
@@ -24,6 +30,7 @@ public abstract class Game implements Serializable {
 
     /**
      * Getter
+     * @return Number of players
      */
     public int getMaxNumberOfPlayers() {
         return mMaxNumberOfPlayers;
@@ -31,6 +38,7 @@ public abstract class Game implements Serializable {
 
     /**
      * Getter
+     * @return Id of leaderboard
      */
     public String getLeaderboardId() {
         return mLeaderboardId;
@@ -38,6 +46,7 @@ public abstract class Game implements Serializable {
 
     /**
      * Getter
+     * @return Description of the game
      */
     public String getDescription() {
         return mDescription;
@@ -45,7 +54,7 @@ public abstract class Game implements Serializable {
 
     /**
      * Getter
-     * @return
+     * @return Id of the game
      */
     public String getGameId() {
         return mGameId;

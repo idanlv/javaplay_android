@@ -14,14 +14,13 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     /**
      * Constants
     */
-
     public static final String CARD_VALUE = "card_value";
     public static final String CARD_SYMBOL = "card_symbol";
+    private static final String CARD_FORMAT = "(%s , %s)";
 
     /**
      * Members
     */
-
     private PlayingCardRanks mRank;
     private PlayingCardSuits mSuit;
 
@@ -71,6 +70,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
      * Validates card was initialized properly
      * @param rank Card numeric rank
      * @param suit Card symbol
+     * @throws IllegalArgumentException If playing card is invalid
      */
     private void validate(PlayingCardRanks rank, PlayingCardSuits suit) {
         if (((rank == PlayingCardRanks.JOKER) && (suit != PlayingCardSuits.NONE)) ||
@@ -80,9 +80,9 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     }
 
     /**
-     * * Generate a json representation of the card
+     * Generate a json representation of the card
      * @return card as json object
-     * @throws JSONException
+     * @throws JSONException If the json object wasn't created correctly
      */
     @Override
     public JSONObject toJson() throws JSONException {
@@ -95,13 +95,13 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
 
     /**
      * Load card from given json format
-     * @param object Card in json format
-     * @throws JSONException
+     * @param jsonObject Card in json format
+     * @throws JSONException If the json object wasn't read correctly
      */
     @Override
-    public void fromJson(JSONObject object) throws JSONException {
-        this.mRank = (PlayingCardRanks)object.get(CARD_VALUE);
-        this.mSuit = (PlayingCardSuits)object.get(CARD_SYMBOL);
+    public void fromJson(JSONObject jsonObject) throws JSONException {
+        this.mRank = PlayingCardRanks.valueOf(jsonObject.getString(CARD_VALUE));
+        this.mSuit = PlayingCardSuits.valueOf(jsonObject.getString(CARD_SYMBOL));
     }
 
     /**
@@ -112,5 +112,14 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     @Override
     public int compareTo(PlayingCard another) {
         return this.getRank().getNumericValue() - another.getRank().getNumericValue();
+    }
+
+    /**
+     * Retrieves a string representation of the playing card
+     * @return String representation
+     */
+    @Override
+    public String toString() {
+        return String.format(CARD_FORMAT, getRank(), getSuit());
     }
 }
