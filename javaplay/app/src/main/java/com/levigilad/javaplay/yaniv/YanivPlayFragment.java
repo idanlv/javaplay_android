@@ -459,7 +459,10 @@ public class YanivPlayFragment extends PlayFragment {
      */
     @Override
     protected void startTurn() {
+        // Link the me to my hand
+        mCurrPlayersHand = mPlayersHands.get(getCurrentParticipantId());
         setPlayStatus(true);
+
         Log.i("turn","Start of Turn");
         Toast.makeText(mAppContext, "Its your turn...", Toast.LENGTH_LONG).show();
     }
