@@ -27,7 +27,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 
-// TODO : Prevend Discard from accruing twice
+/* TODO :
+    1) Prevent Discard from accruing twice
+    2) calculateScore(Array deckofcards) - return array key value of player and score
+    3) convert players deck to array
+    4) make yaniv
+    5) cards history and scores
+
+    Flow :
+    1) deal cards to all
+    2) turn
+        0) yaniv - yes\no
+        a) discard cards
+        b) take cards
+        c) allowed discarted cards to next player
+
+
+*/
 public class YanivPlayFragment extends PlayFragment {
     /**
      * Constants
@@ -95,7 +111,7 @@ public class YanivPlayFragment extends PlayFragment {
         return fragment;
     }
 
-    // Like the onCreate in Activity
+    // Like the onCreate in Activity TODO: make a nice /* */
     private void initializeView(View parentView) {
 
         // Set game Theme
@@ -144,6 +160,7 @@ public class YanivPlayFragment extends PlayFragment {
         });
     }
 
+    //TODO: make comment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
