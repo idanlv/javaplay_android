@@ -74,14 +74,11 @@ public class YanivTurn extends Turn {
     public void fromJson(JSONObject jsonObject) throws JSONException {
         super.fromJson(jsonObject);
 
-        this.mAvailableDiscardedCards = new DeckOfCards();
         this.mAvailableDiscardedCards.fromJson(jsonObject.getJSONObject(AVAILABLE_DISCARDED_CARDS));
-        this.mDiscardedCards = new DeckOfCards();
         this.mDiscardedCards.fromJson(jsonObject.getJSONObject(DISCARDED_CARDS));
-        this.mGlobalCardDeck = new DeckOfCards();
         this.mGlobalCardDeck.fromJson(jsonObject.getJSONObject(GLOBAL_CARD_DECK));
 
-        this.mPlayersHands = new HashMap<>();
+        this.mPlayersHands.clear();
         JSONObject jsonPlayersHands =  jsonObject.getJSONObject(PLAYERS_HANDS);
 
         Iterator<String> it = jsonPlayersHands.keys();
