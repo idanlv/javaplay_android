@@ -27,8 +27,7 @@
                 android:textAppearance="@android:style/TextAppearance.Material.Display1"
                 android:fontFamily="sans-serif"
                 android:textStyle="normal|bold"
-                android:textAllCaps="true"
-                android:textColor="?android:attr/textColorPrimary" />
+                android:textAllCaps="true" />
 
             <TextView
                 android:layout_width="match_parent"
