@@ -177,9 +177,8 @@ public class MainActivity extends BaseGameActivity implements
             }
 
             setTitle(mGameId);
+            // TODO: Does this handle rematch?
             enterExistingMatch(data);
-
-            // TODO: Handle rematch
         } else if (request == RC_LOOK_AT_LEADERBOARD) {
             // TODO: Handle errors
         } else if (request == RC_LOOK_AT_ACHIEVEMENTS) {
@@ -300,6 +299,8 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     private void showLogin() {
-
+        LoginFragment fragment = LoginFragment.newInstance();
+        setTitle(getString(R.string.app_name));
+        replaceFragment(fragment);
     }
 }
