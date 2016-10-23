@@ -29,7 +29,6 @@ public abstract class GameOfCards extends Game {
         mInitialNumOfPlayerCards = initialNumOfPlayerCards;
     }
 
-
     /**
      * Generates a new shuffled deck of cards
      * @param numberOfDecks number of decks to make a shuffle deck from

@@ -16,8 +16,8 @@ public interface IJsonSerializable {
 
     /**
      * Initialize object according to Json representation
-     * @param object
+     * @param jsonObject to convert
      * @throws JSONException if the json wasn't read correctly
      */
-    void fromJson(JSONObject object) throws JSONException;
+    void fromJson(JSONObject jsonObject) throws JSONException;
 }

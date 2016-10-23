@@ -23,6 +23,12 @@ public class ActivityUtils {
         return px;
     }
 
+    /**
+     * Gets a playing card Drawable resource to place in an Image View
+     * @param playingCard as the playing card to get his Drawable
+     * @param context as the application context
+     * @return the drawable resource of the playing card
+     */
     public static Drawable getCardAsDrawable(PlayingCard playingCard, Context context) {
 
         // Build card name

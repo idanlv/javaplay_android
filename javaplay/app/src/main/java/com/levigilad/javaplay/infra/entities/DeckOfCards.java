@@ -24,13 +24,13 @@ public class DeckOfCards implements IJsonSerializable {
     /**
      * Members
      */
-    private LinkedList<PlayingCard> _cards;
+    private LinkedList<PlayingCard> mCards;
 
     /**
      * Constructor: Creates an empty deck
      */
     public DeckOfCards() {
-        _cards = new LinkedList<>();
+        mCards = new LinkedList<>();
     }
 
     /**
@@ -38,10 +38,10 @@ public class DeckOfCards implements IJsonSerializable {
      * @param cards initial deck cards
      */
     public DeckOfCards(LinkedList<PlayingCard> cards) {
-        _cards = new LinkedList<>();
+        mCards = new LinkedList<>();
 
         for (PlayingCard card : cards) {
-            _cards.add(new PlayingCard(card));
+            mCards.add(new PlayingCard(card));
         }
     }
 
@@ -59,7 +59,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @throws IllegalArgumentException If card does not exist in deck
      */
     public void removeCard(PlayingCard card) {
-        if (!_cards.remove(card)) {
+        if (!mCards.remove(card)) {
             throw new IllegalArgumentException("Card does not exists in deck");
         }
     }
@@ -70,7 +70,31 @@ public class DeckOfCards implements IJsonSerializable {
      * @throws IndexOutOfBoundsException If index not in bounds
      */
     public void removeCardByIndex(int index){
-        _cards.remove(index);
+        mCards.remove(index);
+    }
+
+    /**
+     * Clear all playing cards in the deck
+     */
+    public void clear() {
+        mCards.clear();
+    }
+
+    /**
+     * Combine two decks
+     * @param other deck of cards to add all his cards
+     */
+    public void addAll(DeckOfCards other) {
+        this.mCards.addAll(other.mCards);
+    }
+
+    /**
+     * Replace a deck of card with another
+     * @param other deck of card to replace with
+     */
+    public void replace(DeckOfCards other) {
+        this.clear();
+        this.addAll(other);
     }
 
     /**
@@ -80,7 +104,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @throws IndexOutOfBoundsException If index not in bounds
      */
     public PlayingCard get(int index) {
-        return _cards.get(index);
+        return mCards.get(index);
     }
 
     /**
@@ -88,7 +112,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @return deck size
      */
     public int size() {
-        return _cards.size();
+        return mCards.size();
     }
 
     /**
@@ -96,7 +120,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @param card card to add
      */
     public void addCardToTop(PlayingCard card) {
-        _cards.addFirst(card);
+        mCards.addFirst(card);
     }
 
     /**
@@ -104,7 +128,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @param card card to add
      */
     public void addCardToBottom(PlayingCard card) {
-        _cards.addLast(card);
+        mCards.addLast(card);
     }
 
     /**
@@ -112,7 +136,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @return card at top of the deck, or null if the deck is empty
      */
     public PlayingCard peek() {
-        return _cards.peek();
+        return mCards.peek();
     }
 
     /**
@@ -121,7 +145,15 @@ public class DeckOfCards implements IJsonSerializable {
      * @throws NoSuchElementException if this deck is empty
      */
     public PlayingCard pop() {
-        return _cards.pop();
+        return mCards.pop();
+    }
+
+    /**
+     * Returns the last playing card in the deck
+     * @return card at the bottom of the deck
+     */
+    public PlayingCard getLast(){
+        return mCards.getLast();
     }
 
     /**
@@ -135,7 +167,7 @@ public class DeckOfCards implements IJsonSerializable {
 
         final JSONArray cardsArray = new JSONArray();
 
-        for (PlayingCard card : this._cards) {
+        for (PlayingCard card : this.mCards) {
             cardsArray.put(card.toJson());
         }
 
@@ -146,21 +178,21 @@ public class DeckOfCards implements IJsonSerializable {
 
     /**
      * Load deck from given json
-     * @param object Deck in Json format
+     * @param jsonObject Deck in Json format
      * @throws JSONException If json object is not read correctly
      */
     @Override
-    public void fromJson(JSONObject object) throws JSONException {
+    public void fromJson(JSONObject jsonObject) throws JSONException {
         // Clear object from old data
-        this._cards.clear();
+        this.mCards.clear();
 
-        JSONArray cardsArray = object.getJSONArray(DECK);
+        JSONArray cardsArray = jsonObject.getJSONArray(DECK);
 
         for (int i = 0; i < cardsArray.length(); i++) {
             PlayingCard card = new PlayingCard();
             card.fromJson((JSONObject) cardsArray.get(i));
 
-            this._cards.addLast(card);
+            this.mCards.addLast(card);
         }
     }
 
@@ -168,7 +200,7 @@ public class DeckOfCards implements IJsonSerializable {
      * Shuffles cards in deck
      */
     public void shuffle() {
-        Collections.shuffle(this._cards);
+        Collections.shuffle(this.mCards);
     }
 
     /**
@@ -176,7 +208,7 @@ public class DeckOfCards implements IJsonSerializable {
      * @return Iterator
      */
     public Iterator<PlayingCard> iterator() {
-        return this._cards.iterator();
+        return this.mCards.iterator();
     }
 
     /**
@@ -186,7 +218,7 @@ public class DeckOfCards implements IJsonSerializable {
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        for (PlayingCard card : _cards) {
+        for (PlayingCard card : mCards) {
             builder.append(card.toString());
             builder.append(CARDS_SEPERATOR);
         }
@@ -206,13 +238,13 @@ public class DeckOfCards implements IJsonSerializable {
      * @return PlayingCards in a LinkedList
      */
     public LinkedList<PlayingCard> getCards() {
-        return new LinkedList<>(this._cards);
+        return new LinkedList<>(this.mCards);
     }
 
     /**
      * Sorts the current deck
      */
     public void sort() {
-        Collections.sort(_cards);
+        Collections.sort(mCards);
     }
 }
