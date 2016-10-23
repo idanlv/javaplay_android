@@ -77,6 +77,16 @@ public class GameOptionsActivity extends BaseGameActivity implements
         initializeViews();
     }
 
+    @Override
+    protected void onStop() {
+        // Unregister before disconnecting
+        if (isSignedIn()) {
+            Games.TurnBasedMultiplayer.unregisterMatchUpdateListener(getApiClient());
+        }
+
+        super.onStop();
+    }
+
     /**
      * Initializes view
      */
