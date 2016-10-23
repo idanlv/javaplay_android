@@ -7,7 +7,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.LinkedList;
+import java.security.Key;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This class represents Yaniv game turn data
@@ -18,28 +20,26 @@ public class YanivTurn extends Turn {
      */
     public static final String GAME_NAME = "Yaniv";
     public static final String INITIALIZE_DONE = "initializeDone";
-    public static final String CURRENT_PLAYRE_HAND = "mCurrPlayersHand";
     public static final String AVAILABLE_DISCARDED_CARDS = "mAvailableDiscardedCards";
     public static final String DISCARDED_CARDS = "mDiscardedCards";
     public static final String GLOBAL_CARD_DECK = "mGlobalCardDeck";
+    public static final String PLAYERS_HANDS = "mPlayersHands";
 
     /**
      * Members
      */
-    private DeckOfCards mCurrPlayersHand;
     private DeckOfCards mAvailableDiscardedCards;
     private DeckOfCards mDiscardedCards;
     private DeckOfCards mGlobalCardDeck;
-
-    private boolean mInitializeDone;
+    private HashMap <String,DeckOfCards> mPlayersHands;
 
     public YanivTurn() {
         super(GAME_NAME);
 
-        mCurrPlayersHand = new DeckOfCards();
         mAvailableDiscardedCards = new DeckOfCards();
         mDiscardedCards = new DeckOfCards();
         mGlobalCardDeck = new DeckOfCards();
+        mPlayersHands = new HashMap<>();
     }
 
     /**
@@ -51,11 +51,16 @@ public class YanivTurn extends Turn {
     public JSONObject toJson() throws JSONException {
         JSONObject gameData = super.toJson();
 
-        gameData.put(INITIALIZE_DONE, this.mInitializeDone);
-        gameData.put(CURRENT_PLAYRE_HAND, this.mCurrPlayersHand.toJson());
         gameData.put(AVAILABLE_DISCARDED_CARDS, this.mAvailableDiscardedCards.toJson());
         gameData.put(DISCARDED_CARDS, this.mDiscardedCards.toJson());
         gameData.put(GLOBAL_CARD_DECK, this.mGlobalCardDeck.toJson());
+
+        JSONObject playersHandsObject = new JSONObject();
+
+        for(String key : mPlayersHands.keySet()) {
+            playersHandsObject.put(key, mPlayersHands.get(key).toJson());
+        }
+        gameData.put(PLAYERS_HANDS, playersHandsObject);
 
         return gameData;
     }
@@ -69,8 +74,6 @@ public class YanivTurn extends Turn {
     public void fromJson(JSONObject jsonObject) throws JSONException {
         super.fromJson(jsonObject);
 
-        this.mCurrPlayersHand = new DeckOfCards();
-        this.mCurrPlayersHand.fromJson(jsonObject.getJSONObject(CURRENT_PLAYRE_HAND));
         this.mAvailableDiscardedCards = new DeckOfCards();
         this.mAvailableDiscardedCards.fromJson(jsonObject.getJSONObject(AVAILABLE_DISCARDED_CARDS));
         this.mDiscardedCards = new DeckOfCards();
@@ -78,14 +81,27 @@ public class YanivTurn extends Turn {
         this.mGlobalCardDeck = new DeckOfCards();
         this.mGlobalCardDeck.fromJson(jsonObject.getJSONObject(GLOBAL_CARD_DECK));
 
+        this.mPlayersHands = new HashMap<>();
+        JSONObject jsonPlayersHands =  jsonObject.getJSONObject(PLAYERS_HANDS);
+
+        Iterator<String> it = jsonPlayersHands.keys();
+        String key;
+
+        while (it.hasNext()) {
+            DeckOfCards value = new DeckOfCards();
+
+            key = it.next();
+            value.fromJson(jsonPlayersHands.getJSONObject(key));
+            mPlayersHands.put(key, value);
+        }
     }
 
-    public DeckOfCards getmCurrPlayersHand() {
-        return mCurrPlayersHand;
+    public HashMap<String, DeckOfCards> getmPlayersHands() {
+        return mPlayersHands;
     }
 
-    public void setmCurrPlayersHand(DeckOfCards mCurrPlayersHand) {
-        this.mCurrPlayersHand = mCurrPlayersHand;
+    public void setmPlayersHands(HashMap<String, DeckOfCards> mPlayersHands) {
+        this.mPlayersHands = mPlayersHands;
     }
 
     public DeckOfCards getmAvailableDiscardedCards() {
