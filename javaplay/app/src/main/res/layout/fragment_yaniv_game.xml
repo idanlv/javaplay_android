@@ -46,11 +46,19 @@
 
             </LinearLayout>
 
-            <ListView
+            <ScrollView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.19"
-                android:id="@+id/lv_players_cards_count" />
+                android:id="@+id/sv_players_cards_count" >
+                <LinearLayout
+                    android:id="@+id/ll_players_card_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+            </ScrollView>
 
         </LinearLayout>
 

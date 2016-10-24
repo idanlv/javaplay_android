@@ -1,5 +1,6 @@
 package com.levigilad.javaplay.yaniv;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Yaniv Play Fragment, Game Flow :<BR>
@@ -51,6 +53,7 @@ public class YanivPlayFragment extends PlayFragment {
     private static final int DEFAULT_NUMBER_OF_DECKS = 2;
     private static final int DEFAULT_NUMBER_OF_JOKERS = 4;
     private static final int MARKED_IMAGE_BACKGROUND = Color.BLUE;
+    private static final String PLAYER_SCORE_FORMAT = "%s: %d";
 
     /**
      * Members
@@ -67,7 +70,7 @@ public class YanivPlayFragment extends PlayFragment {
     private Button mYanivBtn;
     private LinearLayout mHandLL;
     private LinearLayout mDiscardedCardsLL;
-    private ListView mPlayersCardsCountLV;
+    private LinearLayout mPlayersCardsCountLL;
     private TextView mScoreTV;
     private TextView mInstructionsTV;
 
@@ -145,7 +148,7 @@ public class YanivPlayFragment extends PlayFragment {
         mDeckIV = (ImageView) parentView.findViewById(R.id.iv_deck);
         mDiscardBtn = (Button) parentView.findViewById(R.id.btn_discard);
         mYanivBtn = (Button) parentView.findViewById(R.id.btn_Yaniv);
-        mPlayersCardsCountLV = (ListView) parentView.findViewById(R.id.lv_players_cards_count);
+        mPlayersCardsCountLL = (LinearLayout) parentView.findViewById(R.id.ll_players_card_count);
         mScoreTV = (TextView) parentView.findViewById(R.id.tv_score);
         mInstructionsTV = (TextView) parentView.findViewById(R.id.tv_instructions);
 
@@ -518,6 +521,26 @@ public class YanivPlayFragment extends PlayFragment {
     protected void updateView() {
         showCardsInDiscardView();
         showCardsInHandView();
+        showPlayersCardCount();
+    }
+
+    private void showPlayersCardCount() {
+        mPlayersCardsCountLL.removeAllViews();
+
+        HashMap<String, DeckOfCards> playerHands = getPlayersHands();
+
+        for (String participantId : playerHands.keySet()) {
+            TextView valueTV = new TextView(mAppContext);
+            valueTV.setTextColor(Color.BLACK);
+            valueTV.setText(String.format(PLAYER_SCORE_FORMAT,
+                    mMatch.getParticipant(participantId).getDisplayName(),
+                    playerHands.get(participantId).size()));
+            valueTV.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            mPlayersCardsCountLL.addView(valueTV);
+        }
     }
 
     /**
