@@ -1,6 +1,5 @@
 package com.levigilad.javaplay.yaniv;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -30,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Yaniv Play Fragment, Game Flow :<BR>
@@ -260,7 +260,8 @@ public class YanivPlayFragment extends PlayFragment {
         }
 
         // Update my score
-        mScoreTV.setText(Integer.toString(YanivGame.calculateDeckScore(getCurrPlayersHand())));
+        mScoreTV.setText(String.format("%d".toUpperCase(Locale.getDefault()),
+                YanivGame.calculateDeckScore(getCurrPlayersHand())));
     }
 
     /**
@@ -466,10 +467,12 @@ public class YanivPlayFragment extends PlayFragment {
 
 
         //TODO : test
+        /*
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 mAppContext,R.layout.fragment_yaniv_game, participantIds);
 
         mPlayersCardsCountLV.setAdapter(arrayAdapter);
+        */
     }
 
     /**
