@@ -14,17 +14,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
+import com.google.basegameutils.games.BaseGameUtils;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
-import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
 import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
 import com.levigilad.javaplay.yaniv.YanivPlayFragment;
 
@@ -35,7 +35,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends BaseGameActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        OnTurnBasedMatchUpdateReceivedListener,
         OnGameSelectedListener,
         OnFragmentInteractionListener {
     /**
@@ -52,7 +51,6 @@ public class MainActivity extends BaseGameActivity implements
      */
     private String mGameId;
 
-    private OnTurnBasedMatchReceivedListener mListener = null;
     /**
      * Designer
      */
@@ -117,11 +115,6 @@ public class MainActivity extends BaseGameActivity implements
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -132,19 +125,16 @@ public class MainActivity extends BaseGameActivity implements
 
         switch (id) {
             case R.id.nav_inbox: {
-                Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
-                startActivityForResult(intent, RC_LOOK_AT_MATCHES);
+                showInbox();
                 break;
             }
             case R.id.nav_achievements: {
-                Intent intent = Games.Achievements.getAchievementsIntent(getApiClient());
-                startActivityForResult(intent, RC_LOOK_AT_ACHIEVEMENTS);
+                showAchievements();
 
                 break;
             }
             case R.id.nav_leaderboards: {
-                Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
-                startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
+                showLeaderboards();
                 break;
             }
             case R.id.nav_new_match: {
@@ -154,6 +144,36 @@ public class MainActivity extends BaseGameActivity implements
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showLeaderboards() {
+        if (isSignedIn()) {
+            Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
+            startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
+        } else {
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.leaderboards_not_available)).show();
+            showLogin();
+        }
+    }
+
+    private void showAchievements() {
+        if (isSignedIn()) {
+            Intent intent = Games.Achievements.getAchievementsIntent(getApiClient());
+            startActivityForResult(intent, RC_LOOK_AT_ACHIEVEMENTS);
+        } else {
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.achievements_not_available)).show();
+            showLogin();
+        }
+    }
+
+    private void showInbox() {
+        if (isSignedIn()) {
+            Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
+            startActivityForResult(intent, RC_LOOK_AT_MATCHES);
+        } else {
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.inbox_not_available)).show();
+            showLogin();
+        }
     }
 
     @Override
@@ -166,7 +186,6 @@ public class MainActivity extends BaseGameActivity implements
                 return;
             }
 
-            setTitle(mGameId);
             startNewMatch(data);
         } else if (request == RC_LOOK_AT_MATCHES) {
             // Returning from the 'Select Match' dialog
@@ -176,16 +195,12 @@ public class MainActivity extends BaseGameActivity implements
                 return;
             }
 
-            setTitle(mGameId);
-            enterExistingMatch(data);
-
-            // TODO: Handle rematch
+            // TODO: Does this handle rematch?
+            loadExistingMatch(data);
         } else if (request == RC_LOOK_AT_LEADERBOARD) {
             // TODO: Handle errors
         } else if (request == RC_LOOK_AT_ACHIEVEMENTS) {
             // TODO: Handle errors
-        } else {
-            mHelper.onActivityResult(request, response, data);
         }
     }
 
@@ -196,19 +211,11 @@ public class MainActivity extends BaseGameActivity implements
 
     @Override
     public void onSignInSucceeded() {
+        Log.d(TAG, "Entered onSignInSucceeded()");
+        // TODO: Idan! Check this toast
+        Toast.makeText(this.getApplicationContext(), "Connected", Toast.LENGTH_LONG);
         Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
-    }
-
-    @Override
-    public void onTurnBasedMatchRemoved(String s) {
-        // Does nothing
-    }
-
-    @Override
-    public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
-        if (mListener != null) {
-            mListener.onTurnBasedMatchReceived(turnBasedMatch);
-        }
+        Log.d(TAG, "Exited onSignInSucceeded()");
     }
 
     @Override
@@ -243,8 +250,6 @@ public class MainActivity extends BaseGameActivity implements
             fragment = TicTacToeGameFragment.newInstance(invitees, autoMatchCriteria);
         }
 
-        mListener = fragment;
-
         replaceFragment(fragment);
     }
 
@@ -253,7 +258,7 @@ public class MainActivity extends BaseGameActivity implements
 
     }
 
-    private void enterExistingMatch(Intent data) {
+    private void loadExistingMatch(Intent data) {
         TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
         if (match != null) {
@@ -269,8 +274,6 @@ public class MainActivity extends BaseGameActivity implements
                     } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
                         fragment = TicTacToeGameFragment.newInstance(match);
                     }
-
-                    mListener = fragment;
 
                     replaceFragment(fragment);
                 } catch (JSONException e) {
@@ -295,11 +298,12 @@ public class MainActivity extends BaseGameActivity implements
 
     private void showGameOptions() {
         GamePossibilitiesFragment fragment = GamePossibilitiesFragment.newInstance();
-        setTitle(getString(R.string.pick_a_game));
         replaceFragment(fragment);
     }
 
     private void showLogin() {
-
+        LoginFragment fragment = LoginFragment.newInstance();
+        setTitle(getString(R.string.app_name));
+        replaceFragment(fragment);
     }
 }

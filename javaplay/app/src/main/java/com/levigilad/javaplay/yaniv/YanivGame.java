@@ -9,6 +9,7 @@ import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -65,7 +66,7 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Checks if player's deck is available for Assaf
+     * Checks if player's deck is available for Assaf (does not check if you can declare yaniv)
      * @param deck player's deck
      * @param otherPlayerScore Score of the player who declared Yaniv
      * @return True or False
@@ -73,7 +74,32 @@ public class YanivGame extends GameOfCards {
     public static boolean isAssaf(DeckOfCards deck, int otherPlayerScore) {
         int score = calculateDeckScore(deck);
 
-        return (canYaniv(score) && (score <= otherPlayerScore));
+        return (score <= otherPlayerScore);
+    }
+
+    /**
+     *  Check's if you won when you declare yaniv
+     * @param playersID as the declarer ID of the player
+     * @param playersHand as the declarer deck of cards
+     * @param allPlayersHands all players deck's
+     * @return the winner ID as a String
+     */
+    public static String declareYanivWinner(String playersID, DeckOfCards playersHand,
+                                       HashMap<String, DeckOfCards> allPlayersHands) {
+        String winnerID = playersID;
+        int myScore;
+
+        myScore = YanivGame.calculateDeckScore(playersHand);
+
+        for (String player : allPlayersHands.keySet()) {
+            // Check that its not me and if the score is lower or equals, I lose
+            if(!player.equals(playersID) &&
+                    (calculateDeckScore(allPlayersHands.get(player))) <= myScore) {
+                winnerID = player;
+            }
+        }
+
+        return winnerID;
     }
 
     /**
@@ -210,7 +236,7 @@ public class YanivGame extends GameOfCards {
                 availableCards.addCardToTop(cardsToDiscard.peek());
             }
             else if (isDuplicates(cardsToDiscard)) {
-                availableCards = new DeckOfCards(availableCards);
+                availableCards.addAll(cardsToDiscard);
             }
             // Marked cards is sequence, add edges (isSequence = size >= 3)
             else {
@@ -219,7 +245,6 @@ public class YanivGame extends GameOfCards {
                 availableCards.addCardToTop(cardsToDiscard.getLast());
             }
         }
-
         return availableCards;
     }
 

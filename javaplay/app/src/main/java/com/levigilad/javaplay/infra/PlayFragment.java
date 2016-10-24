@@ -1,9 +1,9 @@
 package com.levigilad.javaplay.infra;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,6 +16,7 @@ import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
+import com.google.basegameutils.games.BaseGameActivity;
 import com.google.basegameutils.games.GameHelper;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.Turn;
@@ -38,25 +39,57 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTO_MATCH";
     protected static final String MATCH_ID = "MATCH_ID";
+    private static final String ORIGINAL_ORIENTATION = "ORIGINAL_ORIENTATION";
 
     /**
      * Members
      */
     private ArrayList<String> mInvitees;
     private Bundle mAutoMatchCriteria;
+    private int mScreenOrientation;
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
-    protected Context mAppContext;
+    protected BaseGameActivity mAppContext;
+    private boolean mRestoreOrientation;
+    private boolean mDidRestartInitiate;
 
     /**
      * Constructor: Creates a game fragment
      * @param turnData A turn data to start with
+     * @param screenOrientation
      */
-    public PlayFragment(Turn turnData) {
+    public PlayFragment(Turn turnData, int screenOrientation) {
         super(REQUESTED_CLIENTS);
         mTurnData = turnData;
+        mScreenOrientation = screenOrientation;
+        mRestoreOrientation = false;
+        mDidRestartInitiate = false;
     }
 
+
+    /**
+     * Set the caller Activity as context
+     * @param context Activity or fragment that current fragment was attached to
+     */
+    @Override
+    public void onAttach(Context context) {
+        Log.d(TAG, "Entered onAttach()");
+        super.onAttach(context);
+
+        try {
+            mAppContext = (BaseGameActivity)context;
+
+            if (mAppContext.getRequestedOrientation() != mScreenOrientation) {
+                mAppContext.setRequestedOrientation(mScreenOrientation);
+                mDidRestartInitiate = true;
+            } else {
+                mRestoreOrientation = true;
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Activity must be sub class of BaseGameActivity");
+        }
+        Log.d(TAG, "Exited onAttach()");
+    }
 
     /**
      * On Create
@@ -64,6 +97,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Entered onCreate()");
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
@@ -76,42 +110,43 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 mAutoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
             }
         }
-    }
-
-    /**
-     * Set the caller Activity as context
-     * @param context Activity or fragment that current fragment was attached to
-     */
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mAppContext = context;
+        Log.d(TAG, "Exited onCreate()");
     }
 
     /**
      * Performs actions after a successful sign in
      */
     public void onSignInSucceeded() {
-        // We're starting a new match
-        if (mMatch == null) {
-            TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-                    .addInvitedPlayers(mInvitees)
-                    .setAutoMatchCriteria(mAutoMatchCriteria)
-                    .build();
+        Log.d(TAG, "Entered onSignInSucceeded()");
 
-            // Create and start the match.
-            Games.TurnBasedMultiplayer
-                    .createMatch(getApiClient(), tbmc)
-                    .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-                        @Override
-                        public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
-                            processResult(initiateMatchResult);
-                        }
-                    });
-        } // We have an existing game
-        else {
-            handleMatchUpdate();
+        if (!mDidRestartInitiate) {
+            // We're starting a new match
+            if (mMatch == null) {
+                TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+                        .addInvitedPlayers(mInvitees)
+                        .setAutoMatchCriteria(mAutoMatchCriteria)
+                        .build();
+
+                // Create and start the match.
+                Games.TurnBasedMultiplayer
+                        .createMatch(getApiClient(), tbmc)
+                        .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+                            @Override
+                            public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+                                processResult(initiateMatchResult);
+                            }
+                        });
+            } // We have an existing game
+            else {
+                mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
+                handleMatchUpdate();
+            }
+
+        } else {
+            Log.d(TAG, "Skipping match start/load");
         }
+
+        Log.d(TAG, "Exited sonSignInSucceeded()");
     }
 
     /**
@@ -164,12 +199,24 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         return false;
     }
 
+    @Override
+    public void onDetach() {
+        mAppContext.removeListenerForMatchUpdates(this);
+
+        if (mRestoreOrientation) {
+            mAppContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
+        }
+        super.onDetach();
+
+    }
+
     /**
      * Performs initiate of a match
      * @param result Initiate match result
      */
     public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         mMatch = result.getMatch();
+        mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
 
         if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
             return;
@@ -369,6 +416,14 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                     });
             mMatch = null;
         }
+    }
+
+    /**
+     * Get the number of participants in a match
+     * @return the number of participants in a match
+     */
+    protected int getPlayersCount() {
+        return mMatch.getParticipantIds().size();
     }
 
     /**

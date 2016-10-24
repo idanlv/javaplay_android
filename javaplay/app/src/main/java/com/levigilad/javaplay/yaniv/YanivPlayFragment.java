@@ -13,21 +13,31 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.ActivityUtils;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
-import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
-import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-
-// TODO : Prevend Discard from accruing twice
+/**
+ * Yaniv Play Fragment, Game Flow :<BR>
+ * 1) Deal cards to all players<BR>
+ * 2) Submit Turn :<BR>
+ *      1) Yaniv declaration YES\NO<BR>
+ *      2) Discard cards<BR>
+ *      3) Take cards from deck form last player discard<BR>
+ * 3) Process win
+ */
 public class YanivPlayFragment extends PlayFragment {
     /**
      * Constants
@@ -46,10 +56,6 @@ public class YanivPlayFragment extends PlayFragment {
      * Members
      */
     private YanivGame mGame;
-    private DeckOfCards mCurrPlayersHand;
-    private DeckOfCards mAvailableDiscardedCards;
-    private DeckOfCards mDiscardedCards;
-    private DeckOfCards mGlobalCardDeck;
     private DeckOfCards mPlayersMarkedCards;
     private boolean mGetNewCard;
 
@@ -61,14 +67,15 @@ public class YanivPlayFragment extends PlayFragment {
     private Button mYanivBtn;
     private LinearLayout mHandLL;
     private LinearLayout mDiscardedCardsLL;
-    private ListView mPlayersCardCountLV;
+    private ListView mPlayersCardsCountLV;
     private TextView mScoreTV;
+    private TextView mInstructionsTV;
 
     /**
      * Required empty constructor
      */
     public YanivPlayFragment() {
-        super(new YanivTurn());
+        super(new YanivTurn(), ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
     }
 
     /**
@@ -87,6 +94,12 @@ public class YanivPlayFragment extends PlayFragment {
         return fragment;
     }
 
+    /**
+     * Use this factory method to load a new instance of
+     * this fragment using existing data.
+     *
+     * @return A new instance of fragment YanivPlayFragment.
+     */
     public static YanivPlayFragment newInstance(TurnBasedMatch match) {
         YanivPlayFragment fragment = new YanivPlayFragment();
         Bundle args = new Bundle();
@@ -95,22 +108,34 @@ public class YanivPlayFragment extends PlayFragment {
         return fragment;
     }
 
-    // Like the onCreate in Activity
+    /** TODO:
+     *  Fragment creation - (Like onCreate in Activity)
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return the fragment view
+     */
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_yaniv_game, container, false);
+        initializeView(view);
+
+        return view;
+    }
+
+    /**
+     * Initialize fragment view
+     * @param parentView as the parent layout for this fragment
+     */
     private void initializeView(View parentView) {
 
         // Set game Theme
         getActivity().setTheme(android.R.style.Theme_Material_NoActionBar_Fullscreen);
 
-        // Fragment locked in landscape screen orientation
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-
         // Set members
-        YanivTurn turn = (YanivTurn)mTurnData; // Local var for YanivTurn
         mGame = new YanivGame(getActivity().getApplicationContext());
-        mCurrPlayersHand = turn.getmCurrPlayersHand(); // use member by ref
-        mAvailableDiscardedCards = turn.getmAvailableDiscardedCards(); // use member by ref
-        mDiscardedCards = turn.getmDiscardedCards(); // use member by ref
-        mGlobalCardDeck = turn.getmGlobalCardDeck(); // use member by ref
         mPlayersMarkedCards = new DeckOfCards();
         mGetNewCard = false;
 
@@ -120,8 +145,9 @@ public class YanivPlayFragment extends PlayFragment {
         mDeckIV = (ImageView) parentView.findViewById(R.id.iv_deck);
         mDiscardBtn = (Button) parentView.findViewById(R.id.btn_discard);
         mYanivBtn = (Button) parentView.findViewById(R.id.btn_Yaniv);
-        mPlayersCardCountLV = (ListView) parentView.findViewById(R.id.lv_cards_count);
+        mPlayersCardsCountLV = (ListView) parentView.findViewById(R.id.lv_players_cards_count);
         mScoreTV = (TextView) parentView.findViewById(R.id.tv_score);
+        mInstructionsTV = (TextView) parentView.findViewById(R.id.tv_instructions);
 
         // Set listeners
         mDeckIV.setOnClickListener(new View.OnClickListener() {
@@ -142,16 +168,9 @@ public class YanivPlayFragment extends PlayFragment {
                 declareYaniv();
             }
         });
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_yaniv_game, container, false);
-        initializeView(view);
-
-        return view;
+        // Disable GUI
+        setPlayStatus(false);
     }
 
     /**
@@ -166,7 +185,7 @@ public class YanivPlayFragment extends PlayFragment {
         Iterator<PlayingCard> it;
 
         // Get marked cards to discarded deck
-        it = mCurrPlayersHand.iterator();
+        it = getCurrPlayersHand().iterator();
         while (it.hasNext()) {
             playingCard = it.next();
             v = mHandLL.getChildAt(i);
@@ -177,32 +196,19 @@ public class YanivPlayFragment extends PlayFragment {
         }
 
         if (YanivGame.isCardsDiscardValid(mPlayersMarkedCards)) {
+            mYanivBtn.setEnabled(false);
+            mDiscardBtn.setEnabled(false);
 
             // Remove discarded cards from players hand
             it = mPlayersMarkedCards.iterator();
             while (it.hasNext()) {
                 playingCard = it.next();
-                mCurrPlayersHand.removeCard(playingCard);
+                getCurrPlayersHand().removeCard(playingCard);
             }
 
             showCardsInHandView();
             mGetNewCard = true;
-
         }
-    }
-    // TODO: write comment
-    private void playerEndOfTurn(){
-        PlayingCard playingCard;
-        Iterator<PlayingCard> it;
-
-        // Move available discard to discard
-        it = mAvailableDiscardedCards.iterator();
-        while (it.hasNext()) {
-            playingCard = it.next();
-            mDiscardedCards.addCardToTop(playingCard);
-        }
-        mAvailableDiscardedCards.replace(
-                YanivGame.getAvailableCardsFromDiscard(mPlayersMarkedCards));
     }
 
     /**
@@ -214,14 +220,11 @@ public class YanivPlayFragment extends PlayFragment {
         ImageView img;
         int i = 0;
 
-        // Disable Yaniv declaration options
-        mYanivBtn.setEnabled(false);
-
         // Clear all cards from view
         mHandLL.removeAllViews();
 
         // Draw cards
-        Iterator<PlayingCard> it = mCurrPlayersHand.iterator();
+        Iterator<PlayingCard> it = getCurrPlayersHand().iterator();
         while (it.hasNext()) {
             playingCard = it.next();
             img = new ImageView(mAppContext);
@@ -254,11 +257,13 @@ public class YanivPlayFragment extends PlayFragment {
             i++;
         }
 
-        // Update my score and set yaniv button if allowed
-        mScoreTV.setText("" + mGame.calculateDeckScore(mCurrPlayersHand));
-        if (mGame.canYaniv(mCurrPlayersHand)) {
-            mYanivBtn.setEnabled(true);
-        }
+        // Update my score
+        /* TODO fix me
+
+        mScoreTV.setText(String.format("%d".toUpperCase(Locale.getDefault()),
+                YanivGame.calculateDeckScore(getCurrPlayersHand())));
+        */
+        mScoreTV.setText("" + YanivGame.calculateDeckScore(getCurrPlayersHand()));
     }
 
     /**
@@ -290,7 +295,7 @@ public class YanivPlayFragment extends PlayFragment {
         mDiscardedCardsLL.removeAllViews();
 
         // Draw cards
-        Iterator<PlayingCard> it = mAvailableDiscardedCards.iterator();
+        Iterator<PlayingCard> it = getAvailableDiscardedCards().iterator();
         while (it.hasNext()) {
             playingCard = it.next();
             img = new ImageView(mAppContext);
@@ -331,17 +336,18 @@ public class YanivPlayFragment extends PlayFragment {
     private void getCardFromAvailableDiscardedPile(View v) {
         PlayingCard playingCard;
         if (mGetNewCard) {
-            mCurrPlayersHand.addCardToBottom(mAvailableDiscardedCards.get(v.getId()));
+            getCurrPlayersHand().addCardToBottom(getAvailableDiscardedCards().get(v.getId()));
 
             // Get unused cards to discarded pile
-            Iterator<PlayingCard> it = mAvailableDiscardedCards.iterator();
+            Iterator<PlayingCard> it = getAvailableDiscardedCards().iterator();
             while (it.hasNext()) {
                 playingCard = it.next();
-                mDiscardedCards.addCardToTop(playingCard);
+                getDiscardedCards().addCardToTop(playingCard);
             }
-            mAvailableDiscardedCards.clear();
+            getAvailableDiscardedCards().clear();
 
             mGetNewCard = false;
+            playerEndOfTurn();
         }
     }
 
@@ -352,70 +358,133 @@ public class YanivPlayFragment extends PlayFragment {
     private void drawCardFromDeck(View v) {
         if (mGetNewCard) {
             // If we have fresh cards, deal them
-            if (mGlobalCardDeck.size() > 0) {
-                mCurrPlayersHand.addCardToBottom(mGlobalCardDeck.pop());
+            if (getGlobalCardDeck().size() > 0) {
+                getCurrPlayersHand().addCardToBottom(getGlobalCardDeck().pop());
             }
-            // No cards in deck, add discarted cards to global and reshuffle
+            // No cards in deck, add discarded cards to global and reshuffle
             else {
-                mGlobalCardDeck.addAll(mDiscardedCards);
-                mGlobalCardDeck.shuffle();
-                mDiscardedCards.clear();
+                getGlobalCardDeck().addAll(getDiscardedCards());
+                getGlobalCardDeck().shuffle();
+                getDiscardedCards().clear();
             }
             mGetNewCard = false;
         }
+        playerEndOfTurn();
     }
 
     /**
-     * Declare Yaniv and finish session
+     * Play the end of turn of the player
+     */
+    private void playerEndOfTurn(){
+        PlayingCard playingCard;
+        Iterator<PlayingCard> it;
+
+        // Move available discard to discard
+        it = getAvailableDiscardedCards().iterator();
+        while (it.hasNext()) {
+            playingCard = it.next();
+            getDiscardedCards().addCardToTop(playingCard);
+        }
+        getAvailableDiscardedCards().replace(
+                YanivGame.getAvailableCardsFromDiscard(mPlayersMarkedCards));
+
+        setPlayStatus(false);
+        finishTurn(getNextParticipantId());
+        Log.i(TAG,"Turn Ended");
+        mInstructionsTV.setText(R.string.games_waiting_for_other_player_turn);
+    }
+
+
+    /**
+     * Declare Yaniv and finish game session
      */
     private void declareYaniv() {
-        //TODO : make somthing here
-        Log.i(TAG, "Yaniv !");
-    }
+        String winnerID;
 
-    //TODO: Del demo for testing
-    private void setDemoCards() {
-        PlayingCard pc1 = new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.CLUBS);
-        PlayingCard pc2 = new PlayingCard(PlayingCardRanks.TWO, PlayingCardSuits.CLUBS);
-        PlayingCard pc3 = new PlayingCard(PlayingCardRanks.THREE, PlayingCardSuits.CLUBS);
-        PlayingCard pc4 = new PlayingCard(PlayingCardRanks.FOUR, PlayingCardSuits.CLUBS);
-        PlayingCard pc5 = new PlayingCard(PlayingCardRanks.FIVE, PlayingCardSuits.CLUBS);
+        setPlayStatus(false);
+        winnerID = YanivGame.declareYanivWinner(
+                getCurrentParticipantId(),getCurrPlayersHand(),getPlayersHands());
 
-        mCurrPlayersHand.addCardToTop(pc1);
-        mCurrPlayersHand.addCardToTop(pc2);
-        mCurrPlayersHand.addCardToTop(pc3);
-        mCurrPlayersHand.addCardToTop(pc4);
-        mCurrPlayersHand.addCardToTop(pc5);
+        // Show win status
+        if (winnerID.equals(getCurrentParticipantId())) {
+            mInstructionsTV.setText(R.string.games_you_win);
+            Toast.makeText(mAppContext, R.string.games_you_win, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(mAppContext, R.string.games_you_lose, Toast.LENGTH_SHORT).show();
+            mInstructionsTV.setText(R.string.games_you_lose);
+        }
 
-        PlayingCard dpc1 = new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.HEARTS);
-        PlayingCard dpc2 = new PlayingCard(PlayingCardRanks.TWO, PlayingCardSuits.HEARTS);
-        PlayingCard dpc3 = new PlayingCard(PlayingCardRanks.THREE, PlayingCardSuits.HEARTS);
-        //PlayingCard dpc4 = new PlayingCard(PlayingCardRanks.FOUR, PlayingCardSuits.HEARTS);
-        //PlayingCard dpc5 = new PlayingCard(PlayingCardRanks.FIVE, PlayingCardSuits.HEARTS);
-        PlayingCard dpc4 = new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE);
-        PlayingCard dpc5 = new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE);
-
-        mAvailableDiscardedCards.addCardToTop(dpc1);
-        mAvailableDiscardedCards.addCardToTop(dpc2);
-        mAvailableDiscardedCards.addCardToTop(dpc3);
-        mAvailableDiscardedCards.addCardToTop(dpc4);
-        mAvailableDiscardedCards.addCardToTop(dpc5);
-
+        processWin(winnerID);
     }
 
     /**
-     * Generate the playing deck's for stat of game
+     * Processes a win result
+     * @param winnerParticipantId as String of winner ID
      */
-    private void startOfGame() {
-        mGlobalCardDeck = mGame.generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS);
+    private void processWin(String winnerParticipantId) {
+        List<ParticipantResult> results = new LinkedList<>();
 
-        // Get my cards from deck
-        for (int i = 0; i < mGame.getInitialNumOfPlayerCards(); i++){
-            mCurrPlayersHand.addCardToTop(mGlobalCardDeck.pop());
+        results.add(new ParticipantResult(
+                winnerParticipantId, ParticipantResult.MATCH_RESULT_WIN,
+                ParticipantResult.PLACING_UNINITIALIZED));
+
+        // Create lose result for other participants
+        for (String participantId : mMatch.getParticipantIds()) {
+            if (!participantId.equals(winnerParticipantId)) {
+                results.add(new ParticipantResult(
+                        participantId, ParticipantResult.MATCH_RESULT_LOSS,
+                        ParticipantResult.PLACING_UNINITIALIZED));
+            }
+        }
+
+        finishMatch(results);
+
+        /* Unlock Achievements
+        Games.Achievements.unlockImmediate(getApiClient(),
+                getString(R.string.achievement_first_win));
+        */
+    }
+
+    /**
+     * Generate the playing deck's
+     */
+    private void dealCards() {
+        ArrayList<String> participantIds = mMatch.getParticipantIds();
+
+        getGlobalCardDeck().replace(YanivGame.generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS));
+
+        for(String participant : participantIds) {
+            DeckOfCards deck = new DeckOfCards();
+
+            // Deal Hand to participant
+            for (int i = 0; i < mGame.getInitialNumOfPlayerCards(); i++){
+                deck.addCardToTop(getGlobalCardDeck().pop());
+            }
+
+            // Save
+            getPlayersHands().put(participant, deck);
         }
 
         // Draw first card to available discarded cards
-        mAvailableDiscardedCards.addCardToTop(mGlobalCardDeck.pop());
+        getAvailableDiscardedCards().addCardToTop(getGlobalCardDeck().pop());
+    }
+
+    /**
+     * Enable/Disable playing gui between turns
+     * @param enabled as to Enable/Disable game play
+     */
+    private void setPlayStatus(boolean enabled) {
+        ActivityUtils.setEnabledRecursively(mHandLL, enabled);
+        ActivityUtils.setEnabledRecursively(mDiscardedCardsLL, enabled);
+        mDeckIV.setEnabled(enabled);
+        mDiscardBtn.setEnabled(enabled);
+
+        // Set enabled only if yaniv is allowed
+        if (enabled && YanivGame.canYaniv(getCurrPlayersHand())) {
+            mYanivBtn.setEnabled(true);
+        } else {
+            mYanivBtn.setEnabled(false);
+        }
     }
 
     /**
@@ -423,7 +492,12 @@ public class YanivPlayFragment extends PlayFragment {
      */
     @Override
     protected void startMatch() {
-        startOfGame();
+        Log.i(TAG,"Match Started");
+
+        dealCards();
+        mInstructionsTV.setText(getString(R.string.games_waiting_for_other_player_turn));
+        Toast.makeText(mAppContext, R.string.games_waiting_for_other_player_turn,
+                Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -431,7 +505,10 @@ public class YanivPlayFragment extends PlayFragment {
      */
     @Override
     protected void startTurn() {
-
+        Log.i(TAG,"Start of Turn");
+        setPlayStatus(true);
+        mInstructionsTV.setText(getString(R.string.games_play_your_turn));
+        Toast.makeText(mAppContext, R.string.games_play_your_turn, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -441,5 +518,45 @@ public class YanivPlayFragment extends PlayFragment {
     protected void updateView() {
         showCardsInDiscardView();
         showCardsInHandView();
+    }
+
+    /**
+     * Get players hands from YanivTurn
+     * @return players hands as HashMap from YanivTurn
+     */
+    public HashMap<String, DeckOfCards> getPlayersHands() {
+        return ((YanivTurn)mTurnData).getPlayersHands();
+    }
+
+    /**
+     * Get available discarded cards from YanivTurn
+     * @return get available discarded cards as DeckOfCards from YanivTurn
+     */
+    private DeckOfCards getAvailableDiscardedCards() {
+        return ((YanivTurn)mTurnData).getAvailableDiscardedCards();
+    }
+
+    /**
+     * Get discarded cards from YanivTurn
+     * @return get discarded cards as DeckOfCards from YanivTurn
+     */
+    private DeckOfCards getDiscardedCards() {
+        return ((YanivTurn)mTurnData).getDiscardedCards();
+    }
+
+    /**
+     * Get global card deck from YanivTurn
+     * @return get global card deck as DeckOfCards from YanivTurn
+     */
+    private DeckOfCards getGlobalCardDeck() {
+        return ((YanivTurn)mTurnData).getGlobalCardDeck();
+    }
+
+    /**
+     * Get my current deck of cards from YanivTurn
+     * @return get my current deck of cards as DeckOfCards from YanivTurn
+     */
+    private DeckOfCards getCurrPlayersHand() {
+        return ((YanivTurn)mTurnData).getPlayersHands().get(getCurrentParticipantId());
     }
 }

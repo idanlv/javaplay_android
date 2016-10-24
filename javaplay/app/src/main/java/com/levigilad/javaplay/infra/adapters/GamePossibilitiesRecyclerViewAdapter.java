@@ -1,5 +1,8 @@
 package com.levigilad.javaplay.infra.adapters;
 
+import android.support.design.widget.FloatingActionButton;
+import android.support.transition.TransitionManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,12 +35,14 @@ public class GamePossibilitiesRecyclerViewAdapter extends
     /**
      * Inner class for handling events on game view
      */
-    public static class GameHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class GameHolder extends RecyclerView.ViewHolder {
         /**
          * Designer
          */
-        TextView mNameTextView;
-        TextView mDescriptionTextView;
+        private TextView mNameTextView;
+        private TextView mDescriptionTextView;
+        private FloatingActionButton mPlayFloatingActionButton;
+        private CardView mCardView;
 
         /**
          * Constructor
@@ -47,9 +52,27 @@ public class GamePossibilitiesRecyclerViewAdapter extends
             super(itemView);
             mNameTextView = (TextView) itemView.findViewById(R.id.game_name_text_view);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.game_description_text_view);
+            mPlayFloatingActionButton =
+                    (FloatingActionButton) itemView.findViewById(R.id.game_start_new_match_action_button);
 
-            Log.d(TAG, "Added listener");
-            itemView.setOnClickListener(this);
+            mCardView = (CardView) itemView.findViewById(R.id.game_card_view);
+
+            mCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TransitionManager.beginDelayedTransition(mCardView);
+                    mDescriptionTextView.setVisibility(View.VISIBLE);
+                }
+            });
+
+            mPlayFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onItemClicked(getAdapterPosition(), mCardView);
+                    }
+                }
+            });
         }
 
         /**
@@ -66,17 +89,6 @@ public class GamePossibilitiesRecyclerViewAdapter extends
          */
         public void setDescription(String description) {
             mDescriptionTextView.setText(description);
-        }
-
-        /**
-         * Raise event in listener
-         * @param v The view that was clicked
-         */
-        @Override
-        public void onClick(View v) {
-            if (mListener != null) {
-                mListener.onItemClicked(getAdapterPosition(), v);
-            }
         }
     }
 
