@@ -110,6 +110,9 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 mAutoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
             }
         }
+
+        mAppContext.setTitle(getGameId());
+
         Log.d(TAG, "Exited onCreate()");
     }
 

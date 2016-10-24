@@ -1,5 +1,6 @@
 package com.levigilad.javaplay;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -41,6 +42,8 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
 
         return fragment;
     }
+
+
 
     /**
      * On Create View
@@ -96,6 +99,7 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
         // Verifies attached context implements listener interface
         if (context instanceof OnGameSelectedListener) {
             mListener = (OnGameSelectedListener)context;
+            ((Activity)context).setTitle(R.string.pick_a_game);
         } else {
             throw new RuntimeException("Activity must implement NavigationDrawerCallbacks.");
         }
