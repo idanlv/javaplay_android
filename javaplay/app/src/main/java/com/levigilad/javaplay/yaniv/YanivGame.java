@@ -210,7 +210,7 @@ public class YanivGame extends GameOfCards {
                 availableCards.addCardToTop(cardsToDiscard.peek());
             }
             else if (isDuplicates(cardsToDiscard)) {
-                availableCards = new DeckOfCards(availableCards);
+                availableCards = new DeckOfCards(cardsToDiscard);
             }
             // Marked cards is sequence, add edges (isSequence = size >= 3)
             else {
