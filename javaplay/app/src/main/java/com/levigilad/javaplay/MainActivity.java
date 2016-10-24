@@ -21,6 +21,7 @@ import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
+import com.google.basegameutils.games.BaseGameUtils;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
@@ -129,19 +130,16 @@ public class MainActivity extends BaseGameActivity implements
 
         switch (id) {
             case R.id.nav_inbox: {
-                Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
-                startActivityForResult(intent, RC_LOOK_AT_MATCHES);
+                showInbox();
                 break;
             }
             case R.id.nav_achievements: {
-                Intent intent = Games.Achievements.getAchievementsIntent(getApiClient());
-                startActivityForResult(intent, RC_LOOK_AT_ACHIEVEMENTS);
+                showAchievements();
 
                 break;
             }
             case R.id.nav_leaderboards: {
-                Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
-                startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
+                showLeaderboards();
                 break;
             }
             case R.id.nav_new_match: {
@@ -151,6 +149,36 @@ public class MainActivity extends BaseGameActivity implements
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showLeaderboards() {
+        if (isSignedIn()) {
+            Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
+            startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
+        } else {
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.leaderboards_not_available)).show();
+            showLogin();
+        }
+    }
+
+    private void showAchievements() {
+        if (isSignedIn()) {
+            Intent intent = Games.Achievements.getAchievementsIntent(getApiClient());
+            startActivityForResult(intent, RC_LOOK_AT_ACHIEVEMENTS);
+        } else {
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.achievements_not_available)).show();
+            showLogin();
+        }
+    }
+
+    private void showInbox() {
+        if (isSignedIn()) {
+            Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
+            startActivityForResult(intent, RC_LOOK_AT_MATCHES);
+        } else {
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.inbox_not_available)).show();
+            showLogin();
+        }
     }
 
     @Override
@@ -175,7 +203,7 @@ public class MainActivity extends BaseGameActivity implements
 
             setTitle(mGameId);
             // TODO: Does this handle rematch?
-            enterExistingMatch(data);
+            loadExistingMatch(data);
         } else if (request == RC_LOOK_AT_LEADERBOARD) {
             // TODO: Handle errors
         } else if (request == RC_LOOK_AT_ACHIEVEMENTS) {
@@ -237,7 +265,7 @@ public class MainActivity extends BaseGameActivity implements
 
     }
 
-    private void enterExistingMatch(Intent data) {
+    private void loadExistingMatch(Intent data) {
         TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
         if (match != null) {
