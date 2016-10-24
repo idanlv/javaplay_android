@@ -49,15 +49,21 @@
             <ScrollView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.32"
-                android:id="@+id/sv_players_cards_count" >
-                <LinearLayout
-                    android:id="@+id/ll_players_card_count"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                </LinearLayout>
+                android:layout_weight="0.32">
+                <HorizontalScrollView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TableLayout
+                            android:id="@+id/tbll_players_card_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                        </TableLayout>
+                    </LinearLayout>
+                </HorizontalScrollView>
             </ScrollView>
 
         </LinearLayout>

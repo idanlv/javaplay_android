@@ -1,21 +1,23 @@
 package com.levigilad.javaplay.yaniv;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
@@ -29,7 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Yaniv Play Fragment, Game Flow :<BR>
@@ -53,6 +54,7 @@ public class YanivPlayFragment extends PlayFragment {
     private static final int DEFAULT_NUMBER_OF_DECKS = 2;
     private static final int DEFAULT_NUMBER_OF_JOKERS = 4;
     private static final int MARKED_IMAGE_BACKGROUND = Color.BLUE;
+    private static final int GLOBAL_TEXT_COLOR = Color.BLACK;
     private static final String PLAYER_SCORE_FORMAT = "%s: %d";
 
     /**
@@ -70,7 +72,7 @@ public class YanivPlayFragment extends PlayFragment {
     private Button mYanivBtn;
     private LinearLayout mHandLL;
     private LinearLayout mDiscardedCardsLL;
-    private LinearLayout mPlayersCardsCountLL;
+    private TableLayout mPlayersCardsCountTBLL;
     private TextView mScoreTV;
     private TextView mInstructionsTV;
 
@@ -148,9 +150,12 @@ public class YanivPlayFragment extends PlayFragment {
         mDeckIV = (ImageView) parentView.findViewById(R.id.iv_deck);
         mDiscardBtn = (Button) parentView.findViewById(R.id.btn_discard);
         mYanivBtn = (Button) parentView.findViewById(R.id.btn_Yaniv);
-        mPlayersCardsCountLL = (LinearLayout) parentView.findViewById(R.id.ll_players_card_count);
+        mPlayersCardsCountTBLL = (TableLayout) parentView.findViewById(R.id.tbll_players_card_count);
         mScoreTV = (TextView) parentView.findViewById(R.id.tv_score);
         mInstructionsTV = (TextView) parentView.findViewById(R.id.tv_instructions);
+
+        // Set attributes
+        mInstructionsTV.setTextColor(GLOBAL_TEXT_COLOR);
 
         // Set listeners
         mDeckIV.setOnClickListener(new View.OnClickListener() {
@@ -448,6 +453,50 @@ public class YanivPlayFragment extends PlayFragment {
         */
     }
 
+    private void showPlayersCardCount() {
+        HashMap<String, DeckOfCards> users = getPlayersHands();
+        mPlayersCardsCountTBLL.removeAllViews();
+
+        //Generate title row
+        TableRow tblrowTitle = new TableRow(mAppContext);
+        TextView tvTitle = new TextView(mAppContext);
+        tvTitle.setText(R.string.yaniv_players_cards_count);
+        tvTitle.setTextColor(GLOBAL_TEXT_COLOR);
+        tvTitle.setGravity(Gravity.CENTER);
+        // span on the entire line
+        TableRow.LayoutParams trpTitle = new TableRow.LayoutParams();
+        trpTitle.weight = 1;
+        trpTitle.setMargins(1,1,1,1);
+        tvTitle.setLayoutParams(trpTitle);
+
+        tblrowTitle.addView(tvTitle);
+        mPlayersCardsCountTBLL.addView(tblrowTitle);
+
+        // Generate data rows
+
+        for (Participant participant : mMatch.getParticipants()) {
+            TableRow tblrowUser = new TableRow(mAppContext);
+
+            // User Name
+            TextView tvUserName = new TextView(mAppContext);
+            tvUserName.setText(participant.getDisplayName());
+            tvUserName.setTextColor(GLOBAL_TEXT_COLOR);
+            tvUserName.setGravity(Gravity.START);
+            tvUserName.setPaddingRelative(0,0,10,0);
+            tblrowUser.addView(tvUserName);
+
+            // Card Count
+            int numOfCards = users.get(participant.getParticipantId()).size();
+            TextView tvUserCardCount = new TextView(mAppContext);
+            tvUserCardCount.setText(String.valueOf(numOfCards));
+            tvUserCardCount.setTextColor(GLOBAL_TEXT_COLOR);
+            tvUserCardCount.setGravity(Gravity.END);
+            tblrowUser.addView(tvUserCardCount);
+
+            mPlayersCardsCountTBLL.addView(tblrowUser);
+        }
+    }
+
     /**
      * Generate the playing deck's
      */
@@ -522,25 +571,6 @@ public class YanivPlayFragment extends PlayFragment {
         showCardsInDiscardView();
         showCardsInHandView();
         showPlayersCardCount();
-    }
-
-    private void showPlayersCardCount() {
-        mPlayersCardsCountLL.removeAllViews();
-
-        HashMap<String, DeckOfCards> playerHands = getPlayersHands();
-
-        for (String participantId : playerHands.keySet()) {
-            TextView valueTV = new TextView(mAppContext);
-            valueTV.setTextColor(Color.BLACK);
-            valueTV.setText(String.format(PLAYER_SCORE_FORMAT,
-                    mMatch.getParticipant(participantId).getDisplayName(),
-                    playerHands.get(participantId).size()));
-            valueTV.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
-
-            mPlayersCardsCountLL.addView(valueTV);
-        }
     }
 
     /**
