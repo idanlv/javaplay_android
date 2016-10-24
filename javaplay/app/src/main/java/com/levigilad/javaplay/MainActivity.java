@@ -81,7 +81,9 @@ public class MainActivity extends BaseGameActivity implements
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        showLogin();
+        if (savedInstanceState == null) {
+            showLogin();
+        }
     }
 
     @Override
@@ -182,9 +184,9 @@ public class MainActivity extends BaseGameActivity implements
         Toast.makeText(this, "Connected to Google Servers", Toast.LENGTH_LONG);
 
         FragmentManager fragmentManager = getFragmentManager();
-        LoginFragment fragment = (LoginFragment) fragmentManager.findFragmentById(R.id.fragment_container);
+        Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
-        if ((fragment != null) && (fragment.isVisible())) {
+        if ((fragment instanceof LoginFragment) && (fragment.isVisible())) {
             showGameOptions();
         }
     }
