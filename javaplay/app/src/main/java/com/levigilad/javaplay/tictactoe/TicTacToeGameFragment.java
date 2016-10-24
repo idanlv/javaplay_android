@@ -34,7 +34,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     private TextView mInstructionsTextView;
 
     public TicTacToeGameFragment() {
-        super(new TicTacToeTurn());
+        super(new TicTacToeTurn(), ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
     }
 
     /**
@@ -120,7 +120,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             mCurrentPlayerSymbol =
                     ((TicTacToeTurn)mTurnData).addParticipant(getCurrentParticipantId());
 
-            mInstructionsTextView.setText(getString(R.string.games_waiting_for_player_turn));
+            mInstructionsTextView.setText(getString(R.string.games_waiting_for_other_player_turn));
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
         }
@@ -246,7 +246,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 processTie();
             } else {
                 finishTurn(getNextParticipantId());
-                mInstructionsTextView.setText(getString(R.string.games_waiting_for_player_turn));
+                mInstructionsTextView.setText(getString(R.string.games_waiting_for_other_player_turn));
             }
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());

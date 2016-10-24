@@ -35,7 +35,7 @@ public abstract class GameOfCards extends Game {
      * @param numberOfJokers number of jokers to add to the deck
      * @return New deck of cards
      */
-    public DeckOfCards generateDeck(int numberOfDecks, int numberOfJokers) {
+    public static DeckOfCards generateDeck(int numberOfDecks, int numberOfJokers) {
         DeckOfCards deck = new DeckOfCards();
 
         // Generate n numbers of decks

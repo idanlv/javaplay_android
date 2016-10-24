@@ -242,7 +242,7 @@ public abstract class BaseGameFragment extends Fragment implements GameHelper.Ga
      */
     protected void showWarning(String title, String message) {
         AlertDialog.Builder alertDialogBuilder =
-                new AlertDialog.Builder(this.getActivity().getApplicationContext());
+                new AlertDialog.Builder(this.getActivity());
 
         // Set title
         alertDialogBuilder.setTitle(title).setMessage(message);

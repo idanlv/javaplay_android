@@ -1,123 +1,309 @@
 package com.levigilad.javaplay;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
+import com.google.basegameutils.games.BaseGameUtils;
+import com.levigilad.javaplay.infra.PlayFragment;
+import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
+import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
+import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
+import com.levigilad.javaplay.yaniv.YanivPlayFragment;
 
-public class MainActivity extends BaseGameActivity implements View.OnClickListener {
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+
+public class MainActivity extends BaseGameActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        OnGameSelectedListener,
+        OnFragmentInteractionListener {
+    /**
+     * Constants
+     */
+    private static final int RC_SELECT_PLAYERS = 5001;
+    private final static int RC_LOOK_AT_MATCHES = 10001;
+    private static final int RC_LOOK_AT_LEADERBOARD = 11001;
+    private static final int RC_LOOK_AT_ACHIEVEMENTS = 12001;
     private static final String TAG = "MainActivity";
+
+    /**
+     * Members
+     */
+    private String mGameId;
 
     /**
      * Designer
      */
-    private com.google.android.gms.common.SignInButton mBtnSignIn;
-    private Button mBtnSignOut;
-    private Button mBtnPlay;
-    private ProgressBar mProgressBarConnect;
-    private LinearLayout mBarSignIn;
-    private LinearLayout mBarSignOut;
+    private ActionBarDrawerToggle mToggle;
+    private NavigationView mNavigationView = null;
+    private Toolbar mToolBar = null;
+    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate()");
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
-        initializeViews();
-    }
+        if (savedInstanceState == null) {
+            showLogin();
+        }
 
-    private void initializeViews() {
-        mBarSignIn = (LinearLayout) findViewById(R.id.sign_in_bar);
+        mToolBar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolBar);
 
-        mBarSignOut = (LinearLayout) findViewById(R.id.sign_out_bar);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        mBtnSignIn = (com.google.android.gms.common.SignInButton) findViewById(R.id.button_sign_in);
-        mBtnSignIn.setOnClickListener(this);
+        mToggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(mToggle);
+        mToggle.syncState();
 
-        mBtnSignOut = (Button) findViewById(R.id.button_sign_out);
-        mBtnSignOut.setOnClickListener(this);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        mBtnPlay = (Button) findViewById(R.id.btn_play);
-        mBtnPlay.setOnClickListener(this);
-        mBtnPlay.setVisibility(View.GONE);
-
-        mProgressBarConnect = (ProgressBar) findViewById(R.id.progressBar_connect);
-        mProgressBarConnect.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Shows the "sign in" bar (explanation and button)
-     */
-    private void showSignInBar() {
-        Log.d(TAG, "Showing sign in bar");
-        mBarSignIn.setVisibility(View.VISIBLE);
-        mBarSignOut.setVisibility(View.GONE);
-    }
-
-    /**
-     * Shows the "sign out" bar (explanation and button)
-     */
-    private void showSignOutBar() {
-        Log.d(TAG, "Showing sign out bar");
-        mBarSignIn.setVisibility(View.GONE);
-        mBarSignOut.setVisibility(View.VISIBLE);
+        mNavigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.button_sign_in:
-                btnSignIn_OnClick();
+    protected void onStop() {
+        if (isSignedIn()) {
+            Games.TurnBasedMultiplayer.unregisterMatchUpdateListener(getApiClient());
+        }
+
+        super.onStop();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.nav_inbox: {
+                showInbox();
                 break;
-            case R.id.button_sign_out:
-                btnSignOut_OnClick();
+            }
+            case R.id.nav_achievements: {
+                showAchievements();
+
                 break;
-            case R.id.btn_play:
-                btnPlay_OnClick();
+            }
+            case R.id.nav_leaderboards: {
+                showLeaderboards();
                 break;
+            }
+            case R.id.nav_new_match: {
+                showGameOptions();
+            }
+        }
+
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void showLeaderboards() {
+        if (isSignedIn()) {
+            Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
+            startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
+        } else {
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.leaderboards_not_available)).show();
+            showLogin();
         }
     }
 
-    private void btnSignOut_OnClick() {
-        // sign out.
-        Log.d(TAG, "Sign-out button clicked");
-        signOut();
-        showSignInBar();
+    private void showAchievements() {
+        if (isSignedIn()) {
+            Intent intent = Games.Achievements.getAchievementsIntent(getApiClient());
+            startActivityForResult(intent, RC_LOOK_AT_ACHIEVEMENTS);
+        } else {
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.achievements_not_available)).show();
+            showLogin();
+        }
     }
 
-    private void btnSignIn_OnClick() {
-        Log.d(TAG, "Sign-in button clicked");
-        beginUserInitiatedSignIn();
-        mProgressBarConnect.setVisibility(View.VISIBLE);
-        mBtnPlay.setVisibility(View.GONE);
-        showSignOutBar();
+    private void showInbox() {
+        if (isSignedIn()) {
+            Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
+            startActivityForResult(intent, RC_LOOK_AT_MATCHES);
+        } else {
+            BaseGameUtils.makeSimpleDialog(this, getString(R.string.inbox_not_available)).show();
+            showLogin();
+        }
     }
 
-    private void btnPlay_OnClick() {
-        Intent i = new Intent(this, GameOptionsActivity.class);
-        startActivity(i);
+    @Override
+    public void onActivityResult(int request, int response, Intent data) {
+        super.onActivityResult(request, response, data);
+
+        if (request == RC_SELECT_PLAYERS) {
+            if (response != Activity.RESULT_OK) {
+                // user canceled
+                return;
+            }
+
+            startNewMatch(data);
+        } else if (request == RC_LOOK_AT_MATCHES) {
+            // Returning from the 'Select Match' dialog
+
+            if (response != Activity.RESULT_OK) {
+                // user canceled
+                return;
+            }
+
+            // TODO: Does this handle rematch?
+            loadExistingMatch(data);
+        } else if (request == RC_LOOK_AT_LEADERBOARD) {
+            // TODO: Handle errors
+        } else if (request == RC_LOOK_AT_ACHIEVEMENTS) {
+            // TODO: Handle errors
+        }
     }
 
     @Override
     public void onSignInFailed() {
-        beginUserInitiatedSignIn();
-        mBtnPlay.setVisibility(View.GONE);
-        mProgressBarConnect.setVisibility(View.VISIBLE);
+        reconnectClient();
     }
 
     @Override
     public void onSignInSucceeded() {
-        showSignOutBar();
-        mProgressBarConnect.setVisibility(View.GONE);
-        mBtnPlay.setVisibility(View.VISIBLE);
+        Log.d(TAG, "Entered onSignInSucceeded()");
+        // TODO: Idan! Check this toast
+        Toast.makeText(this.getApplicationContext(), "Connected", Toast.LENGTH_LONG);
+        Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
+        Log.d(TAG, "Exited onSignInSucceeded()");
+    }
+
+    @Override
+    public void onGameSelected(String gameId) {
+        mGameId = gameId;
+
+        Intent intent = Games.TurnBasedMultiplayer
+                .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
+        startActivityForResult(intent, RC_SELECT_PLAYERS);
+    }
+
+    private void startNewMatch(Intent data) {
+        // Get the invitee list.
+        final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+
+        // Get auto-match criteria.
+        Bundle autoMatchCriteria = null;
+        int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+        int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+        if (minAutoMatchPlayers > 0) {
+            autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
+                    minAutoMatchPlayers, maxAutoMatchPlayers, 0);
+        } else {
+            autoMatchCriteria = null;
+        }
+
+        PlayFragment fragment = null;
+
+        if (mGameId.equals(getString(R.string.yaniv_game_id))) {
+            fragment = YanivPlayFragment.newInstance(invitees, autoMatchCriteria);
+        } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
+            fragment = TicTacToeGameFragment.newInstance(invitees, autoMatchCriteria);
+        }
+
+        replaceFragment(fragment);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    private void loadExistingMatch(Intent data) {
+        TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
+
+        if (match != null) {
+            if (match.getData() != null) {
+                try {
+                    JSONObject turnData = new JSONObject(new String(match.getData()));
+                    mGameId = turnData.getString("game_id");
+
+                    PlayFragment fragment = null;
+
+                    if (mGameId.equals(getString(R.string.yaniv_game_id))) {
+                        fragment = YanivPlayFragment.newInstance(match);
+                    } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
+                        fragment = TicTacToeGameFragment.newInstance(match);
+                    }
+
+                    replaceFragment(fragment);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // TODO: rematch?
+            }
+        }
+
+        Log.d(TAG, "Match = " + match);
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        // update the main content by replacing fragments
+        FragmentManager fragmentManager = getFragmentManager();
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
+    }
+
+    private void showGameOptions() {
+        GamePossibilitiesFragment fragment = GamePossibilitiesFragment.newInstance();
+        replaceFragment(fragment);
+    }
+
+    private void showLogin() {
+        LoginFragment fragment = LoginFragment.newInstance();
+        setTitle(getString(R.string.app_name));
+        replaceFragment(fragment);
     }
 }

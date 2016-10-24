@@ -16,29 +16,19 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Application theme. -->
-    <style name="AppTheme.NoActionBar.FullScreen" parent="android:Theme.Material.NoActionBar.Fullscreen">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:colorPrimary">@color/primary_material_dark</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark_material_dark</item>
-        <item name="android:colorAccent">@color/accent_material_dark</item>
-        <item name="android:colorBackground">@color/background_material_dark</item>
-        <item name="android:textColorPrimary">@color/primary_text_material_dark</item>
-        <item name="android:textColorSecondary">@color/secondary_text_material_dark</item>
-        <item name="android:textColorPrimaryInverse">@color/primary_text_material_light</item>
-        <item name="android:colorButtonNormal">@color/primary_material_dark</item>
-    </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
 
-    <style name="AppTheme" parent="android:Theme.Material">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:colorPrimary">@color/primary_material_dark</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark_material_dark</item>
-        <item name="android:colorAccent">@color/accent_material_dark</item>
-        <item name="android:colorBackground">@color/background_material_dark</item>
-        <item name="android:textColorPrimary">@color/primary_text_material_dark</item>
-        <item name="android:textColorSecondary">@color/secondary_text_material_dark</item>
-        <item name="android:textColorPrimaryInverse">@color/primary_text_material_light</item>
-        <item name="android:colorButtonNormal">@color/primary_material_dark</item>
     </style>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="MainLayout">
         <item name="android:layout_width">match_parent</item>
