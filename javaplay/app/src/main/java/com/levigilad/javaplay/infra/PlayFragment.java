@@ -39,7 +39,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTO_MATCH";
     protected static final String MATCH_ID = "MATCH_ID";
-    private static final String ORIGINAL_ORIENTATION = "ORIGINAL_ORIENTATION";
 
     /**
      * Members
@@ -369,6 +368,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
 
             // Start my turn
             if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                mListener.onFragmentInteraction(getString(R.string.games_play_your_turn));
                 mTurnData.increaseTurnCounter();
                 startTurn();
             }

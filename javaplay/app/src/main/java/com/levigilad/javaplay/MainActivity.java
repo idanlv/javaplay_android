@@ -6,7 +6,9 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -59,6 +61,7 @@ public class MainActivity extends BaseGameActivity implements
     private NavigationView mNavigationView = null;
     private Toolbar mToolBar = null;
     private DrawerLayout mDrawerLayout;
+    private CoordinatorLayout mCoordinatorLayour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,8 @@ public class MainActivity extends BaseGameActivity implements
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
 
         mNavigationView.setNavigationItemSelectedListener(this);
+
+        mCoordinatorLayour = (CoordinatorLayout)findViewById(R.id.app_coordinator_layout);
     }
 
     @Override
@@ -258,8 +263,11 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(String message) {
+        Snackbar snackbar = Snackbar
+                .make(mCoordinatorLayour, message, Snackbar.LENGTH_INDEFINITE);
 
+        snackbar.show();
     }
 
     private void loadExistingMatch(Intent data) {

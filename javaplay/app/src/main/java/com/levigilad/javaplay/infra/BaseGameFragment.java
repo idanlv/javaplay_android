@@ -23,7 +23,7 @@ public abstract class BaseGameFragment extends Fragment implements GameHelper.Ga
     private GameHelper mHelper;
     private boolean mDebugLog;
     private int mRequestedClients;
-    private OnFragmentInteractionListener mListener;
+    protected OnFragmentInteractionListener mListener;
     private String mGameId;
 
     /**
