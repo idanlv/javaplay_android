@@ -115,11 +115,6 @@ public class MainActivity extends BaseGameActivity implements
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -191,7 +186,6 @@ public class MainActivity extends BaseGameActivity implements
                 return;
             }
 
-            setTitle(mGameId);
             startNewMatch(data);
         } else if (request == RC_LOOK_AT_MATCHES) {
             // Returning from the 'Select Match' dialog
@@ -201,7 +195,6 @@ public class MainActivity extends BaseGameActivity implements
                 return;
             }
 
-            setTitle(mGameId);
             // TODO: Does this handle rematch?
             loadExistingMatch(data);
         } else if (request == RC_LOOK_AT_LEADERBOARD) {
@@ -305,7 +298,6 @@ public class MainActivity extends BaseGameActivity implements
 
     private void showGameOptions() {
         GamePossibilitiesFragment fragment = GamePossibilitiesFragment.newInstance();
-        setTitle(getString(R.string.pick_a_game));
         replaceFragment(fragment);
     }
 
