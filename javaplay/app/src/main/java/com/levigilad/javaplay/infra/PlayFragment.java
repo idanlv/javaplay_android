@@ -26,7 +26,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * This class represents a fragment of a game
@@ -40,6 +39,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTO_MATCH";
     protected static final String MATCH_ID = "MATCH_ID";
+    private static final String ORIGINAL_ORIENTATION = "ORIGINAL_ORIENTATION";
 
     /**
      * Members
@@ -50,6 +50,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
     protected BaseGameActivity mAppContext;
+    private boolean mRestoreOrientation;
 
     /**
      * Constructor: Creates a game fragment
@@ -60,8 +61,32 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         super(REQUESTED_CLIENTS);
         mTurnData = turnData;
         mScreenOrientation = screenOrientation;
+        mRestoreOrientation = false;
     }
 
+
+    /**
+     * Set the caller Activity as context
+     * @param context Activity or fragment that current fragment was attached to
+     */
+    @Override
+    public void onAttach(Context context) {
+        Log.d(TAG, "Entered onAttach()");
+        super.onAttach(context);
+
+        try {
+            mAppContext = (BaseGameActivity)context;
+
+            if (mAppContext.getRequestedOrientation() != mScreenOrientation) {
+                mAppContext.setRequestedOrientation(mScreenOrientation);
+            } else {
+                mRestoreOrientation = true;
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Activity must be sub class of BaseGameActivity");
+        }
+        Log.d(TAG, "Exited onAttach()");
+    }
 
     /**
      * On Create
@@ -83,27 +108,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
             }
         }
         Log.d(TAG, "Exited onCreate()");
-    }
-
-    /**
-     * Set the caller Activity as context
-     * @param context Activity or fragment that current fragment was attached to
-     */
-    @Override
-    public void onAttach(Context context) {
-        Log.d(TAG, "Entered onAttach()");
-        super.onAttach(context);
-
-        try {
-            mAppContext = (BaseGameActivity)context;
-
-            if (getResources().getConfiguration().orientation != mScreenOrientation) {
-                mAppContext.setRequestedOrientation(mScreenOrientation);
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("Activity must be sub class of BaseGameActivity");
-        }
-        Log.d(TAG, "Exited onAttach()");
     }
 
     /**
@@ -190,7 +194,10 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     @Override
     public void onDetach() {
         mAppContext.removeListenerForMatchUpdates(this);
-        mAppContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+
+        if (mRestoreOrientation) {
+            mAppContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
+        }
         super.onDetach();
 
     }
