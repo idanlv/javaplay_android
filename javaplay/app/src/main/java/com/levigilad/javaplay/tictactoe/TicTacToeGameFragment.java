@@ -34,7 +34,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     private TextView mInstructionsTextView;
 
     public TicTacToeGameFragment() {
-        super(new TicTacToeTurn());
+        super(new TicTacToeTurn(), ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
     }
 
     /**

@@ -1,9 +1,9 @@
 package com.levigilad.javaplay.infra;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,6 +16,7 @@ import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
+import com.google.basegameutils.games.BaseGameActivity;
 import com.google.basegameutils.games.GameHelper;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.Turn;
@@ -25,6 +26,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This class represents a fragment of a game
@@ -44,17 +46,20 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
      */
     private ArrayList<String> mInvitees;
     private Bundle mAutoMatchCriteria;
+    private int mScreenOrientation;
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
-    protected Context mAppContext;
+    protected BaseGameActivity mAppContext;
 
     /**
      * Constructor: Creates a game fragment
      * @param turnData A turn data to start with
+     * @param screenOrientation
      */
-    public PlayFragment(Turn turnData) {
+    public PlayFragment(Turn turnData, int screenOrientation) {
         super(REQUESTED_CLIENTS);
         mTurnData = turnData;
+        mScreenOrientation = screenOrientation;
     }
 
 
@@ -64,6 +69,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Entered onCreate()");
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
@@ -76,6 +82,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 mAutoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
             }
         }
+        Log.d(TAG, "Exited onCreate()");
     }
 
     /**
@@ -84,14 +91,27 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
      */
     @Override
     public void onAttach(Context context) {
+        Log.d(TAG, "Entered onAttach()");
         super.onAttach(context);
-        mAppContext = context;
+
+        try {
+            mAppContext = (BaseGameActivity)context;
+
+            if (getResources().getConfiguration().orientation != mScreenOrientation) {
+                mAppContext.setRequestedOrientation(mScreenOrientation);
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Activity must be sub class of BaseGameActivity");
+        }
+        Log.d(TAG, "Exited onAttach()");
     }
 
     /**
      * Performs actions after a successful sign in
      */
     public void onSignInSucceeded() {
+        Log.d(TAG, "Entered onSignInSucceeded()");
+
         // We're starting a new match
         if (mMatch == null) {
             TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
@@ -110,8 +130,11 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                     });
         } // We have an existing game
         else {
+            mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
             handleMatchUpdate();
         }
+
+        Log.d(TAG, "Exited sonSignInSucceeded()");
     }
 
     /**
@@ -164,12 +187,21 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         return false;
     }
 
+    @Override
+    public void onDetach() {
+        mAppContext.removeListenerForMatchUpdates(this);
+        mAppContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        super.onDetach();
+
+    }
+
     /**
      * Performs initiate of a match
      * @param result Initiate match result
      */
     public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         mMatch = result.getMatch();
+        mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
 
         if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
             return;
