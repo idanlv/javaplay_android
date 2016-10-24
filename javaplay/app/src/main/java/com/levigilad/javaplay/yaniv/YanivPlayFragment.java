@@ -260,8 +260,12 @@ public class YanivPlayFragment extends PlayFragment {
         }
 
         // Update my score
+        /* TODO fix me
+        
         mScoreTV.setText(String.format("%d".toUpperCase(Locale.getDefault()),
                 YanivGame.calculateDeckScore(getCurrPlayersHand())));
+        */
+        mScoreTV.setText("" + YanivGame.calculateDeckScore(getCurrPlayersHand()));
     }
 
     /**
