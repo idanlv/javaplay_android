@@ -58,7 +58,6 @@ public class YanivPlayFragment extends PlayFragment {
      * Members
      */
     private YanivGame mGame;
-    private HashMap<String, DeckOfCards> mPlayersHands;
     private DeckOfCards mPlayersMarkedCards;
     private boolean mGetNewCard;
 
@@ -115,7 +114,6 @@ public class YanivPlayFragment extends PlayFragment {
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         // Set members
-        YanivTurn turn = (YanivTurn)mTurnData; // Local var for YanivTurn
         mGame = new YanivGame(getActivity().getApplicationContext());
         mPlayersMarkedCards = new DeckOfCards();
         mGetNewCard = false;
@@ -406,7 +404,7 @@ public class YanivPlayFragment extends PlayFragment {
             }
 
             // Save
-            mPlayersHands.put(participant, deck);
+            getPlayersHands().put(participant, deck);
         }
 
         // Draw first card to available discarded cards
@@ -459,6 +457,14 @@ public class YanivPlayFragment extends PlayFragment {
     protected void updateView() {
         showCardsInDiscardView();
         showCardsInHandView();
+    }
+
+    /**
+     * Get players hands from YanivTurn
+     * @return players hands as HashMap from YanivTurn
+     */
+    public HashMap<String, DeckOfCards> getPlayersHands() {
+        return ((YanivTurn)mTurnData).getPlayersHands();
     }
 
     /**
