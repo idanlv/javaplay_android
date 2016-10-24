@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Yaniv Play Fragment, Game Flow :<BR>
@@ -261,7 +259,7 @@ public class YanivPlayFragment extends PlayFragment {
 
         // Update my score
         /* TODO fix me
-        
+
         mScoreTV.setText(String.format("%d".toUpperCase(Locale.getDefault()),
                 YanivGame.calculateDeckScore(getCurrPlayersHand())));
         */
@@ -393,6 +391,7 @@ public class YanivPlayFragment extends PlayFragment {
         setPlayStatus(false);
         finishTurn(getNextParticipantId());
         Log.i(TAG,"Turn Ended");
+        mInstructionsTV.setText(R.string.games_waiting_for_other_player_turn);
     }
 
 
@@ -468,15 +467,6 @@ public class YanivPlayFragment extends PlayFragment {
 
         // Draw first card to available discarded cards
         getAvailableDiscardedCards().addCardToTop(getGlobalCardDeck().pop());
-
-
-        //TODO : test
-        /*
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                mAppContext,R.layout.fragment_yaniv_game, participantIds);
-
-        mPlayersCardsCountLV.setAdapter(arrayAdapter);
-        */
     }
 
     /**
@@ -505,8 +495,8 @@ public class YanivPlayFragment extends PlayFragment {
         Log.i(TAG,"Match Started");
 
         dealCards();
-        mInstructionsTV.setText(getString(R.string.games_waiting_for_player_turn));
-        Toast.makeText(mAppContext, R.string.games_waiting_for_player_turn,
+        mInstructionsTV.setText(getString(R.string.games_waiting_for_other_player_turn));
+        Toast.makeText(mAppContext, R.string.games_waiting_for_other_player_turn,
                 Toast.LENGTH_LONG).show();
     }
 
