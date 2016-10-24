@@ -51,6 +51,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected Turn mTurnData;
     protected BaseGameActivity mAppContext;
     private boolean mRestoreOrientation;
+    private boolean mDidRestartInitiate;
 
     /**
      * Constructor: Creates a game fragment
@@ -62,6 +63,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         mTurnData = turnData;
         mScreenOrientation = screenOrientation;
         mRestoreOrientation = false;
+        mDidRestartInitiate = false;
     }
 
 
@@ -79,6 +81,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
 
             if (mAppContext.getRequestedOrientation() != mScreenOrientation) {
                 mAppContext.setRequestedOrientation(mScreenOrientation);
+                mDidRestartInitiate = true;
             } else {
                 mRestoreOrientation = true;
             }
@@ -116,26 +119,31 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     public void onSignInSucceeded() {
         Log.d(TAG, "Entered onSignInSucceeded()");
 
-        // We're starting a new match
-        if (mMatch == null) {
-            TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-                    .addInvitedPlayers(mInvitees)
-                    .setAutoMatchCriteria(mAutoMatchCriteria)
-                    .build();
+        if (!mDidRestartInitiate) {
+            // We're starting a new match
+            if (mMatch == null) {
+                TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+                        .addInvitedPlayers(mInvitees)
+                        .setAutoMatchCriteria(mAutoMatchCriteria)
+                        .build();
 
-            // Create and start the match.
-            Games.TurnBasedMultiplayer
-                    .createMatch(getApiClient(), tbmc)
-                    .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-                        @Override
-                        public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
-                            processResult(initiateMatchResult);
-                        }
-                    });
-        } // We have an existing game
-        else {
-            mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
-            handleMatchUpdate();
+                // Create and start the match.
+                Games.TurnBasedMultiplayer
+                        .createMatch(getApiClient(), tbmc)
+                        .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+                            @Override
+                            public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+                                processResult(initiateMatchResult);
+                            }
+                        });
+            } // We have an existing game
+            else {
+                mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
+                handleMatchUpdate();
+            }
+
+        } else {
+            Log.d(TAG, "Skipping match start/load");
         }
 
         Log.d(TAG, "Exited sonSignInSucceeded()");

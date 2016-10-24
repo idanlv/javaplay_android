@@ -463,13 +463,6 @@ public class YanivPlayFragment extends PlayFragment {
 
         // Draw first card to available discarded cards
         getAvailableDiscardedCards().addCardToTop(getGlobalCardDeck().pop());
-
-
-        //TODO : test
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                mAppContext,R.layout.fragment_yaniv_game, participantIds);
-
-        mPlayersCardsCountLV.setAdapter(arrayAdapter);
     }
 
     /**
