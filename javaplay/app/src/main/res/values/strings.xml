@@ -26,26 +26,11 @@
     <string name="app_misconfigured">The application is incorrectly configured. Check that the package name and signing certificate match the client ID created in Developer Console. Also, if the application is not yet published, check that the account you are trying to sign in with is listed as a tester account. See logs for more information.</string>
     <string name="unknown_error">Unknown error.</string>
     <string name="pick_a_game">Pick a game</string>
-    <string name="continue_to_game">Continue</string>
-
-    <string name="title_activity_game">GameActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-
 
     <string name="game_description_stub">Game_Description</string>
-    <string name="title_activity_game_options">GameOptionsActivity</string>
-
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_example">Example action</string>
-
-    <string name="action_settings">Settings</string>
 
     <!-- Games -->
     <string name="games_waiting_for_players">Waiting for players to join</string>
@@ -56,6 +41,9 @@
     <string name="rematch_question">Do you want a rematch?</string>
     <string name="rematch_yes">Sure, rematch!</string>
     <string name="rematch_no">No.</string>
+    <string name="achievements_not_available">Please sign in to view achievements.</string>
+    <string name="leaderboards_not_available">Please sign in to view leaderboards.</string>
+    <string name="inbox_not_available">Please sign in to view inbox</string>
 
     <!-- Yaniv -->
     <string name="yaniv_game_id">Yaniv</string>
@@ -87,11 +75,6 @@
     <string name="status_internal_error">Internal error</string>
     <string name="unexpected_status">Unexpected status</string>
     <string name="match_error_inactive_match">This match is inactive.</string>
-    <string name='match_error_locally_modified'>This match has locally-modified data.  This operation cannot be performed until the match is sent to the server.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="connect">Connect</string>
-    <string name="play">Play</string>
+    <string name="match_error_locally_modified">This match has locally-modified data.  This operation cannot be performed until the match is sent to the server.</string>
 
 </resources>
