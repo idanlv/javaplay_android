@@ -138,7 +138,7 @@ public class YanivPlayFragment extends PlayFragment {
         getActivity().setTheme(android.R.style.Theme_Material_NoActionBar_Fullscreen);
 
         // Set members
-        mGame = new YanivGame(getActivity().getApplicationContext());
+        mGame = new YanivGame();
         mPlayersMarkedCards = new DeckOfCards();
         mGetNewCard = false;
 

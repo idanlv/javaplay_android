@@ -1,8 +1,5 @@
 package com.levigilad.javaplay.yaniv;
 
-import android.content.Context;
-
-import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
@@ -26,25 +23,24 @@ public class YanivGame extends GameOfCards {
     private static final int MIN_SEQUENCE_LENGTH = 3;
     private static final int MIN_DISCARDED_CARDS = 1;
     private static final int MIN_DUPLICATES_LENGTH = 2;
+    private static final String YANIV = "Yaniv";
+    private static final String DESCRIPTION = "Description for yaniv";
+    private static final String LEADERBOARD_ID = "CgkIyuG_9qMQEAIQCA";
 
     /**
      * Empty constructor
      */
-    public YanivGame(Context context) {
-        this(context, MAX_DEFAULT_PLAYERS, INITIAL_DEFAULT_CARD_COUNT);
+    public YanivGame() {
+        this(MAX_DEFAULT_PLAYERS, INITIAL_DEFAULT_CARD_COUNT);
     }
 
     /**
      * Constructor
-     * @param numberOfPlayers number of players in game
+     * @param maxNumberOfPlayers number of players in game
      * @param numberOfStartingCards number of starting cards for player
      */
-    public YanivGame(Context context, int numberOfPlayers, int numberOfStartingCards) {
-        super(context.getString(R.string.yaniv_game_id),
-                context.getString(R.string.yaniv_description),
-                context.getString(R.string.yaniv_leaderboard_id),
-                numberOfPlayers,
-                numberOfStartingCards);
+    public YanivGame(int maxNumberOfPlayers, int numberOfStartingCards) {
+        super(YANIV, DESCRIPTION, LEADERBOARD_ID, maxNumberOfPlayers, numberOfStartingCards);
     }
 
     /**

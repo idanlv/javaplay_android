@@ -9,10 +9,18 @@ public abstract class Game implements Serializable {
     /**
      * Constants
      */
-    private final String mGameId;
-    private final String mLeaderboardId;
+    private static final int DEFAULT_MIN_NUM_PLAYERS = 2;
+    private static final boolean DEFAULT_AUTO_MATCH = false;
+
+    /**
+     * Members
+     */
+    private boolean mAllowAutoMatch;
     private final String mDescription;
     private final int mMaxNumberOfPlayers;
+    private final String mLeaderboardId;
+    private final String mGameId;
+    private int mMinNumberOfPlayers;
 
     /**
      * Constructor: Creates a game object
@@ -20,12 +28,54 @@ public abstract class Game implements Serializable {
      * @param description The description for the game
      * @param leaderboardId The id of the leaderboard in google play services
      * @param maxNumberOfPlayers Maximum number of players in match
+     * @param allowAutoMatch
      */
-    public Game(String gameId, String description, String leaderboardId, int maxNumberOfPlayers) {
+    public Game(String gameId, String description, String leaderboardId,
+                int maxNumberOfPlayers, boolean allowAutoMatch) {
+        this(gameId, description, leaderboardId, DEFAULT_MIN_NUM_PLAYERS, maxNumberOfPlayers, allowAutoMatch);
+    }
+
+    /**
+     * Constructor: Creates a game object
+     * @param gameId The game name (used as id)
+     * @param description The description for the game
+     * @param leaderboardId The id of the leaderboard in google play services
+     * @param minNumberOfPlayers
+     * @param maxNumberOfPlayers Maximum number of players in match
+     */
+    public Game(String gameId, String description, String leaderboardId,
+                int minNumberOfPlayers, int maxNumberOfPlayers) {
+        this(gameId, description, leaderboardId, minNumberOfPlayers, maxNumberOfPlayers, DEFAULT_AUTO_MATCH);
+    }
+
+    /**
+     * Constructor: Creates a game object
+ * @param gameId The game name (used as id)
+     * @param description The description for the game
+ * @param leaderboardId The id of the leaderboard in google play services
+ * @param maxNumberOfPlayers Maximum number of players in match
+     */
+    public Game(String gameId, String description, String leaderboardId,
+                int maxNumberOfPlayers) {
+        this(gameId, description, leaderboardId, DEFAULT_MIN_NUM_PLAYERS, maxNumberOfPlayers, DEFAULT_AUTO_MATCH);
+    }
+
+    /**
+     * Constructor: Creates a game object
+     * @param gameId The game name (used as id)
+     * @param description The description for the game
+     * @param leaderboardId The id of the leaderboard in google play services
+     * @param minNumberOfPlayers
+     * @param maxNumberOfPlayers Maximum number of players in match
+     */
+    public Game(String gameId, String description, String leaderboardId,
+                int minNumberOfPlayers, int maxNumberOfPlayers, boolean allowAutoMatch) {
         this.mGameId = gameId;
         this.mLeaderboardId = leaderboardId;
         this.mDescription = description;
         this.mMaxNumberOfPlayers = maxNumberOfPlayers;
+        this.mMinNumberOfPlayers = minNumberOfPlayers;
+        this.mAllowAutoMatch = allowAutoMatch;
     }
 
     /**
@@ -58,5 +108,13 @@ public abstract class Game implements Serializable {
      */
     public String getGameId() {
         return mGameId;
+    }
+
+    public boolean getmAllowAutoMatch() {
+        return mAllowAutoMatch;
+    }
+
+    public int getMinNumberOfPlayers() {
+        return mMinNumberOfPlayers;
     }
 }

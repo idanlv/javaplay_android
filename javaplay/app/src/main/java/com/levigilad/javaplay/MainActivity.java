@@ -23,6 +23,7 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.google.basegameutils.games.BaseGameUtils;
 import com.levigilad.javaplay.infra.PlayFragment;
+import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
 import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
@@ -219,11 +220,14 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     @Override
-    public void onGameSelected(String gameId) {
-        mGameId = gameId;
+    public void onGameSelected(Game game) {
+        mGameId = game.getGameId();
 
-        Intent intent = Games.TurnBasedMultiplayer
-                .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
+        Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(
+                getApiClient(),
+                game.getMinNumberOfPlayers() - 1,
+                game.getMaxNumberOfPlayers() - 1,
+                game.getmAllowAutoMatch());
         startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 
@@ -297,7 +301,7 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     private void showGameOptions() {
-        GamePossibilitiesFragment fragment = GamePossibilitiesFragment.newInstance();
+        GamesFragment fragment = GamesFragment.newInstance();
         replaceFragment(fragment);
     }
 

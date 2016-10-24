@@ -4,7 +4,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +18,8 @@ import java.util.ArrayList;
 /**
  * This class is in charge of creating a view object for each game possibility in our game
  */
-public class GamePossibilitiesRecyclerViewAdapter extends
-        RecyclerView.Adapter<GamePossibilitiesRecyclerViewAdapter.GameHolder> {
+public class GamesRecyclerViewAdapter extends
+        RecyclerView.Adapter<GamesRecyclerViewAdapter.GameHolder> {
     /**
      * Constants
      */
@@ -43,6 +42,7 @@ public class GamePossibilitiesRecyclerViewAdapter extends
         private TextView mDescriptionTextView;
         private FloatingActionButton mPlayFloatingActionButton;
         private CardView mCardView;
+        private Game tag;
 
         /**
          * Constructor
@@ -50,12 +50,13 @@ public class GamePossibilitiesRecyclerViewAdapter extends
          */
         public GameHolder(View itemView) {
             super(itemView);
+            mCardView = (CardView) itemView.findViewById(R.id.game_card_view);
+
             mNameTextView = (TextView) itemView.findViewById(R.id.game_name_text_view);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.game_description_text_view);
             mPlayFloatingActionButton =
                     (FloatingActionButton) itemView.findViewById(R.id.game_start_new_match_action_button);
 
-            mCardView = (CardView) itemView.findViewById(R.id.game_card_view);
 
             mCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -90,13 +91,17 @@ public class GamePossibilitiesRecyclerViewAdapter extends
         public void setDescription(String description) {
             mDescriptionTextView.setText(description);
         }
+
+        public void setTag(Game tag) {
+            mCardView.setTag(tag);
+        }
     }
 
     /**
      * Constructor
      * @param games Game possibilities
      */
-    public GamePossibilitiesRecyclerViewAdapter(ArrayList<Game> games) {
+    public GamesRecyclerViewAdapter(ArrayList<Game> games) {
         this.mGames = games;
     }
 
@@ -124,7 +129,8 @@ public class GamePossibilitiesRecyclerViewAdapter extends
 
     /**
      * Determines GameHolder data according the viewer position in list of games
-     * @param holder Object to update
+     *
+     * @param holder   Object to update
      * @param position Position in game list
      */
     @Override
@@ -132,6 +138,7 @@ public class GamePossibilitiesRecyclerViewAdapter extends
         Game currentGame = mGames.get(position);
         holder.setName(currentGame.getGameId());
         holder.setDescription(currentGame.getDescription());
+        holder.setTag(currentGame);
     }
 
     /**
