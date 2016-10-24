@@ -14,17 +14,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
-import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
 import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
 import com.levigilad.javaplay.yaniv.YanivPlayFragment;
 
@@ -35,7 +34,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends BaseGameActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        OnTurnBasedMatchUpdateReceivedListener,
         OnGameSelectedListener,
         OnFragmentInteractionListener {
     /**
@@ -52,7 +50,6 @@ public class MainActivity extends BaseGameActivity implements
      */
     private String mGameId;
 
-    private OnTurnBasedMatchReceivedListener mListener = null;
     /**
      * Designer
      */
@@ -183,8 +180,6 @@ public class MainActivity extends BaseGameActivity implements
             // TODO: Handle errors
         } else if (request == RC_LOOK_AT_ACHIEVEMENTS) {
             // TODO: Handle errors
-        } else {
-            mHelper.onActivityResult(request, response, data);
         }
     }
 
@@ -195,19 +190,11 @@ public class MainActivity extends BaseGameActivity implements
 
     @Override
     public void onSignInSucceeded() {
+        Log.d(TAG, "Entered onSignInSucceeded()");
+        // TODO: Idan! Check this toast
+        Toast.makeText(this.getApplicationContext(), "Connected", Toast.LENGTH_LONG);
         Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
-    }
-
-    @Override
-    public void onTurnBasedMatchRemoved(String s) {
-        // Does nothing
-    }
-
-    @Override
-    public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
-        if (mListener != null) {
-            mListener.onTurnBasedMatchReceived(turnBasedMatch);
-        }
+        Log.d(TAG, "Exited onSignInSucceeded()");
     }
 
     @Override
@@ -242,8 +229,6 @@ public class MainActivity extends BaseGameActivity implements
             fragment = TicTacToeGameFragment.newInstance(invitees, autoMatchCriteria);
         }
 
-        mListener = fragment;
-
         replaceFragment(fragment);
     }
 
@@ -268,8 +253,6 @@ public class MainActivity extends BaseGameActivity implements
                     } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
                         fragment = TicTacToeGameFragment.newInstance(match);
                     }
-
-                    mListener = fragment;
 
                     replaceFragment(fragment);
                 } catch (JSONException e) {

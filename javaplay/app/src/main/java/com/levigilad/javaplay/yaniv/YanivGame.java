@@ -236,7 +236,7 @@ public class YanivGame extends GameOfCards {
                 availableCards.addCardToTop(cardsToDiscard.peek());
             }
             else if (isDuplicates(cardsToDiscard)) {
-                availableCards = new DeckOfCards(cardsToDiscard);
+                availableCards.addAll(cardsToDiscard);
             }
             // Marked cards is sequence, add edges (isSequence = size >= 3)
             else {
@@ -245,7 +245,6 @@ public class YanivGame extends GameOfCards {
                 availableCards.addCardToTop(cardsToDiscard.getLast());
             }
         }
-
         return availableCards;
     }
 

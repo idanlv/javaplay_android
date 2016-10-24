@@ -22,6 +22,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
+import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
 
 /**
  * Example base class for games. This implementation takes care of setting up
@@ -41,7 +44,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
  * @author Bruno Oliveira (Google)
  */
 public abstract class BaseGameActivity extends AppCompatActivity implements
-        GameHelper.GameHelperListener {
+        GameHelper.GameHelperListener,
+        OnTurnBasedMatchUpdateReceivedListener {
 
     // The game helper object. This class is mainly a wrapper around this object.
     protected GameHelper mHelper;
@@ -57,6 +61,8 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
 
     private final static String TAG = "BaseGameActivity";
     protected boolean mDebugLog = false;
+    private OnTurnBasedMatchReceivedListener mListener;
+    private String mListenerMatchId;
 
     /** Constructs a BaseGameActivity with default client (GamesClient). */
     protected BaseGameActivity() {
@@ -174,5 +180,25 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
 
     protected GameHelper.SignInFailureReason getSignInError() {
         return mHelper.getSignInError();
+    }
+
+    public void addListenerForMatchUpdates(OnTurnBasedMatchReceivedListener listener, String matchId) {
+        mListener = listener;
+        mListenerMatchId = matchId;
+    }
+    public void removeListenerForMatchUpdates(OnTurnBasedMatchReceivedListener listener) {
+        mListener = null;
+    }
+
+    @Override
+    public void onTurnBasedMatchRemoved(String s) {
+        // TODO: do something
+    }
+
+    @Override
+    public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
+        if ((mListener != null) && (turnBasedMatch.getMatchId().equals(mListenerMatchId))) {
+            mListener.onTurnBasedMatchReceived(turnBasedMatch);
+        }
     }
 }

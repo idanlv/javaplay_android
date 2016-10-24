@@ -75,7 +75,7 @@ public class YanivPlayFragment extends PlayFragment {
      * Required empty constructor
      */
     public YanivPlayFragment() {
-        super(new YanivTurn());
+        super(new YanivTurn(), ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
     }
 
     /**
@@ -133,9 +133,6 @@ public class YanivPlayFragment extends PlayFragment {
 
         // Set game Theme
         getActivity().setTheme(android.R.style.Theme_Material_NoActionBar_Fullscreen);
-
-        // Fragment locked in landscape screen orientation
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         // Set members
         mGame = new YanivGame(getActivity().getApplicationContext());
