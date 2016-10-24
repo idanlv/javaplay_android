@@ -31,7 +31,6 @@
     <string name="title_activity_game">GameActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="waiting_for_players">Waiting for players to join</string>
 
 
     <string name="game_description_stub">Game_Description</string>
@@ -49,7 +48,10 @@
     <string name="action_settings">Settings</string>
 
     <!-- Games -->
-    <string name="games_waiting_for_player_turn">Waiting for other player to play</string>
+    <string name="games_waiting_for_players">Waiting for players to join</string>
+    <string name="games_waiting_for_player_turn">Waiting for other players to play</string>
+    <string name="games_you_win">You WIN !</string>
+    <string name="games_you_lose">You lose...</string>
     <string name="games_play_your_turn">Play your turn</string>
     <string name="rematch_question">Do you want a rematch?</string>
     <string name="rematch_yes">Sure, rematch!</string>

@@ -1,5 +1,6 @@
 package com.levigilad.javaplay.yaniv;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
@@ -68,8 +69,9 @@ public class YanivPlayFragment extends PlayFragment {
     private Button mYanivBtn;
     private LinearLayout mHandLL;
     private LinearLayout mDiscardedCardsLL;
-    private ListView mPlayersCardCountLV;
+    private ListView mPlayersCardsCountLV;
     private TextView mScoreTV;
+    private TextView mInstructionsTV;
 
     /**
      * Required empty constructor
@@ -145,8 +147,9 @@ public class YanivPlayFragment extends PlayFragment {
         mDeckIV = (ImageView) parentView.findViewById(R.id.iv_deck);
         mDiscardBtn = (Button) parentView.findViewById(R.id.btn_discard);
         mYanivBtn = (Button) parentView.findViewById(R.id.btn_Yaniv);
-        mPlayersCardCountLV = (ListView) parentView.findViewById(R.id.lv_cards_count);
+        mPlayersCardsCountLV = (ListView) parentView.findViewById(R.id.lv_players_cards_count);
         mScoreTV = (TextView) parentView.findViewById(R.id.tv_score);
+        mInstructionsTV = (TextView) parentView.findViewById(R.id.tv_instructions);
 
         // Set listeners
         mDeckIV.setOnClickListener(new View.OnClickListener() {
@@ -257,7 +260,7 @@ public class YanivPlayFragment extends PlayFragment {
         }
 
         // Update my score
-        mScoreTV.setText("" + YanivGame.calculateDeckScore(getCurrPlayersHand()));
+        mScoreTV.setText(Integer.toString(YanivGame.calculateDeckScore(getCurrPlayersHand())));
     }
 
     /**
@@ -394,8 +397,19 @@ public class YanivPlayFragment extends PlayFragment {
     private void declareYaniv() {
         String winnerID;
 
+        setPlayStatus(false);
         winnerID = YanivGame.declareYanivWinner(
                 getCurrentParticipantId(),getCurrPlayersHand(),getPlayersHands());
+
+        // Show win status
+        if (winnerID.equals(getCurrentParticipantId())) {
+            mInstructionsTV.setText(R.string.games_you_win);
+            Toast.makeText(mAppContext, R.string.games_you_win, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(mAppContext, R.string.games_you_lose, Toast.LENGTH_SHORT).show();
+            mInstructionsTV.setText(R.string.games_you_lose);
+        }
+
         processWin(winnerID);
     }
 
@@ -449,6 +463,13 @@ public class YanivPlayFragment extends PlayFragment {
 
         // Draw first card to available discarded cards
         getAvailableDiscardedCards().addCardToTop(getGlobalCardDeck().pop());
+
+
+        //TODO : test
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                mAppContext,R.layout.fragment_yaniv_game, participantIds);
+
+        mPlayersCardsCountLV.setAdapter(arrayAdapter);
     }
 
     /**
@@ -475,8 +496,11 @@ public class YanivPlayFragment extends PlayFragment {
     @Override
     protected void startMatch() {
         Log.i(TAG,"Match Started");
+
         dealCards();
-        Toast.makeText(mAppContext, "Waiting for players", Toast.LENGTH_SHORT).show();
+        mInstructionsTV.setText(getString(R.string.games_waiting_for_player_turn));
+        Toast.makeText(mAppContext, R.string.games_waiting_for_player_turn,
+                Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -486,7 +510,8 @@ public class YanivPlayFragment extends PlayFragment {
     protected void startTurn() {
         Log.i(TAG,"Start of Turn");
         setPlayStatus(true);
-        Toast.makeText(mAppContext, "Its your turn...", Toast.LENGTH_LONG).show();
+        mInstructionsTV.setText(getString(R.string.games_play_your_turn));
+        Toast.makeText(mAppContext, R.string.games_play_your_turn, Toast.LENGTH_LONG).show();
     }
 
     /**
