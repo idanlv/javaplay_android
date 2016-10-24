@@ -15,6 +15,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.ActivityUtils;
@@ -25,21 +27,18 @@ import com.levigilad.javaplay.infra.entities.PlayingCard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-
-/* TODO :
-    0) fix bugs
-    1) make yaniv
-    2) cards history and scores
-
-    Flow :
-    1) deal cards to all
-    2) turn
-        0) yaniv - yes\no
-        a) discard cards
-        b) take cards
-        c) End Turn : allowed discarted cards to next player
-*/
+/**
+ * Yaniv Play Fragment, Game Flow :<BR>
+ * 1) Deal cards to all players<BR>
+ * 2) Submit Turn :<BR>
+ *      1) Yaniv declaration YES\NO<BR>
+ *      2) Discard cards<BR>
+ *      3) Take cards from deck form last player discard<BR>
+ * 3) Process win
+ */
 public class YanivPlayFragment extends PlayFragment {
     /**
      * Constants
@@ -95,7 +94,12 @@ public class YanivPlayFragment extends PlayFragment {
         return fragment;
     }
 
-    //TODO: make comment
+    /**
+     * Use this factory method to load a new instance of
+     * this fragment using existing data.
+     *
+     * @return A new instance of fragment YanivPlayFragment.
+     */
     public static YanivPlayFragment newInstance(TurnBasedMatch match) {
         YanivPlayFragment fragment = new YanivPlayFragment();
         Bundle args = new Bundle();
@@ -104,7 +108,27 @@ public class YanivPlayFragment extends PlayFragment {
         return fragment;
     }
 
-    // Like the onCreate in Activity TODO: make a nice /* */
+    /** TODO:
+     *  Fragment creation - (Like onCreate in Activity)
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return the fragment view
+     */
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_yaniv_game, container, false);
+        initializeView(view);
+
+        return view;
+    }
+
+    /**
+     * Initialize fragment view
+     * @param parentView as the parent layout for this fragment
+     */
     private void initializeView(View parentView) {
 
         // Set game Theme
@@ -151,17 +175,6 @@ public class YanivPlayFragment extends PlayFragment {
         setPlayStatus(false);
     }
 
-    //TODO: make comment
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_yaniv_game, container, false);
-        initializeView(view);
-
-        return view;
-    }
-
     /**
      * Clicked the discard button
      */
@@ -197,7 +210,6 @@ public class YanivPlayFragment extends PlayFragment {
 
             showCardsInHandView();
             mGetNewCard = true;
-
         }
     }
 
@@ -375,16 +387,47 @@ public class YanivPlayFragment extends PlayFragment {
 
         setPlayStatus(false);
         finishTurn(getNextParticipantId());
-        Log.i("EndOfTurn","Turn Ended");
+        Log.i(TAG,"Turn Ended");
     }
 
 
     /**
-     * Declare Yaniv and finish session
+     * Declare Yaniv and finish game session
      */
     private void declareYaniv() {
-        //TODO : make something here
-        Log.i(TAG, "Yaniv !");
+        String winnerID;
+
+        winnerID = YanivGame.declareYanivWinner(
+                getCurrentParticipantId(),getCurrPlayersHand(),getPlayersHands());
+        processWin(winnerID);
+    }
+
+    /**
+     * Processes a win result
+     * @param winnerParticipantId as String of winner ID
+     */
+    private void processWin(String winnerParticipantId) {
+        List<ParticipantResult> results = new LinkedList<>();
+
+        results.add(new ParticipantResult(
+                winnerParticipantId, ParticipantResult.MATCH_RESULT_WIN,
+                ParticipantResult.PLACING_UNINITIALIZED));
+
+        // Create lose result for other participants
+        for (String participantId : mMatch.getParticipantIds()) {
+            if (!participantId.equals(winnerParticipantId)) {
+                results.add(new ParticipantResult(
+                        participantId, ParticipantResult.MATCH_RESULT_LOSS,
+                        ParticipantResult.PLACING_UNINITIALIZED));
+            }
+        }
+
+        finishMatch(results);
+
+        /* Unlock Achievements
+        Games.Achievements.unlockImmediate(getApiClient(),
+                getString(R.string.achievement_first_win));
+        */
     }
 
     /**
@@ -421,7 +464,7 @@ public class YanivPlayFragment extends PlayFragment {
         mDeckIV.setEnabled(enabled);
         mDiscardBtn.setEnabled(enabled);
 
-        // Set enabled only if allowed
+        // Set enabled only if yaniv is allowed
         if (enabled && YanivGame.canYaniv(getCurrPlayersHand())) {
             mYanivBtn.setEnabled(true);
         } else {
@@ -434,9 +477,9 @@ public class YanivPlayFragment extends PlayFragment {
      */
     @Override
     protected void startMatch() {
+        Log.i(TAG,"Match Started");
         dealCards();
-        Log.i("match","Start of Match");
-        Toast.makeText(mAppContext, "startMatch()", Toast.LENGTH_LONG).show();
+        Toast.makeText(mAppContext, "Waiting for players", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -444,9 +487,8 @@ public class YanivPlayFragment extends PlayFragment {
      */
     @Override
     protected void startTurn() {
+        Log.i(TAG,"Start of Turn");
         setPlayStatus(true);
-
-        Log.i("turn","Start of Turn");
         Toast.makeText(mAppContext, "Its your turn...", Toast.LENGTH_LONG).show();
     }
 
