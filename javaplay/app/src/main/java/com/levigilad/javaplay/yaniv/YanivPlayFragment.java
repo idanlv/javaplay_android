@@ -1,6 +1,5 @@
 package com.levigilad.javaplay.yaniv;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +27,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Yaniv Play Fragment, Game Flow :<BR>
@@ -50,8 +47,6 @@ public class YanivPlayFragment extends PlayFragment {
     private static final int PADDING_AS_RECT_SIZE= 5;
     private static final float LIGHTED_IMAGE_VIEW_ALPHA = 1f;
     private static final float DIMMED_IMAGE_VIEW_ALPHA = 0.6f;
-    private static final int DEFAULT_NUMBER_OF_DECKS = 2;
-    private static final int DEFAULT_NUMBER_OF_JOKERS = 4;
     private static final int MARKED_IMAGE_BACKGROUND = Color.BLUE;
     private static final String PLAYER_SCORE_FORMAT = "%s: %d";
 
@@ -173,7 +168,7 @@ public class YanivPlayFragment extends PlayFragment {
         });
 
         // Disable GUI
-        setPlayStatus(false);
+        updatePlayStatus(false);
     }
 
     /**
@@ -391,7 +386,7 @@ public class YanivPlayFragment extends PlayFragment {
         getAvailableDiscardedCards().replace(
                 YanivGame.getAvailableCardsFromDiscard(mPlayersMarkedCards));
 
-        setPlayStatus(false);
+        updatePlayStatus(false);
         finishTurn(getNextParticipantId());
         Log.i(TAG,"Turn Ended");
         mInstructionsTV.setText(R.string.games_waiting_for_other_player_turn);
@@ -404,7 +399,7 @@ public class YanivPlayFragment extends PlayFragment {
     private void declareYaniv() {
         String winnerID;
 
-        setPlayStatus(false);
+        updatePlayStatus(false);
         winnerID = YanivGame.declareYanivWinner(
                 getCurrentParticipantId(),getCurrPlayersHand(),getPlayersHands());
 
@@ -453,41 +448,24 @@ public class YanivPlayFragment extends PlayFragment {
      */
     private void dealCards() {
         ArrayList<String> participantIds = mMatch.getParticipantIds();
-
-        getGlobalCardDeck().replace(YanivGame.generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS));
-
-        for(String participant : participantIds) {
-            DeckOfCards deck = new DeckOfCards();
-
-            // Deal Hand to participant
-            for (int i = 0; i < mGame.getInitialNumOfPlayerCards(); i++){
-                deck.addCardToTop(getGlobalCardDeck().pop());
-            }
-
-            // Save
-            getPlayersHands().put(participant, deck);
-        }
-
-        // Draw first card to available discarded cards
-        getAvailableDiscardedCards().addCardToTop(getGlobalCardDeck().pop());
+        mTurnData = YanivGame.initiateMatch(mMatch.getParticipantIds());
     }
 
     /**
      * Enable/Disable playing gui between turns
      * @param enabled as to Enable/Disable game play
      */
-    private void setPlayStatus(boolean enabled) {
+    private void updatePlayStatus(boolean enabled) {
         ActivityUtils.setEnabledRecursively(mHandLL, enabled);
+
+        // TODO: Move this to discard result
         ActivityUtils.setEnabledRecursively(mDiscardedCardsLL, enabled);
+
         mDeckIV.setEnabled(enabled);
         mDiscardBtn.setEnabled(enabled);
 
-        // Set enabled only if yaniv is allowed
-        if (enabled && YanivGame.canYaniv(getCurrPlayersHand())) {
-            mYanivBtn.setEnabled(true);
-        } else {
-            mYanivBtn.setEnabled(false);
-        }
+        // Set enabled only if yaniv is allowed and this is player's turn
+        mYanivBtn.setEnabled(enabled && YanivGame.canYaniv(getCurrPlayersHand()));
     }
 
     /**
@@ -495,12 +473,11 @@ public class YanivPlayFragment extends PlayFragment {
      */
     @Override
     protected void startMatch() {
-        Log.i(TAG,"Match Started");
+        Log.d(TAG,"Match Started");
 
-        dealCards();
+        mTurnData = YanivGame.initiateMatch(mMatch.getParticipantIds());
         mInstructionsTV.setText(getString(R.string.games_waiting_for_other_player_turn));
-        Toast.makeText(mAppContext, R.string.games_waiting_for_other_player_turn,
-                Toast.LENGTH_LONG).show();
+        Toast.makeText(mAppContext, R.string.games_waiting_for_other_player_turn, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -509,7 +486,7 @@ public class YanivPlayFragment extends PlayFragment {
     @Override
     protected void startTurn() {
         Log.i(TAG,"Start of Turn");
-        setPlayStatus(true);
+        updatePlayStatus(true);
         mInstructionsTV.setText(getString(R.string.games_play_your_turn));
         Toast.makeText(mAppContext, R.string.games_play_your_turn, Toast.LENGTH_LONG).show();
     }

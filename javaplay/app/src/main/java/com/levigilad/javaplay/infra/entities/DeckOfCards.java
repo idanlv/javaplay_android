@@ -247,4 +247,14 @@ public class DeckOfCards implements IJsonSerializable {
     public void sort() {
         Collections.sort(mCards);
     }
+
+    public DeckOfCards drawCards(int numberOfCards) {
+        DeckOfCards cards = new DeckOfCards();
+
+        for (int i = 0; i < numberOfCards; i++) {
+            cards.addCardToTop(mCards.pop());
+        }
+
+        return cards;
+    }
 }

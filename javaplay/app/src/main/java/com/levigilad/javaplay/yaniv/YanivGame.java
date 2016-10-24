@@ -6,6 +6,7 @@ import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -26,6 +27,10 @@ public class YanivGame extends GameOfCards {
     private static final String YANIV = "Yaniv";
     private static final String DESCRIPTION = "Description for yaniv";
     private static final String LEADERBOARD_ID = "CgkIyuG_9qMQEAIQCA";
+    private static final int DEFAULT_NUMBER_OF_DECKS = 2;
+    private static final int DEFAULT_NUMBER_OF_JOKERS = 2;
+    private static final int INITIAL_AVAILABLE_DISCARDED_DECK_SIZE = 1;
+
 
     /**
      * Empty constructor
@@ -259,5 +264,27 @@ public class YanivGame extends GameOfCards {
             default:
                 return card.getRank().getNumericValue();
         }
+    }
+
+    public static YanivTurn initiateMatch(ArrayList<String> participantIds) {
+        YanivTurn turn = new YanivTurn();
+
+        DeckOfCards globalDeck = YanivGame.generateDeck();
+        turn.setGlobalDeck(globalDeck);
+
+        for(String participantId : participantIds) {
+            DeckOfCards deck = globalDeck.drawCards(INITIAL_DEFAULT_CARD_COUNT);
+            turn.addParticipantDeck(participantId, deck);
+        }
+
+        DeckOfCards availableDiscardedDeck =
+                globalDeck.drawCards(INITIAL_AVAILABLE_DISCARDED_DECK_SIZE);
+        turn.setAvailableDiscardedDeck(availableDiscardedDeck);
+
+        return turn;
+    }
+
+    private static DeckOfCards generateDeck() {
+        return generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS);
     }
 }

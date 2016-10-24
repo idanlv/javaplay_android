@@ -124,4 +124,15 @@ public class YanivTurn extends Turn {
         return mGlobalCardDeck;
     }
 
+    public void addParticipantDeck(String participantId, DeckOfCards deck) {
+        mPlayersHands.put(participantId, deck);
+    }
+
+    public void setGlobalDeck(DeckOfCards globalDeck) {
+        this.mGlobalCardDeck = globalDeck;
+    }
+
+    public void setAvailableDiscardedDeck(DeckOfCards availableDiscardedDeck) {
+        this.mAvailableDiscardedCards = availableDiscardedDeck;
+    }
 }
