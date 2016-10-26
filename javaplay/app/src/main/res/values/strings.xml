@@ -47,6 +47,7 @@
 
     <!-- Yaniv -->
     <string name="yaniv_game_id">Yaniv</string>
+    <string name="yaniv_players_cards_count">Card Count :</string>
     <string name="yaniv_description">Play Yaniv card game</string>
     <string name="deck_view_description">Draw New Card</string>
     <string name="discard">Discard</string>
