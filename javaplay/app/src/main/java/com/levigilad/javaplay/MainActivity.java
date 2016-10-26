@@ -264,10 +264,7 @@ public class MainActivity extends BaseGameActivity implements
 
     @Override
     public void onFragmentInteraction(String message) {
-        Snackbar snackbar = Snackbar
-                .make(mCoordinatorLayour, message, Snackbar.LENGTH_INDEFINITE);
-
-        snackbar.show();
+        
     }
 
     private void loadExistingMatch(Intent data) {
