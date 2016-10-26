@@ -241,42 +241,6 @@ public class DeckOfCards implements IJsonSerializable {
         }
 
         Collections.sort(mCards);
-
-        // Get the joker count and move pass them
-        Iterator<PlayingCard> iterator = mCards.iterator();
-
-        DeckOfCards sortedDeck = new DeckOfCards();
-        DeckOfCards jokersDeck = new DeckOfCards();
-        PlayingCard playingCard = null;
-
-        int previousValue = -1;
-        while (iterator.hasNext()) {
-            playingCard = iterator.next();
-            if (playingCard.getRank() == PlayingCardRanks.JOKER) {
-                jokersDeck.addCardToBottom(playingCard);
-            } else if (sortedDeck.size() == 0) {
-                // Get current card values
-                previousValue = playingCard.getRank().getNumericValue();
-                sortedDeck.addCardToBottom(playingCard);
-            } else {
-                int currentValue = playingCard.getRank().getNumericValue();
-
-                while ((currentValue > previousValue + 1) && (jokersDeck.size() > 0)) {
-                    sortedDeck.addCardToBottom(jokersDeck.drawFirstCard());
-                    previousValue++;
-                }
-
-                sortedDeck.addCardToBottom(playingCard);
-            }
-        }
-
-        // Add remaining jokers in beginning of game
-        while (jokersDeck.size() > 0) {
-            sortedDeck.addCardToTop(jokersDeck.drawFirstCard());
-            jokersDeck.removeCardByIndex(0);
-        }
-
-        this.replace(sortedDeck);
     }
 
     /**
