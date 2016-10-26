@@ -244,12 +244,12 @@ public class YanivPlayFragment extends PlayFragment {
             v.setAlpha(LIGHTED_IMAGE_VIEW_ALPHA);
             v.setBackgroundColor(Color.TRANSPARENT);
             v.setActivated(false);
-            card.setState(PlayingCardState.DISCARDED);
+            card.setState(PlayingCardState.AVAILABLE);
         } else {
             v.setAlpha(DIMMED_IMAGE_VIEW_ALPHA);
             v.setBackgroundColor(MARKED_IMAGE_BACKGROUND);
             v.setActivated(true);
-            card.setState(PlayingCardState.AVAILABLE);
+            card.setState(PlayingCardState.DISCARDED);
         }
     }
 

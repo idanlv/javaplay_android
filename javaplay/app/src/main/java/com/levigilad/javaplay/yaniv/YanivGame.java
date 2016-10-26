@@ -313,7 +313,7 @@ public class YanivGame extends GameOfCards {
             }
         }
 
-        if (isCardsDiscardValid(turnData.getPlayerHand(participantId))) {
+        if (isCardsDiscardValid(discardedDeck)) {
             turnData.getPlayerHand(participantId).removeAll(discardedDeck);
             turnData.setTurnDiscardedDeck(discardedDeck);
             return true;
