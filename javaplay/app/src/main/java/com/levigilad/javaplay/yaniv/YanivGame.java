@@ -312,7 +312,7 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Gets the available cards for next turn from given discarded deck
+     * Removes the available cards for next turn from given discarded deck
      * @param discardedDeck Current deck discarded by participant
      * @return Available cards
      */
@@ -321,6 +321,8 @@ public class YanivGame extends GameOfCards {
 
         availableDeck.addCardToBottom(discardedDeck.drawFirstCard());
 
+        // Participant has discarded more than one card, therefore we need to add a second card
+        // for available deck. This card must be the last.
         if (discardedDeck.size() > 0) {
             availableDeck.addCardToBottom(discardedDeck.drawLastCard());
         }
