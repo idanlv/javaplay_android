@@ -382,7 +382,6 @@ public class YanivGame extends GameOfCards {
         // Add remaining jokers in beginning of game
         while (jokersDeck.size() > 0) {
             sortedDeck.addCardToTop(jokersDeck.drawFirstCard());
-            jokersDeck.removeCardByIndex(0);
         }
 
         deck.replace(sortedDeck);

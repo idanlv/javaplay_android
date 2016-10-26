@@ -408,14 +408,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     }
 
     /**
-     * Get the number of participants in a match
-     * @return the number of participants in a match
-     */
-    protected int getPlayersCount() {
-        return mMatch.getParticipantIds().size();
-    }
-
-    /**
      * Starts a match
      */
     protected abstract void startMatch();

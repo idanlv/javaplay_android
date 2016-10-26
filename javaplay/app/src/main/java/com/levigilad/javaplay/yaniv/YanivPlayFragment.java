@@ -134,10 +134,6 @@ public class YanivPlayFragment extends PlayFragment {
      * @param parentView as the parent layout for this fragment
      */
     private void initializeView(View parentView) {
-
-        // Set game Theme
-        getActivity().setTheme(android.R.style.Theme_Material_NoActionBar_Fullscreen);
-
         // Set members
         mGame = new YanivGame();
         mPlayersMarkedCards = new DeckOfCards();
@@ -341,8 +337,8 @@ public class YanivPlayFragment extends PlayFragment {
      * Play the end of turn of the player
      */
     private void finishTurn(){
-        super.finishTurn(getNextParticipantId());
         Log.i(TAG,"Turn Ended");
+        super.finishTurn(getNextParticipantId());
         mInstructionsTV.setText(R.string.games_waiting_for_other_player_turn);
     }
 
