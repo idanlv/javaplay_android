@@ -1,10 +1,9 @@
-package com.levigilad.javaplay.YanivGame;
+package com.levigilad.javaplay.yaniv;
 
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
-import com.levigilad.javaplay.yaniv.YanivGame;
 
 import org.junit.Test;
 
@@ -51,7 +50,7 @@ public class IsSequenceUnitTest {
     }
 
     @Test
-    public void testAllJokers() {
+    public void testNothingButJokers() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));

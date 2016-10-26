@@ -1,17 +1,13 @@
 package com.levigilad.javaplay.yaniv;
 
-import android.widget.LinearLayout;
-
 import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
-import com.levigilad.javaplay.infra.entities.Turn;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import com.levigilad.javaplay.infra.enums.PlayingCardState;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -294,8 +290,8 @@ public class YanivGame extends GameOfCards {
             turnData.getDiscardedCards().clear();
         }
 
-        DeckOfCards oneCardDeck = turnData.getGlobalCardDeck().drawCard();
-        turnData.getPlayerHand(participantId).addAll(oneCardDeck);
+        turnData.getPlayerHand(participantId)
+                .addCardToBottom(turnData.getGlobalCardDeck().drawFirstCard());
 
         updateAvailableDiscardedDeck(turnData);
     }
@@ -304,25 +300,32 @@ public class YanivGame extends GameOfCards {
      * Updates available discarded deck according to participant's disacrded deck
      * @param turnData Turn data
      */
-    private static void updateAvailableDiscardedDeck(YanivTurn turnData) {
+    static void updateAvailableDiscardedDeck(YanivTurn turnData) {
         turnData.getDiscardedCards().addAll(turnData.getAvailableDiscardedCards());
         turnData.getAvailableDiscardedCards().clear();
 
-        DeckOfCards cards = turnData.getTurnDiscardedDeck();
-
-        if (cards.size() == 1) {
-            turnData.setAvailableDiscardedDeck(cards);
-        } else {
-            turnData.getAvailableDiscardedCards().addAll(cards.drawCard());
-
-            while (cards.size() > 1) {
-                turnData.getAvailableDiscardedCards().addAll(cards.drawCard());
-            }
-
-            turnData.getAvailableDiscardedCards().addAll(cards.drawCard());
-        }
+        DeckOfCards discardedCards = turnData.getTurnDiscardedDeck();
+        turnData.setAvailableDiscardedDeck(findAvailableCards(discardedCards));
+        turnData.getDiscardedCards().addAll(discardedCards);
 
         turnData.setTurnDiscardedDeck(null);
+    }
+
+    /**
+     * Gets the available cards for next turn from given discarded deck
+     * @param discardedDeck Current deck discarded by participant
+     * @return Available cards
+     */
+    static DeckOfCards findAvailableCards(DeckOfCards discardedDeck) {
+        DeckOfCards availableDeck = new DeckOfCards();
+
+        availableDeck.addCardToBottom(discardedDeck.drawFirstCard());
+
+        if (discardedDeck.size() > 0) {
+            availableDeck.addCardToBottom(discardedDeck.drawLastCard());
+        }
+
+        return availableDeck;
     }
 
     /**

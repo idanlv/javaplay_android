@@ -143,4 +143,15 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     public String toString() {
         return String.format(CARD_FORMAT, getRank(), getSuit());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PlayingCard) {
+            PlayingCard otherCard = (PlayingCard) obj;
+            return (mRank.equals(otherCard.mRank) && mSuit.equals(otherCard.mSuit) &&
+                    mState.equals(otherCard.mState));
+        }
+
+        return false;
+    }
 }

@@ -1,7 +1,6 @@
 package com.levigilad.javaplay.infra.entities;
 
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
-import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 import com.levigilad.javaplay.infra.interfaces.IJsonSerializable;
 
 import org.json.JSONArray;
@@ -11,7 +10,6 @@ import org.json.JSONObject;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 /**
  * This class represents a deck of cards
@@ -264,7 +262,7 @@ public class DeckOfCards implements IJsonSerializable {
                 int currentValue = playingCard.getRank().getNumericValue();
 
                 while ((currentValue > previousValue + 1) && (jokersDeck.size() > 0)) {
-                    sortedDeck.addAll(jokersDeck.drawCard());
+                    sortedDeck.addCardToBottom(jokersDeck.drawFirstCard());
                     previousValue++;
                 }
 
@@ -272,8 +270,9 @@ public class DeckOfCards implements IJsonSerializable {
             }
         }
 
+        // Add remaining jokers in beginning of game
         while (jokersDeck.size() > 0) {
-            sortedDeck.addCardToTop(jokersDeck.drawCard().get(0));
+            sortedDeck.addCardToTop(jokersDeck.drawFirstCard());
             jokersDeck.removeCardByIndex(0);
         }
 
@@ -281,9 +280,9 @@ public class DeckOfCards implements IJsonSerializable {
     }
 
     /**
-     * Draws cards from deck according to requested amount
+     * Draws cards from beginning of deck according to requested amount
      * @param numberOfCards
-     * @return
+     * @return Deck with requested amount of cards
      */
     public DeckOfCards drawCards(int numberOfCards) {
         DeckOfCards cards = new DeckOfCards();
@@ -293,7 +292,7 @@ public class DeckOfCards implements IJsonSerializable {
         }
 
         for (int i = 0; i < numberOfCards; i++) {
-            cards.addCardToTop(mCards.pop());
+            cards.addCardToTop(drawFirstCard());
         }
 
         return cards;
@@ -307,7 +306,27 @@ public class DeckOfCards implements IJsonSerializable {
         mCards.removeAll(deck.getCards());
     }
 
-    public DeckOfCards drawCard() {
-        return this.drawCards(1);
+    /**
+     * Draws the first card in deck and removes it
+     * @return First card in deck
+     */
+    public PlayingCard drawFirstCard() {
+        return mCards.removeFirst();
+    }
+
+    /**
+     * Draws the last card in deck and removes it
+     * @return
+     */
+    public PlayingCard drawLastCard() {
+        return mCards.removeLast();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DeckOfCards) {
+            return mCards.equals(((DeckOfCards) obj).mCards);
+        }
+        return false;
     }
 }
