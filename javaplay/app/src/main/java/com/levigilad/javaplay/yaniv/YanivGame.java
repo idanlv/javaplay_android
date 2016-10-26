@@ -149,12 +149,13 @@ public class YanivGame extends GameOfCards {
             return false;
         }
 
-        PlayingCardRanks value = cards.get(0).getRank();
-
         Iterator<PlayingCard> it = cards.iterator();
+        PlayingCardRanks rank = it.next().getRank();
+
 
         while (it.hasNext()) {
-            if (value != it.next().getRank()) {
+            PlayingCardRanks currentRank = it.next().getRank();
+            if ((currentRank != PlayingCardRanks.JOKER) && (rank != currentRank)) {
                 return false;
             }
 
@@ -165,13 +166,11 @@ public class YanivGame extends GameOfCards {
 
     /**
      * Checks if this card series is a valid sequence
-     * @param cardSeries cards
+     * @param cardSeries sorted deck of cards
      * @return True or False
      */
     public static boolean isSequence(DeckOfCards cardSeries) {
-        Iterator<PlayingCard> it;
         PlayingCard playingCard = null;
-        int jokerCount = 0;
         int previousValue;
         PlayingCardSuits suit;
 
@@ -179,18 +178,11 @@ public class YanivGame extends GameOfCards {
             return false;
         }
 
-        // Get the joker count and move pass them
-        it = cardSeries.iterator();
-        while (it.hasNext()) {
-            playingCard = it.next();
-            if (playingCard.getRank() == PlayingCardRanks.JOKER) {
-                jokerCount++;
-            } else {
-                break;
-            }
-        }
 
-        // Get current card values
+        Iterator<PlayingCard> it = cardSeries.iterator();
+
+        // Since we've checked for minimal size, next will certainly return a value
+        playingCard = it.next();
         suit = playingCard.getSuit();
         previousValue = playingCard.getRank().getNumericValue();
 
@@ -198,23 +190,17 @@ public class YanivGame extends GameOfCards {
         while (it.hasNext()) {
             playingCard = it.next();
 
+            if (playingCard.getRank() == PlayingCardRanks.JOKER) {
+                previousValue++;
+            }
             // if not same suit, return quit
-            if (playingCard.getSuit() != suit) {
+            else if (playingCard.getSuit() != suit) {
                 return false;
             }
-
-            // Joker handle
-            while (playingCard.getRank().getNumericValue() > previousValue + 1 &&
-                    jokerCount > 0) {
-                jokerCount--;
-                previousValue++;
-            }
-
             // Check if this is the next expected card
-            if (playingCard.getRank().getNumericValue() == previousValue + 1) {
+            else if (playingCard.getRank().getNumericValue() == previousValue + 1) {
                 previousValue++;
             }
-
             // Current number does not continue the sequence
             else {
                 return false;

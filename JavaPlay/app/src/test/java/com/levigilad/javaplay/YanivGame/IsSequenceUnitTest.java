@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 public class IsSequenceUnitTest {
     @Test
-    public void testIsSequenceGood() {
+    public void testGoodSequence() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.TWO, PlayingCardSuits.DIAMONDS));
@@ -28,7 +28,7 @@ public class IsSequenceUnitTest {
     }
 
     @Test
-    public void testIsSequenceTooSmallDeck() {
+    public void testTooSmallDeck() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.TWO, PlayingCardSuits.DIAMONDS));
@@ -39,7 +39,7 @@ public class IsSequenceUnitTest {
     }
 
     @Test
-    public void testIsSequenceDifferentSuits() {
+    public void testDifferentSuits() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.TWO, PlayingCardSuits.CLUBS));
@@ -51,7 +51,7 @@ public class IsSequenceUnitTest {
     }
 
     @Test
-    public void testIsSequenceAllJokers() {
+    public void testAllJokers() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
@@ -63,7 +63,7 @@ public class IsSequenceUnitTest {
     }
 
     @Test
-    public void testIsSequenceGoodWithJokers() {
+    public void testGoodWithJokers() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
@@ -75,7 +75,7 @@ public class IsSequenceUnitTest {
     }
 
     @Test
-    public void testIsSequenceBadWithJokers() {
+    public void testBadWithJokers() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
@@ -87,7 +87,7 @@ public class IsSequenceUnitTest {
     }
 
     @Test
-    public void testIsSequenceGapsNoJokers() {
+    public void testGapsNoJokers() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.FOUR, PlayingCardSuits.DIAMONDS));
@@ -98,7 +98,7 @@ public class IsSequenceUnitTest {
     }
 
     @Test
-    public void testIsSequenceDuplicatesNoJoker() {
+    public void testDuplicatesNoJoker() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
@@ -109,13 +109,25 @@ public class IsSequenceUnitTest {
     }
 
     @Test
-    public void testIsSequenceDuplicatesWithJoker() {
+    public void testDuplicatesWithJoker() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
 
         boolean expected = false;
+        boolean actual = YanivGame.isSequence(cards);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testRoyalty() {
+        DeckOfCards cards = new DeckOfCards();
+        cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JACK, PlayingCardSuits.DIAMONDS));
+        cards.addCardToBottom(new PlayingCard(PlayingCardRanks.QUEEN, PlayingCardSuits.DIAMONDS));
+        cards.addCardToBottom(new PlayingCard(PlayingCardRanks.KING, PlayingCardSuits.DIAMONDS));
+
+        boolean expected = true;
         boolean actual = YanivGame.isSequence(cards);
         assertEquals(expected, actual);
     }
