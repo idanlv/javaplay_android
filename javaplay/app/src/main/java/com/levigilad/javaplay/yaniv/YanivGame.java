@@ -1,12 +1,17 @@
 package com.levigilad.javaplay.yaniv;
 
+import android.widget.LinearLayout;
+
 import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
+import com.levigilad.javaplay.infra.entities.Turn;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
+import com.levigilad.javaplay.infra.enums.PlayingCardState;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -122,11 +127,12 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Checks if user made a valid discard operation
+     * Checks if user made a valid tryDiscard operation
      * @param discardCards cards
      * @return True or False
      */
-    public static boolean isCardsDiscardValid(DeckOfCards discardCards) {
+    private static boolean isCardsDiscardValid(DeckOfCards discardCards) {
+        discardCards.sort();
         return ((discardCards.size() == MIN_DISCARDED_CARDS)
                 || isSequence(discardCards)
                 || isDuplicates(discardCards));
@@ -169,12 +175,9 @@ public class YanivGame extends GameOfCards {
         int previousValue;
         PlayingCardSuits suit;
 
-
         if (cardSeries.size() < MIN_SEQUENCE_LENGTH) {
             return false;
         }
-
-        cardSeries.sort();
 
         // Get the joker count and move pass them
         it = cardSeries.iterator();
@@ -222,9 +225,9 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Get the available from a discard action
-     * @param cardsToDiscard as deck of cards to discard
-     * @return deck of cards with the available cards, or null if the discard is invalid
+     * Get the available from a tryDiscard action
+     * @param cardsToDiscard as deck of cards to tryDiscard
+     * @return deck of cards with the available cards, or null if the tryDiscard is invalid
      */
     public static DeckOfCards getAvailableCardsFromDiscard(DeckOfCards cardsToDiscard){
         DeckOfCards availableCards = null;
@@ -286,5 +289,99 @@ public class YanivGame extends GameOfCards {
 
     private static DeckOfCards generateDeck() {
         return generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS);
+    }
+
+    /**
+     * Tries to discard given cards from player's deck
+     * @param participantId Participant identifier
+     * @param turnData Current turn data object
+     * @return True if discarded. Otherwise false.
+     */
+    public static boolean tryDiscard(String participantId, YanivTurn turnData) {
+        if (turnData.hasTurnDiscardedDeck()) {
+            throw new UnsupportedOperationException("Participant cannot discard twice in same turn");
+        }
+
+        DeckOfCards discardedDeck = new DeckOfCards();
+
+        Iterator<PlayingCard> iterator = turnData.getPlayerHand(participantId).iterator();
+
+        while (iterator.hasNext()) {
+            PlayingCard card = iterator.next();
+            if (card.isDiscarded()) {
+                discardedDeck.addCardToBottom(card);
+            }
+        }
+
+        if (isCardsDiscardValid(turnData.getPlayerHand(participantId))) {
+            turnData.getPlayerHand(participantId).removeAll(discardedDeck);
+            turnData.setTurnDiscardedDeck(discardedDeck);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * This method is called when player draws a card from global deck
+     * @param participantId Participant identifier
+     * @param turnData Current turn data object
+     */
+    public static void onDrawFromGlobalDeck(String participantId, YanivTurn turnData) {
+        // No cards left in deck
+        if (turnData.getGlobalCardDeck().size() == 0) {
+            // Change status of cards to Available
+
+            // Add discarded deck to global deck and shuffle cards
+            turnData.getGlobalCardDeck().addAll(turnData.getDiscardedCards());
+            turnData.getGlobalCardDeck().shuffle();
+
+            // Empty discarded deck
+            turnData.getDiscardedCards().clear();
+        }
+
+        DeckOfCards oneCardDeck = turnData.getGlobalCardDeck().drawCard();
+        turnData.getPlayerHand(participantId).addAll(oneCardDeck);
+
+        updateAvailableDiscardedDeck(turnData);
+    }
+
+    private static void updateAvailableDiscardedDeck(YanivTurn turnData) {
+        turnData.getDiscardedCards().addAll(turnData.getAvailableDiscardedCards());
+        turnData.getAvailableDiscardedCards().clear();
+
+        DeckOfCards cards = turnData.getTurnDiscardedDeck();
+
+        if (cards.size() == 1) {
+            turnData.setAvailableDiscardedDeck(cards);
+        } else {
+            turnData.getAvailableDiscardedCards().addAll(cards.drawCard());
+
+            while (cards.size() > 1) {
+                turnData.getAvailableDiscardedCards().addAll(cards.drawCard());
+            }
+
+            turnData.getAvailableDiscardedCards().addAll(cards.drawCard());
+        }
+
+        turnData.setTurnDiscardedDeck(null);
+    }
+
+    /**
+     * This method is called when player draws a card from available discarded deck
+     * @param participantId Participant identifier
+     * @param turnData Current turn data object
+     * @param drawnCard card which was selected by player
+     */
+    public static void onDrawFromDiscardedDeck(String participantId, YanivTurn turnData,
+                                               PlayingCard drawnCard) {
+        turnData.getAvailableDiscardedCards().removeCard(drawnCard);
+        turnData.getPlayerHand(participantId).addCardToBottom(drawnCard);
+        drawnCard.setState(PlayingCardState.AVAILABLE);
+        turnData.getDiscardedCards().addAll(turnData.getAvailableDiscardedCards());
+
+        turnData.getAvailableDiscardedCards().clear();
+
+        updateAvailableDiscardedDeck(turnData);
     }
 }

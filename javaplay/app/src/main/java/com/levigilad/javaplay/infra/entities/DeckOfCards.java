@@ -1,5 +1,7 @@
 package com.levigilad.javaplay.infra.entities;
 
+import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
+import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 import com.levigilad.javaplay.infra.interfaces.IJsonSerializable;
 
 import org.json.JSONArray;
@@ -140,15 +142,6 @@ public class DeckOfCards implements IJsonSerializable {
     }
 
     /**
-     * Returns the card at the top of the deck and removes it
-     * @return card at top of the deck
-     * @throws NoSuchElementException if this deck is empty
-     */
-    public PlayingCard pop() {
-        return mCards.pop();
-    }
-
-    /**
      * Returns the last playing card in the deck
      * @return card at the bottom of the deck
      */
@@ -245,16 +238,76 @@ public class DeckOfCards implements IJsonSerializable {
      * Sorts the current deck
      */
     public void sort() {
+        if (mCards.size() == 0) {
+            return;
+        }
+
         Collections.sort(mCards);
+
+        // Get the joker count and move pass them
+        Iterator<PlayingCard> iterator = mCards.iterator();
+
+        DeckOfCards sortedDeck = new DeckOfCards();
+        DeckOfCards jokersDeck = new DeckOfCards();
+        PlayingCard playingCard = null;
+
+        int previousValue = -1;
+        while (iterator.hasNext()) {
+            playingCard = iterator.next();
+            if (playingCard.getRank() == PlayingCardRanks.JOKER) {
+                jokersDeck.addCardToBottom(playingCard);
+            } else if (sortedDeck.size() == 0) {
+                // Get current card values
+                previousValue = playingCard.getRank().getNumericValue();
+                sortedDeck.addCardToBottom(playingCard);
+            } else {
+                int currentValue = playingCard.getRank().getNumericValue();
+
+                while ((currentValue > previousValue + 1) && (jokersDeck.size() > 0)) {
+                    sortedDeck.addAll(jokersDeck.drawCard());
+                    previousValue++;
+                }
+
+                sortedDeck.addCardToBottom(playingCard);
+            }
+        }
+
+        while (jokersDeck.size() > 0) {
+            sortedDeck.addCardToTop(jokersDeck.drawCard().get(0));
+            jokersDeck.removeCardByIndex(0);
+        }
+
+        this.replace(sortedDeck);
     }
 
+    /**
+     * Draws cards from deck according to requested amount
+     * @param numberOfCards
+     * @return
+     */
     public DeckOfCards drawCards(int numberOfCards) {
         DeckOfCards cards = new DeckOfCards();
+
+        if (numberOfCards > this.size()) {
+            throw new RuntimeException("Deck has less than requested amount of cards");
+        }
 
         for (int i = 0; i < numberOfCards; i++) {
             cards.addCardToTop(mCards.pop());
         }
 
         return cards;
+    }
+
+    /**
+     * Removes deck in deck if they exists in given deck
+     * @param deck The deck to remove
+     */
+    public void removeAll(DeckOfCards deck) {
+        mCards.removeAll(deck.getCards());
+    }
+
+    public DeckOfCards drawCard() {
+        return this.drawCards(1);
     }
 }

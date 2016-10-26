@@ -31,6 +31,7 @@ public class YanivTurn extends Turn {
     private DeckOfCards mDiscardedCards;
     private DeckOfCards mGlobalCardDeck;
     private HashMap <String,DeckOfCards> mPlayersHands;
+    private DeckOfCards mTurnDiscardedDeck;
 
     public YanivTurn() {
         super(GAME_NAME);
@@ -134,5 +135,21 @@ public class YanivTurn extends Turn {
 
     public void setAvailableDiscardedDeck(DeckOfCards availableDiscardedDeck) {
         this.mAvailableDiscardedCards = availableDiscardedDeck;
+    }
+
+    public DeckOfCards getPlayerHand(String participantId) {
+        return mPlayersHands.get(participantId);
+    }
+
+    public void setTurnDiscardedDeck(DeckOfCards turnDiscardedDeck) {
+        this.mTurnDiscardedDeck = turnDiscardedDeck;
+    }
+
+    public boolean hasTurnDiscardedDeck() {
+        return this.mTurnDiscardedDeck != null;
+    }
+
+    public DeckOfCards getTurnDiscardedDeck() {
+        return mTurnDiscardedDeck;
     }
 }
