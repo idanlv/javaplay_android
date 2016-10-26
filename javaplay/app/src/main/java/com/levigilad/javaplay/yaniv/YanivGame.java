@@ -72,18 +72,6 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Checks if player's deck is available for Assaf (does not check if you can declare yaniv)
-     * @param deck player's deck
-     * @param otherPlayerScore Score of the player who declared Yaniv
-     * @return True or False
-     */
-    public static boolean isAssaf(DeckOfCards deck, int otherPlayerScore) {
-        int score = calculateDeckScore(deck);
-
-        return (score <= otherPlayerScore);
-    }
-
-    /**
      *  Check's if you won when you declare yaniv
      * @param playersID as the declarer ID of the player
      * @param playersHand as the declarer deck of cards
@@ -109,7 +97,7 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Calculates the score of given deck
+     * Calculates the score of a given deck
      * @param deck player's deck
      * @return Score
      */
@@ -178,7 +166,6 @@ public class YanivGame extends GameOfCards {
             return false;
         }
 
-
         Iterator<PlayingCard> it = cardSeries.iterator();
 
         // Since we've checked for minimal size, next will certainly return a value
@@ -211,34 +198,6 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Get the available from a tryDiscard action
-     * @param cardsToDiscard as deck of cards to tryDiscard
-     * @return deck of cards with the available cards, or null if the tryDiscard is invalid
-     */
-    public static DeckOfCards getAvailableCardsFromDiscard(DeckOfCards cardsToDiscard){
-        DeckOfCards availableCards = null;
-
-        if (isCardsDiscardValid(cardsToDiscard)) {
-            availableCards = new DeckOfCards();
-
-            // Add permitted cards to the available cards deck
-            if (cardsToDiscard.size() == 1) {
-                availableCards.addCardToTop(cardsToDiscard.peek());
-            }
-            else if (isDuplicates(cardsToDiscard)) {
-                availableCards.addAll(cardsToDiscard);
-            }
-            // Marked cards is sequence, add edges (isSequence = size >= 3)
-            else {
-                // Take first and last
-                availableCards.addCardToTop(cardsToDiscard.peek());
-                availableCards.addCardToTop(cardsToDiscard.getLast());
-            }
-        }
-        return availableCards;
-    }
-
-    /**
      * This method returns the numeric value of the card within game rules
      * @param card as PlayingCard
      * @return int value as Yaniv card value
@@ -255,6 +214,11 @@ public class YanivGame extends GameOfCards {
         }
     }
 
+    /**
+     * Creates an initialized match object
+     * @param participantIds Participants in match
+     * @return Initialized YanivTurn object
+     */
     public static YanivTurn initiateMatch(ArrayList<String> participantIds) {
         YanivTurn turn = new YanivTurn();
 
@@ -273,6 +237,10 @@ public class YanivGame extends GameOfCards {
         return turn;
     }
 
+    /**
+     * Generates a new deck of cards with default number of decks and jokers
+     * @return Initialized deck of cards
+     */
     private static DeckOfCards generateDeck() {
         return generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS);
     }
@@ -332,6 +300,10 @@ public class YanivGame extends GameOfCards {
         updateAvailableDiscardedDeck(turnData);
     }
 
+    /**
+     * Updates available discarded deck according to participant's disacrded deck
+     * @param turnData Turn data
+     */
     private static void updateAvailableDiscardedDeck(YanivTurn turnData) {
         turnData.getDiscardedCards().addAll(turnData.getAvailableDiscardedCards());
         turnData.getAvailableDiscardedCards().clear();
