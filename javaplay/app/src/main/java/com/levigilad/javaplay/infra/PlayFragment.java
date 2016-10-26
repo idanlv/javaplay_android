@@ -49,8 +49,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
     protected BaseGameActivity mAppContext;
-    private boolean mRestoreOrientation;
-    private boolean mDidRestartInitiate;
 
     /**
      * Constructor: Creates a game fragment
@@ -61,8 +59,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
         super(REQUESTED_CLIENTS);
         mTurnData = turnData;
         mScreenOrientation = screenOrientation;
-        mRestoreOrientation = false;
-        mDidRestartInitiate = false;
     }
 
 
@@ -77,13 +73,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
 
         try {
             mAppContext = (BaseGameActivity)context;
-
-            if (mAppContext.getRequestedOrientation() != mScreenOrientation) {
-                mAppContext.setRequestedOrientation(mScreenOrientation);
-                mDidRestartInitiate = true;
-            } else {
-                mRestoreOrientation = true;
-            }
+            mAppContext.setRequestedOrientation(mScreenOrientation);
         } catch (Exception ex) {
             throw new RuntimeException("Activity must be sub class of BaseGameActivity");
         }
@@ -121,34 +111,31 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     public void onSignInSucceeded() {
         Log.d(TAG, "Entered onSignInSucceeded()");
 
-        if (!mDidRestartInitiate) {
-            // We're starting a new match
-            if (mMatch == null) {
-                TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-                        .addInvitedPlayers(mInvitees)
-                        .setAutoMatchCriteria(mAutoMatchCriteria)
-                        .build();
+        // We're starting a new match
+        if (mMatch == null) {
+            Log.d(TAG, "Run match initiation");
+            TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+                    .addInvitedPlayers(mInvitees)
+                    .setAutoMatchCriteria(mAutoMatchCriteria)
+                    .build();
 
-                // Create and start the match.
-                Games.TurnBasedMultiplayer
-                        .createMatch(getApiClient(), tbmc)
-                        .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-                            @Override
-                            public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
-                                processResult(initiateMatchResult);
-                            }
-                        });
-            } // We have an existing game
-            else {
-                mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
-                handleMatchUpdate();
-            }
-
-        } else {
-            Log.d(TAG, "Skipping match start/load");
+            // Create and start the match.
+            Games.TurnBasedMultiplayer
+                    .createMatch(getApiClient(), tbmc)
+                    .setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+                        @Override
+                        public void onResult(@NonNull TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+                            processResult(initiateMatchResult);
+                        }
+                    });
+        } // We have an existing game
+        else {
+            Log.d(TAG, "Run match load");
+            mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
+            handleMatchUpdate();
         }
 
-        Log.d(TAG, "Exited sonSignInSucceeded()");
+        Log.d(TAG, "Exited onSignInSucceeded()");
     }
 
     /**
@@ -205,9 +192,8 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     public void onDetach() {
         mAppContext.removeListenerForMatchUpdates(this);
 
-        if (mRestoreOrientation) {
-            mAppContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
-        }
+        mAppContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
+
         super.onDetach();
 
     }
