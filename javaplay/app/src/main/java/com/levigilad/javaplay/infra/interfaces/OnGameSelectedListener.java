@@ -1,5 +1,7 @@
 package com.levigilad.javaplay.infra.interfaces;
 
+import com.levigilad.javaplay.infra.entities.Game;
+
 /**
  * This interface must be implemented by an object which wants
  * to be inform whenever a new game is selected by the user
@@ -7,7 +9,7 @@ package com.levigilad.javaplay.infra.interfaces;
 public interface OnGameSelectedListener {
     /**
      * This methods handles a selection of a game
-     * @param gameId The id of the game
+     * @param game The id of the game
      */
-    void onGameSelected(String gameId);
+    void onGameSelected(Game game);
 }

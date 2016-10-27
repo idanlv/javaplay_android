@@ -1,7 +1,5 @@
 package com.levigilad.javaplay.infra.entities;
 
-import android.content.Context;
-
 import com.levigilad.javaplay.tictactoe.TicTacToeGame;
 import com.levigilad.javaplay.yaniv.YanivGame;
 
@@ -25,17 +23,17 @@ public class Playground {
     /**
      * Constructor
      */
-    private Playground(Context context) {
-        init(context);
+    private Playground() {
+        load();
     }
 
     /**
      * Retrieves Playground instance
      * @return Playground instance
      */
-    public static Playground getInstance(Context context) {
+    public static Playground getInstance() {
         if (mInstance == null) {
-            mInstance = new Playground(context);
+            mInstance = new Playground();
         }
 
         return mInstance;
@@ -44,9 +42,9 @@ public class Playground {
     /**
      * Loads all game options
      */
-    private void init(Context context) {
-        mGames.add(new YanivGame(context));
-        mGames.add(new TicTacToeGame(context));
+    private void load() {
+        mGames.add(new YanivGame());
+        mGames.add(new TicTacToeGame());
     }
 
     /**

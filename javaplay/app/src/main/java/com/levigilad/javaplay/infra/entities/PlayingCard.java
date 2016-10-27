@@ -1,5 +1,6 @@
 package com.levigilad.javaplay.infra.entities;
 
+import com.levigilad.javaplay.infra.enums.PlayingCardState;
 import com.levigilad.javaplay.infra.interfaces.IJsonSerializable;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
@@ -23,11 +24,13 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     */
     private PlayingCardRanks mRank;
     private PlayingCardSuits mSuit;
+    private PlayingCardState mState;
 
     /**
-     * Empty Constructor
+     * Empty constructor
      */
     public PlayingCard() {
+
     }
 
     /**
@@ -38,6 +41,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     public PlayingCard(PlayingCardRanks rank, PlayingCardSuits suit) {
         this.mRank = rank;
         this.mSuit = suit;
+        this.mState = PlayingCardState.AVAILABLE;
         validate(rank, suit);
     }
 
@@ -48,6 +52,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     public PlayingCard(PlayingCard other) {
         this.mRank = other.getRank();
         this.mSuit = other.getSuit();
+        this.mState = other.mState;
     }
 
     /**
@@ -64,6 +69,22 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
      */
     public PlayingCardSuits getSuit() {
         return this.mSuit;
+    }
+
+    /**
+     * Checks if the card is discarded
+     * @return
+     */
+    public boolean isDiscarded() {
+        return mState == PlayingCardState.DISCARDED;
+    }
+
+    /**
+     * Setter
+     * @param state new playing card state (discarded/available)
+     */
+    public void setState(PlayingCardState state) {
+        mState  = state;
     }
 
     /**
@@ -121,5 +142,16 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     @Override
     public String toString() {
         return String.format(CARD_FORMAT, getRank(), getSuit());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PlayingCard) {
+            PlayingCard otherCard = (PlayingCard) obj;
+            return (mRank.equals(otherCard.mRank) && mSuit.equals(otherCard.mSuit) &&
+                    mState.equals(otherCard.mState));
+        }
+
+        return false;
     }
 }

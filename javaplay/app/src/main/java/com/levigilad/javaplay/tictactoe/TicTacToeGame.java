@@ -1,8 +1,5 @@
 package com.levigilad.javaplay.tictactoe;
 
-import android.content.Context;
-
-import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.Game;
 
 /**
@@ -10,13 +7,19 @@ import com.levigilad.javaplay.infra.entities.Game;
  */
 public class TicTacToeGame extends Game {
     /**
+     * Constants
+     */
+    private static String TAG = "TicTacToeGame";
+    private static String GAME = "Tic Tac Toe";
+    private static String DESCRIPTION = "Description for game";
+    private static String LEADERBOARD_ID = "CgkIyuG_9qMQEAIQDA";
+    private static int MAX_NUM_OF_PLAYERS = 2;
+
+    /**
      * Constructor
      */
-    public TicTacToeGame(Context context) {
-        super(context.getString(R.string.tictactoe_game_id),
-                context.getString(R.string.tictactoe_description),
-                context.getString(R.string.tictactoe_leaderboard_id),
-                2);
+    public TicTacToeGame() {
+        super(GAME, DESCRIPTION, LEADERBOARD_ID, MAX_NUM_OF_PLAYERS);
     }
 
     /**

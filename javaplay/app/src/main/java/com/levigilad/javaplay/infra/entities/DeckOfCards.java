@@ -1,5 +1,6 @@
 package com.levigilad.javaplay.infra.entities;
 
+import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import com.levigilad.javaplay.infra.interfaces.IJsonSerializable;
 
 import org.json.JSONArray;
@@ -9,7 +10,6 @@ import org.json.JSONObject;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 /**
  * This class represents a deck of cards
@@ -140,15 +140,6 @@ public class DeckOfCards implements IJsonSerializable {
     }
 
     /**
-     * Returns the card at the top of the deck and removes it
-     * @return card at top of the deck
-     * @throws NoSuchElementException if this deck is empty
-     */
-    public PlayingCard pop() {
-        return mCards.pop();
-    }
-
-    /**
      * Returns the last playing card in the deck
      * @return card at the bottom of the deck
      */
@@ -245,6 +236,61 @@ public class DeckOfCards implements IJsonSerializable {
      * Sorts the current deck
      */
     public void sort() {
+        if (mCards.size() == 0) {
+            return;
+        }
+
         Collections.sort(mCards);
+    }
+
+    /**
+     * Draws cards from beginning of deck according to requested amount
+     * @param numberOfCards
+     * @return Deck with requested amount of cards
+     */
+    public DeckOfCards drawCards(int numberOfCards) {
+        DeckOfCards cards = new DeckOfCards();
+
+        if (numberOfCards > this.size()) {
+            throw new RuntimeException("Deck has less than requested amount of cards");
+        }
+
+        for (int i = 0; i < numberOfCards; i++) {
+            cards.addCardToTop(drawFirstCard());
+        }
+
+        return cards;
+    }
+
+    /**
+     * Removes deck in deck if they exists in given deck
+     * @param deck The deck to remove
+     */
+    public void removeAll(DeckOfCards deck) {
+        mCards.removeAll(deck.getCards());
+    }
+
+    /**
+     * Draws the first card in deck and removes it
+     * @return First card in deck
+     */
+    public PlayingCard drawFirstCard() {
+        return mCards.removeFirst();
+    }
+
+    /**
+     * Draws the last card in deck and removes it
+     * @return
+     */
+    public PlayingCard drawLastCard() {
+        return mCards.removeLast();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DeckOfCards) {
+            return mCards.equals(((DeckOfCards) obj).mCards);
+        }
+        return false;
     }
 }

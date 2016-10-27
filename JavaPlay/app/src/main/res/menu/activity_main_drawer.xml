@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_inbox" android:icon="@android:drawable/ic_menu_camera"
+        <item android:id="@+id/nav_inbox" android:icon="@drawable/ic_menu_inbox"
             android:title="Inbox" />
-        <item android:id="@+id/nav_new_match" android:icon="@android:drawable/ic_menu_gallery"
+        <item android:id="@+id/nav_new_match" android:icon="@drawable/ic_menu_new_match"
             android:title="New Match" />
-        <item android:id="@+id/nav_achievements" android:icon="@android:drawable/ic_menu_slideshow"
-            android:title="Achievements" />
-        <item android:id="@+id/nav_leaderboards" android:icon="@android:drawable/ic_menu_manage"
+        <item android:id="@+id/nav_leaderboards" android:icon="@drawable/ic_menu_leaderboards"
             android:title="Leader Boards" />
+        <item android:id="@+id/nav_achievements" android:icon="@drawable/ic_menu_achievement"
+            android:title="Achievements" />
     </group>
 
 </menu>

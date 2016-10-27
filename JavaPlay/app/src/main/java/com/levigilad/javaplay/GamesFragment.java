@@ -1,5 +1,6 @@
 package com.levigilad.javaplay;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -10,7 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.levigilad.javaplay.infra.adapters.GamePossibilitiesRecyclerViewAdapter;
+import com.levigilad.javaplay.infra.adapters.GamesRecyclerViewAdapter;
+import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.entities.Playground;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
 import com.levigilad.javaplay.infra.interfaces.OnItemClickListener;
@@ -18,11 +20,11 @@ import com.levigilad.javaplay.infra.interfaces.OnItemClickListener;
 /**
  * This activity is the viewer for picking a game
  */
-public class GamePossibilitiesFragment extends Fragment implements OnItemClickListener {
+public class GamesFragment extends Fragment implements OnItemClickListener {
     /**
      * Constants
      */
-    private static final String TAG = "GamePossibilitiesFragment";
+    private static final String TAG = "GamesFragment";
 
     /**
      * Designer
@@ -34,10 +36,10 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
 
     /**
      * Use this factory method to create a new instance of this fragment
-     * @return GamePossibilitiesFragment instance
+     * @return GamesFragment instance
      */
-    public static GamePossibilitiesFragment newInstance() {
-        GamePossibilitiesFragment fragment = new GamePossibilitiesFragment();
+    public static GamesFragment newInstance() {
+        GamesFragment fragment = new GamesFragment();
 
         return fragment;
     }
@@ -71,8 +73,7 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerViewGameOptions.setLayoutManager(mLayoutManager);
 
-        mAdapter = new GamePossibilitiesRecyclerViewAdapter(
-                Playground.getInstance(getActivity()).getGames());
+        mAdapter = new GamesRecyclerViewAdapter(Playground.getInstance().getGames());
         mRecyclerViewGameOptions.setAdapter(mAdapter);
     }
 
@@ -82,7 +83,7 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
     @Override
     public void onResume() {
         super.onResume();
-        ((GamePossibilitiesRecyclerViewAdapter) mAdapter).setOnClickListener(this);
+        ((GamesRecyclerViewAdapter) mAdapter).setOnClickListener(this);
     }
 
     /**
@@ -96,6 +97,7 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
         // Verifies attached context implements listener interface
         if (context instanceof OnGameSelectedListener) {
             mListener = (OnGameSelectedListener)context;
+            ((Activity)context).setTitle(R.string.pick_a_game);
         } else {
             throw new RuntimeException("Activity must implement NavigationDrawerCallbacks.");
         }
@@ -108,9 +110,9 @@ public class GamePossibilitiesFragment extends Fragment implements OnItemClickLi
      */
     @Override
     public void onItemClicked(int position, View v) {
-        String gameId = (String) ((TextView) v.findViewById(R.id.game_name_text_view)).getText();
+        Game selectedGame = (Game) v.getTag();
         if (mListener != null) {
-            mListener.onGameSelected(gameId);
+            mListener.onGameSelected(selectedGame);
         }
     }
 }

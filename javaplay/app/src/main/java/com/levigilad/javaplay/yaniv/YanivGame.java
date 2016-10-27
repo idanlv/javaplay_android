@@ -1,14 +1,13 @@
 package com.levigilad.javaplay.yaniv;
 
-import android.content.Context;
-
-import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.GameOfCards;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 import com.levigilad.javaplay.infra.entities.PlayingCard;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
+import com.levigilad.javaplay.infra.enums.PlayingCardState;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -26,25 +25,28 @@ public class YanivGame extends GameOfCards {
     private static final int MIN_SEQUENCE_LENGTH = 3;
     private static final int MIN_DISCARDED_CARDS = 1;
     private static final int MIN_DUPLICATES_LENGTH = 2;
+    private static final String YANIV = "Yaniv";
+    private static final String DESCRIPTION = "Description for yaniv";
+    private static final String LEADERBOARD_ID = "CgkIyuG_9qMQEAIQCA";
+    private static final int DEFAULT_NUMBER_OF_DECKS = 2;
+    private static final int DEFAULT_NUMBER_OF_JOKERS = 2;
+    private static final int INITIAL_AVAILABLE_DISCARDED_DECK_SIZE = 1;
+
 
     /**
      * Empty constructor
      */
-    public YanivGame(Context context) {
-        this(context, MAX_DEFAULT_PLAYERS, INITIAL_DEFAULT_CARD_COUNT);
+    public YanivGame() {
+        this(MAX_DEFAULT_PLAYERS, INITIAL_DEFAULT_CARD_COUNT);
     }
 
     /**
      * Constructor
-     * @param numberOfPlayers number of players in game
+     * @param maxNumberOfPlayers number of players in game
      * @param numberOfStartingCards number of starting cards for player
      */
-    public YanivGame(Context context, int numberOfPlayers, int numberOfStartingCards) {
-        super(context.getString(R.string.yaniv_game_id),
-                context.getString(R.string.yaniv_description),
-                context.getString(R.string.yaniv_leaderboard_id),
-                numberOfPlayers,
-                numberOfStartingCards);
+    public YanivGame(int maxNumberOfPlayers, int numberOfStartingCards) {
+        super(YANIV, DESCRIPTION, LEADERBOARD_ID, maxNumberOfPlayers, numberOfStartingCards);
     }
 
     /**
@@ -63,18 +65,6 @@ public class YanivGame extends GameOfCards {
      */
     public static boolean canYaniv(int playerScore) {
         return playerScore <= MAX_DEFAULT_YANIV_CARD_SCORE;
-    }
-
-    /**
-     * Checks if player's deck is available for Assaf (does not check if you can declare yaniv)
-     * @param deck player's deck
-     * @param otherPlayerScore Score of the player who declared Yaniv
-     * @return True or False
-     */
-    public static boolean isAssaf(DeckOfCards deck, int otherPlayerScore) {
-        int score = calculateDeckScore(deck);
-
-        return (score <= otherPlayerScore);
     }
 
     /**
@@ -103,7 +93,7 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Calculates the score of given deck
+     * Calculates the score of a given deck
      * @param deck player's deck
      * @return Score
      */
@@ -121,11 +111,12 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Checks if user made a valid discard operation
+     * Checks if user made a valid tryDiscard operation
      * @param discardCards cards
      * @return True or False
      */
-    public static boolean isCardsDiscardValid(DeckOfCards discardCards) {
+    private static boolean isCardsDiscardValid(DeckOfCards discardCards) {
+        sortDeck(discardCards);
         return ((discardCards.size() == MIN_DISCARDED_CARDS)
                 || isSequence(discardCards)
                 || isDuplicates(discardCards));
@@ -142,12 +133,13 @@ public class YanivGame extends GameOfCards {
             return false;
         }
 
-        PlayingCardRanks value = cards.get(0).getRank();
-
         Iterator<PlayingCard> it = cards.iterator();
+        PlayingCardRanks rank = it.next().getRank();
+
 
         while (it.hasNext()) {
-            if (value != it.next().getRank()) {
+            PlayingCardRanks currentRank = it.next().getRank();
+            if ((currentRank != PlayingCardRanks.JOKER) && (rank != currentRank)) {
                 return false;
             }
 
@@ -158,35 +150,22 @@ public class YanivGame extends GameOfCards {
 
     /**
      * Checks if this card series is a valid sequence
-     * @param cardSeries cards
+     * @param cardSeries sorted deck of cards
      * @return True or False
      */
     public static boolean isSequence(DeckOfCards cardSeries) {
-        Iterator<PlayingCard> it;
         PlayingCard playingCard = null;
-        int jokerCount = 0;
         int previousValue;
         PlayingCardSuits suit;
-
 
         if (cardSeries.size() < MIN_SEQUENCE_LENGTH) {
             return false;
         }
 
-        cardSeries.sort();
+        Iterator<PlayingCard> it = cardSeries.iterator();
 
-        // Get the joker count and move pass them
-        it = cardSeries.iterator();
-        while (it.hasNext()) {
-            playingCard = it.next();
-            if (playingCard.getRank() == PlayingCardRanks.JOKER) {
-                jokerCount++;
-            } else {
-                break;
-            }
-        }
-
-        // Get current card values
+        // Since we've checked for minimal size, next will certainly return a value
+        playingCard = it.next();
         suit = playingCard.getSuit();
         previousValue = playingCard.getRank().getNumericValue();
 
@@ -194,23 +173,17 @@ public class YanivGame extends GameOfCards {
         while (it.hasNext()) {
             playingCard = it.next();
 
+            if (playingCard.getRank() == PlayingCardRanks.JOKER) {
+                previousValue++;
+            }
             // if not same suit, return quit
-            if (playingCard.getSuit() != suit) {
+            else if (playingCard.getSuit() != suit) {
                 return false;
             }
-
-            // Joker handle
-            while (playingCard.getRank().getNumericValue() > previousValue + 1 &&
-                    jokerCount > 0) {
-                jokerCount--;
-                previousValue++;
-            }
-
             // Check if this is the next expected card
-            if (playingCard.getRank().getNumericValue() == previousValue + 1) {
+            else if (playingCard.getRank().getNumericValue() == previousValue + 1) {
                 previousValue++;
             }
-
             // Current number does not continue the sequence
             else {
                 return false;
@@ -218,34 +191,6 @@ public class YanivGame extends GameOfCards {
         }
         // All is OK
         return true;
-    }
-
-    /**
-     * Get the available from a discard action
-     * @param cardsToDiscard as deck of cards to discard
-     * @return deck of cards with the available cards, or null if the discard is invalid
-     */
-    public static DeckOfCards getAvailableCardsFromDiscard(DeckOfCards cardsToDiscard){
-        DeckOfCards availableCards = null;
-
-        if (isCardsDiscardValid(cardsToDiscard)) {
-            availableCards = new DeckOfCards();
-
-            // Add permitted cards to the available cards deck
-            if (cardsToDiscard.size() == 1) {
-                availableCards.addCardToTop(cardsToDiscard.peek());
-            }
-            else if (isDuplicates(cardsToDiscard)) {
-                availableCards.addAll(cardsToDiscard);
-            }
-            // Marked cards is sequence, add edges (isSequence = size >= 3)
-            else {
-                // Take first and last
-                availableCards.addCardToTop(cardsToDiscard.peek());
-                availableCards.addCardToTop(cardsToDiscard.getLast());
-            }
-        }
-        return availableCards;
     }
 
     /**
@@ -263,5 +208,182 @@ public class YanivGame extends GameOfCards {
             default:
                 return card.getRank().getNumericValue();
         }
+    }
+
+    /**
+     * Creates an initialized match object
+     * @param participantIds Participants in match
+     * @return Initialized YanivTurn object
+     */
+    public static YanivTurn initiateMatch(ArrayList<String> participantIds) {
+        YanivTurn turn = new YanivTurn();
+
+        DeckOfCards globalDeck = YanivGame.generateDeck();
+        turn.setGlobalDeck(globalDeck);
+
+        for(String participantId : participantIds) {
+            DeckOfCards deck = globalDeck.drawCards(INITIAL_DEFAULT_CARD_COUNT);
+            turn.addParticipantDeck(participantId, deck);
+        }
+
+        DeckOfCards availableDiscardedDeck =
+                globalDeck.drawCards(INITIAL_AVAILABLE_DISCARDED_DECK_SIZE);
+        turn.setAvailableDiscardedDeck(availableDiscardedDeck);
+
+        return turn;
+    }
+
+    /**
+     * Generates a new deck of cards with default number of decks and jokers
+     * @return Initialized deck of cards
+     */
+    private static DeckOfCards generateDeck() {
+        return generateDeck(DEFAULT_NUMBER_OF_DECKS, DEFAULT_NUMBER_OF_JOKERS);
+    }
+
+    /**
+     * Tries to discard given cards from player's deck
+     * @param participantId Participant identifier
+     * @param turnData Current turn data object
+     * @return True if discarded. Otherwise false.
+     */
+    public static boolean tryDiscard(String participantId, YanivTurn turnData) {
+        if (turnData.hasTurnDiscardedDeck()) {
+            throw new UnsupportedOperationException("Participant cannot discard twice in same turn");
+        }
+
+        DeckOfCards discardedDeck = new DeckOfCards();
+
+        Iterator<PlayingCard> iterator = turnData.getPlayerHand(participantId).iterator();
+
+        while (iterator.hasNext()) {
+            PlayingCard card = iterator.next();
+            if (card.isDiscarded()) {
+                discardedDeck.addCardToBottom(card);
+            }
+        }
+
+        if (isCardsDiscardValid(discardedDeck)) {
+            turnData.getPlayerHand(participantId).removeAll(discardedDeck);
+            turnData.setTurnDiscardedDeck(discardedDeck);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * This method is called when player draws a card from global deck
+     * @param participantId Participant identifier
+     * @param turnData Current turn data object
+     */
+    public static void onDrawFromGlobalDeck(String participantId, YanivTurn turnData) {
+        // No cards left in deck
+        if (turnData.getGlobalCardDeck().size() == 0) {
+            // Change status of cards to Available
+
+            // Add discarded deck to global deck and shuffle cards
+            turnData.getGlobalCardDeck().addAll(turnData.getDiscardedCards());
+            turnData.getGlobalCardDeck().shuffle();
+
+            // Empty discarded deck
+            turnData.getDiscardedCards().clear();
+        }
+
+        turnData.getPlayerHand(participantId)
+                .addCardToBottom(turnData.getGlobalCardDeck().drawFirstCard());
+
+        updateAvailableDiscardedDeck(turnData);
+    }
+
+    /**
+     * Updates available discarded deck according to participant's disacrded deck
+     * @param turnData Turn data
+     */
+    static void updateAvailableDiscardedDeck(YanivTurn turnData) {
+        turnData.getDiscardedCards().addAll(turnData.getAvailableDiscardedCards());
+        turnData.getAvailableDiscardedCards().clear();
+
+        DeckOfCards discardedCards = turnData.getTurnDiscardedDeck();
+        turnData.setAvailableDiscardedDeck(findAvailableCards(discardedCards));
+        turnData.getDiscardedCards().addAll(discardedCards);
+
+        turnData.setTurnDiscardedDeck(null);
+    }
+
+    /**
+     * Removes the available cards for next turn from given discarded deck
+     * @param discardedDeck Current deck discarded by participant
+     * @return Available cards
+     */
+    static DeckOfCards findAvailableCards(DeckOfCards discardedDeck) {
+        DeckOfCards availableDeck = new DeckOfCards();
+
+        availableDeck.addCardToBottom(discardedDeck.drawFirstCard());
+
+        // Participant has discarded more than one card, therefore we need to add a second card
+        // for available deck. This card must be the last.
+        if (discardedDeck.size() > 0) {
+            availableDeck.addCardToBottom(discardedDeck.drawLastCard());
+        }
+
+        return availableDeck;
+    }
+
+    /**
+     * This method is called when player draws a card from available discarded deck
+     * @param participantId Participant identifier
+     * @param turnData Current turn data object
+     * @param drawnCard card which was selected by player
+     */
+    public static void onDrawFromDiscardedDeck(String participantId, YanivTurn turnData,
+                                               PlayingCard drawnCard) {
+        turnData.getAvailableDiscardedCards().removeCard(drawnCard);
+        turnData.getPlayerHand(participantId).addCardToBottom(drawnCard);
+        drawnCard.setState(PlayingCardState.AVAILABLE);
+        turnData.getDiscardedCards().addAll(turnData.getAvailableDiscardedCards());
+
+        turnData.getAvailableDiscardedCards().clear();
+
+        updateAvailableDiscardedDeck(turnData);
+    }
+
+    private static void sortDeck(DeckOfCards deck) {
+        deck.sort();
+
+        // Get the joker count and move pass them
+        Iterator<PlayingCard> iterator = deck.iterator();
+
+        DeckOfCards sortedDeck = new DeckOfCards();
+        DeckOfCards jokersDeck = new DeckOfCards();
+        PlayingCard playingCard = null;
+
+        int previousValue = -1;
+        while (iterator.hasNext()) {
+            playingCard = iterator.next();
+            if (playingCard.getRank() == PlayingCardRanks.JOKER) {
+                jokersDeck.addCardToBottom(playingCard);
+            } else if (sortedDeck.size() == 0) {
+                // Get current card values
+                previousValue = playingCard.getRank().getNumericValue();
+                sortedDeck.addCardToBottom(playingCard);
+            } else {
+                int currentValue = playingCard.getRank().getNumericValue();
+
+                while ((currentValue > previousValue + 1) && (jokersDeck.size() > 0)) {
+                    sortedDeck.addCardToBottom(jokersDeck.drawFirstCard());
+                    previousValue++;
+                }
+
+                sortedDeck.addCardToBottom(playingCard);
+            }
+        }
+
+        // Add remaining jokers in beginning of game
+        while (jokersDeck.size() > 0) {
+            sortedDeck.addCardToTop(jokersDeck.drawFirstCard());
+        }
+
+        deck.replace(sortedDeck);
     }
 }

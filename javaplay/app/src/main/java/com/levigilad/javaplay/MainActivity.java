@@ -6,7 +6,9 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,6 +25,7 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.google.basegameutils.games.BaseGameUtils;
 import com.levigilad.javaplay.infra.PlayFragment;
+import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
 import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
@@ -58,6 +61,7 @@ public class MainActivity extends BaseGameActivity implements
     private NavigationView mNavigationView = null;
     private Toolbar mToolBar = null;
     private DrawerLayout mDrawerLayout;
+    private CoordinatorLayout mCoordinatorLayour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +85,8 @@ public class MainActivity extends BaseGameActivity implements
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
 
         mNavigationView.setNavigationItemSelectedListener(this);
+
+        mCoordinatorLayour = (CoordinatorLayout)findViewById(R.id.app_coordinator_layout);
     }
 
     @Override
@@ -219,11 +225,14 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     @Override
-    public void onGameSelected(String gameId) {
-        mGameId = gameId;
+    public void onGameSelected(Game game) {
+        mGameId = game.getGameId();
 
-        Intent intent = Games.TurnBasedMultiplayer
-                .getSelectOpponentsIntent(getApiClient(), 1, 7, true);
+        Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(
+                getApiClient(),
+                game.getMinNumberOfPlayers() - 1,
+                game.getMaxNumberOfPlayers() - 1,
+                game.getmAllowAutoMatch());
         startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 
@@ -254,8 +263,8 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onFragmentInteraction(String message) {
+        
     }
 
     private void loadExistingMatch(Intent data) {
@@ -297,7 +306,7 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     private void showGameOptions() {
-        GamePossibilitiesFragment fragment = GamePossibilitiesFragment.newInstance();
+        GamesFragment fragment = GamesFragment.newInstance();
         replaceFragment(fragment);
     }
 
