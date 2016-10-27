@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -202,7 +200,8 @@ public class MainActivity extends BaseGameActivity implements
             }
 
             // TODO: Does this handle rematch?
-            loadExistingMatch(data);
+            loadExistingMatch(
+                    (TurnBasedMatch) data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH));
         } else if (request == RC_LOOK_AT_LEADERBOARD) {
             // TODO: Handle errors
         } else if (request == RC_LOOK_AT_ACHIEVEMENTS) {
@@ -218,9 +217,12 @@ public class MainActivity extends BaseGameActivity implements
     @Override
     public void onSignInSucceeded() {
         Log.d(TAG, "Entered onSignInSucceeded()");
-        // TODO: Idan! Check this toast
-        Toast.makeText(this.getApplicationContext(), "Connected", Toast.LENGTH_LONG);
         Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
+
+        if (getGameHelper().hasTurnBasedMatch()) {
+            loadExistingMatch(getGameHelper().getTurnBasedMatch());
+        }
+
         Log.d(TAG, "Exited onSignInSucceeded()");
     }
 
@@ -267,9 +269,7 @@ public class MainActivity extends BaseGameActivity implements
         
     }
 
-    private void loadExistingMatch(Intent data) {
-        TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
-
+    private void loadExistingMatch(TurnBasedMatch match) {
         if (match != null) {
             if (match.getData() != null) {
                 try {
@@ -289,6 +289,7 @@ public class MainActivity extends BaseGameActivity implements
                     e.printStackTrace();
                 }
             } else {
+
                 // TODO: rematch?
             }
         }
