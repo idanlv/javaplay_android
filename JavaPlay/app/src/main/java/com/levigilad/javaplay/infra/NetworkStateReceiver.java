@@ -23,7 +23,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
      * Constructor
      */
     public NetworkStateReceiver() {
-        mListeners = new ArrayList(); //TODO: Resolve unchecked assignment
+        mListeners = new ArrayList<>();
         mConnected = null;
     }
 
