@@ -30,7 +30,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
      * Empty constructor
      */
     public PlayingCard() {
-
+        this.mState = PlayingCardState.AVAILABLE;
     }
 
     /**

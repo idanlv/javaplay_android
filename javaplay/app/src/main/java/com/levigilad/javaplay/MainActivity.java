@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -14,7 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
@@ -22,6 +23,7 @@ import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.google.basegameutils.games.BaseGameUtils;
+import com.levigilad.javaplay.infra.ActivityUtils;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
@@ -37,7 +39,7 @@ import java.util.ArrayList;
 public class MainActivity extends BaseGameActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         OnGameSelectedListener,
-        OnFragmentInteractionListener {
+        OnFragmentInteractionListener, NetworkStateReceiver.NetworkStateReceiverListener {
     /**
      * Constants
      */
@@ -51,6 +53,7 @@ public class MainActivity extends BaseGameActivity implements
      * Members
      */
     private String mGameId;
+    private NetworkStateReceiver mNetworkStateReceiver;
 
     /**
      * Designer
@@ -60,6 +63,7 @@ public class MainActivity extends BaseGameActivity implements
     private Toolbar mToolBar = null;
     private DrawerLayout mDrawerLayout;
     private CoordinatorLayout mCoordinatorLayour;
+    private TextProgressBar mConnectionProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,15 @@ public class MainActivity extends BaseGameActivity implements
         if (savedInstanceState == null) {
             showLogin();
         }
+
+        mNetworkStateReceiver = new NetworkStateReceiver();
+        mNetworkStateReceiver.addListener(this);
+        this.registerReceiver(mNetworkStateReceiver,
+                new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
+
+        mConnectionProgressBar =
+                (TextProgressBar) findViewById(R.id.internet_connection_progress_bar);
+        mConnectionProgressBar.setVisibility(View.GONE);
 
         mToolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
@@ -315,5 +328,20 @@ public class MainActivity extends BaseGameActivity implements
         LoginFragment fragment = LoginFragment.newInstance();
         setTitle(getString(R.string.app_name));
         replaceFragment(fragment);
+    }
+
+    @Override
+    public void networkAvailable() {
+        Log.d(TAG, "Entered networkAvailable");
+        reconnectClient();
+        mConnectionProgressBar.setVisibility(View.GONE);
+        ActivityUtils.setEnabledRecursively(mDrawerLayout, true);
+    }
+
+    @Override
+    public void networkUnavailable() {
+        Log.d(TAG, "Entered networkUnavailable");
+        mConnectionProgressBar.setVisibility(View.VISIBLE);
+        ActivityUtils.setEnabledRecursively(mDrawerLayout, false);
     }
 }

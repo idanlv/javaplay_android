@@ -124,7 +124,7 @@ public class YanivGame extends GameOfCards {
 
     /**
      * Checks if this cards have the same value
-     * @param cards cards
+     * @param cards sorted deck of cards
      * @return True or False
      */
     public static boolean isDuplicates(DeckOfCards cards) {

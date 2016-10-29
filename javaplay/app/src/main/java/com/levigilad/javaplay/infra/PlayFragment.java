@@ -1,6 +1,7 @@
 package com.levigilad.javaplay.infra;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
@@ -30,7 +32,7 @@ import java.util.List;
 /**
  * This class represents a fragment of a game
  */
-public abstract class PlayFragment extends BaseGameFragment implements OnTurnBasedMatchReceivedListener {
+public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchReceivedListener {
     /**
      * Constants
      */
@@ -39,6 +41,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTO_MATCH";
     protected static final String MATCH_ID = "MATCH_ID";
+    private static final String GAME_ID = "GameId";
 
     /**
      * Members
@@ -49,6 +52,7 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
     protected BaseGameActivity mAppContext;
+    private String mGameId;
 
     /**
      * Constructor: Creates a game fragment
@@ -56,7 +60,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
      * @param screenOrientation
      */
     public PlayFragment(Turn turnData, int screenOrientation) {
-        super(REQUESTED_CLIENTS);
         mTurnData = turnData;
         mScreenOrientation = screenOrientation;
     }
@@ -93,23 +96,24 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
             Bundle bundle = getArguments();
 
             mMatch = bundle.getParcelable(MATCH_ID);
+            mGameId = bundle.getString(GAME_ID);
 
             if (mMatch== null) {
-                mInvitees = getArguments().getStringArrayList(INVITEES);
-                mAutoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
+                mInvitees = bundle.getStringArrayList(INVITEES);
+                mAutoMatchCriteria = bundle.getBundle(AUTO_MATCH);
+
+
             }
         }
 
-        mAppContext.setTitle(getGameId());
+        mAppContext.setTitle(mGameId);
 
         Log.d(TAG, "Exited onCreate()");
     }
 
-    /**
-     * Performs actions after a successful sign in
-     */
-    public void onSignInSucceeded() {
-        Log.d(TAG, "Entered onSignInSucceeded()");
+    @Override
+    public void onStart() {
+        super.onStart();
 
         // We're starting a new match
         if (mMatch == null) {
@@ -134,8 +138,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
             mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
             handleMatchUpdate();
         }
-
-        Log.d(TAG, "Exited onSignInSucceeded()");
     }
 
     /**
@@ -354,7 +356,6 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
 
             // Start my turn
             if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                mListener.onFragmentInteraction(getString(R.string.games_play_your_turn));
                 mTurnData.increaseTurnCounter();
                 startTurn();
             }
@@ -421,4 +422,46 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
      * Updates player's view according to turn data
      */
     protected abstract void updateView();
+
+    public GoogleApiClient getApiClient() {
+        return mAppContext.getGameHelper().getApiClient();
+    }
+
+    /**
+     * Shows an error message
+     * @param statusCode Status code of the error
+     * @param stringId The resource id for the message
+     */
+    protected void showErrorMessage(int statusCode, int stringId) {
+        showWarning("Warning", getResources().getString(stringId));
+    }
+
+    /**
+     * Shows a warning
+     * @param title Warning's title
+     * @param message Warning' message
+     */
+    protected void showWarning(String title, String message) {
+        AlertDialog.Builder alertDialogBuilder =
+                new AlertDialog.Builder(this.getActivity());
+
+        // Set title
+        alertDialogBuilder.setTitle(title).setMessage(message);
+
+        // Set dialog message
+        alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        // If this button is clicked, close
+                        // current activity
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog dialog = alertDialogBuilder.create();
+
+        // show it
+        dialog.show();
+    }
 }
