@@ -26,10 +26,4 @@
             app:menu="@menu/activity_main_drawer" />
 
     </android.support.v4.widget.DrawerLayout>
-    <com.levigilad.javaplay.TextProgressBar
-        android:id="@+id/internet_connection_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:text="Waiting for internet connection"/>
 </FrameLayout>

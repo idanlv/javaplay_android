@@ -101,8 +101,6 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
             if (mMatch== null) {
                 mInvitees = bundle.getStringArrayList(INVITEES);
                 mAutoMatchCriteria = bundle.getBundle(AUTO_MATCH);
-
-
             }
         }
 

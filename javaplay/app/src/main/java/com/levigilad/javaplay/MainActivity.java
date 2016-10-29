@@ -1,6 +1,7 @@
 package com.levigilad.javaplay;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -15,7 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.view.WindowManager;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
@@ -23,7 +24,6 @@ import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.google.basegameutils.games.BaseGameUtils;
-import com.levigilad.javaplay.infra.ActivityUtils;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
@@ -63,7 +63,7 @@ public class MainActivity extends BaseGameActivity implements
     private Toolbar mToolBar = null;
     private DrawerLayout mDrawerLayout;
     private CoordinatorLayout mCoordinatorLayour;
-    private TextProgressBar mConnectionProgressBar;
+    private Dialog mNetworStatusDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +79,11 @@ public class MainActivity extends BaseGameActivity implements
         this.registerReceiver(mNetworkStateReceiver,
                 new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 
-        mConnectionProgressBar =
-                (TextProgressBar) findViewById(R.id.internet_connection_progress_bar);
-        mConnectionProgressBar.setVisibility(View.GONE);
+        mNetworStatusDialog = new Dialog(this);
+        mNetworStatusDialog.setContentView(R.layout.dialog_network_status);
+        mNetworStatusDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        mNetworStatusDialog.setCanceledOnTouchOutside(false);
+        mNetworStatusDialog.setCancelable(false);
 
         mToolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
@@ -333,15 +335,16 @@ public class MainActivity extends BaseGameActivity implements
     @Override
     public void networkAvailable() {
         Log.d(TAG, "Entered networkAvailable");
-        reconnectClient();
-        mConnectionProgressBar.setVisibility(View.GONE);
-        ActivityUtils.setEnabledRecursively(mDrawerLayout, true);
+        if (mNetworStatusDialog.isShowing()) {
+            mNetworStatusDialog.dismiss();
+            reconnectClient();
+        }
     }
 
     @Override
     public void networkUnavailable() {
         Log.d(TAG, "Entered networkUnavailable");
-        mConnectionProgressBar.setVisibility(View.VISIBLE);
-        ActivityUtils.setEnabledRecursively(mDrawerLayout, false);
+
+        mNetworStatusDialog.show();
     }
 }
