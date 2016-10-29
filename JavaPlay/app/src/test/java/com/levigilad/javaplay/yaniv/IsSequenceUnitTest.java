@@ -74,6 +74,32 @@ public class IsSequenceUnitTest {
     }
 
     @Test
+    public void testGoodWithJokersAtStart() {
+        DeckOfCards cards = new DeckOfCards();
+        cards.addCardToBottom(new PlayingCard(PlayingCardRanks.SEVEN, PlayingCardSuits.CLUBS));
+        cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
+        cards.addCardToBottom(new PlayingCard(PlayingCardRanks.SIX, PlayingCardSuits.CLUBS));
+        cards.sort();
+
+        boolean expected = true;
+        boolean actual = YanivGame.isSequence(cards);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGoodWith2Jokers() {
+        DeckOfCards cards = new DeckOfCards();
+        cards.addCardToBottom(new PlayingCard(PlayingCardRanks.SEVEN, PlayingCardSuits.CLUBS));
+        cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
+        cards.addCardToBottom(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
+        cards.sort();
+
+        boolean expected = true;
+        boolean actual = YanivGame.isSequence(cards);
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void testBadWithJokers() {
         DeckOfCards cards = new DeckOfCards();
         cards.addCardToBottom(new PlayingCard(PlayingCardRanks.ACE, PlayingCardSuits.DIAMONDS));

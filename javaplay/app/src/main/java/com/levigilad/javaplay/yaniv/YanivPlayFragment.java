@@ -54,13 +54,10 @@ public class YanivPlayFragment extends PlayFragment {
     private static final float DIMMED_IMAGE_VIEW_ALPHA = 0.6f;
     private static final int MARKED_IMAGE_BACKGROUND = Color.BLUE;
     private static final int GLOBAL_TEXT_COLOR = Color.BLACK;
-    private static final String PLAYER_SCORE_FORMAT = "%s: %d";
-
     /**
      * Members
      */
-    private YanivGame mGame;
-    private DeckOfCards mPlayersMarkedCards;
+    //TODO : Remove this and use the one in mTurn
     private boolean mDrawCard;
 
     /**
@@ -135,8 +132,6 @@ public class YanivPlayFragment extends PlayFragment {
      */
     private void initializeView(View parentView) {
         // Set members
-        mGame = new YanivGame();
-        mPlayersMarkedCards = new DeckOfCards();
         mDrawCard = false;
 
         // Hook id's
@@ -264,7 +259,6 @@ public class YanivPlayFragment extends PlayFragment {
         PlayingCard playingCard;
         Drawable drawable;
         ImageView img;
-        int i = 0;
 
         // Clear all cards from view
         mDiscardedCardsLL.removeAllViews();
@@ -306,7 +300,6 @@ public class YanivPlayFragment extends PlayFragment {
      * @param v as the clicked view (card)
      */
     private void drawCardFromDiscardedDeck(View v) {
-        PlayingCard playingCard;
         if (mDrawCard) {
             ActivityUtils.setEnabledRecursively(mDiscardedCardsLL, false);
             mDeckIV.setEnabled(false);
@@ -438,14 +431,6 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     /**
-     * Generate the playing deck's
-     */
-    private void dealCards() {
-        ArrayList<String> participantIds = mMatch.getParticipantIds();
-        mTurnData = YanivGame.initiateMatch(mMatch.getParticipantIds());
-    }
-
-    /**
      * Enable/Disable playing gui between turns
      * @param enabled as to Enable/Disable game play
      */
@@ -466,7 +451,9 @@ public class YanivPlayFragment extends PlayFragment {
     protected void startMatch() {
         Log.d(TAG,"Match Started");
 
+        // Deal cards
         mTurnData = YanivGame.initiateMatch(mMatch.getParticipantIds());
+
         mInstructionsTV.setText(getString(R.string.games_waiting_for_other_player_turn));
         Toast.makeText(mAppContext, R.string.games_waiting_for_other_player_turn, Toast.LENGTH_LONG).show();
     }

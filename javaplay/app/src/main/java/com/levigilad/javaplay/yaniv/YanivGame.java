@@ -166,6 +166,12 @@ public class YanivGame extends GameOfCards {
 
         // Since we've checked for minimal size, next will certainly return a value
         playingCard = it.next();
+
+        // If joker, keep going
+        while ((playingCard.getRank() == PlayingCardRanks.JOKER) && (it.hasNext())) {
+            playingCard = it.next();
+        }
+
         suit = playingCard.getSuit();
         previousValue = playingCard.getRank().getNumericValue();
 
