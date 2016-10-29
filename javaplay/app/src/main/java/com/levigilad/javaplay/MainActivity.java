@@ -24,6 +24,7 @@ import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.google.basegameutils.games.BaseGameUtils;
+import com.levigilad.javaplay.infra.NetworkStateReceiver;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.entities.Game;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;

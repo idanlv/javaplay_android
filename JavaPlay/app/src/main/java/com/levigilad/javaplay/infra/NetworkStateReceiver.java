@@ -1,4 +1,4 @@
-package com.levigilad.javaplay;
+package com.levigilad.javaplay.infra;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
