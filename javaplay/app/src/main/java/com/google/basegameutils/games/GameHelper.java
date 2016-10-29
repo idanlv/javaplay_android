@@ -159,19 +159,19 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
     Handler mHandler;
 
     /*
-     * If we got an invitation when we Connected to the games client, it's here.
+     * If we got an invitation when we connected to the games client, it's here.
      * Otherwise, it's null.
      */
     Invitation mInvitation;
 
     /*
-     * If we got turn-based match when we Connected to the games client, it's
+     * If we got turn-based match when we connected to the games client, it's
      * here. Otherwise, it's null.
      */
     TurnBasedMatch mTurnBasedMatch;
 
     /*
-     * If we have incoming requests when we Connected to the games client, they
+     * If we have incoming requests when we connected to the games client, they
      * are here. Otherwise, it's null.
      */
     ArrayList<GameRequest> mRequests;
