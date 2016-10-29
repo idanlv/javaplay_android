@@ -374,7 +374,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         if (mConnectOnStart) {
             if (mGoogleApiClient.isConnected()) {
                 Log.w(TAG,
-                        "GameHelper: client was already Connected on onStart()");
+                        "GameHelper: client was already connected on onStart()");
             } else {
                 debugLog("Connecting client.");
                 mConnecting = true;
@@ -641,7 +641,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
 
         if (mGoogleApiClient.isConnected()) {
             // nothing to do
-            logWarn("beginUserInitiatedSignIn() called when already Connected. "
+            logWarn("beginUserInitiatedSignIn() called when already connected. "
                     + "Calling listener directly to notify of success.");
             notifyListener(true);
             return;
@@ -679,7 +679,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
 
     void connect() {
         if (mGoogleApiClient.isConnected()) {
-            debugLog("Already Connected.");
+            debugLog("Already connected.");
             return;
         }
         debugLog("Starting connection.");
@@ -694,7 +694,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
      */
     public void reconnectClient() {
         if (!mGoogleApiClient.isConnected()) {
-            Log.w(TAG, "reconnectClient() called when client is not Connected.");
+            Log.w(TAG, "reconnectClient() called when client is not connected.");
             // interpret it as a request to connect
             connect();
         } else {
@@ -706,7 +706,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
     /** Called when we successfully obtain a connection to a client. */
     @Override
     public void onConnected(Bundle connectionHint) {
-        debugLog("onConnected: Connected!");
+        debugLog("onConnected: connected!");
 
         if (connectionHint != null) {
             debugLog("onConnected: connection hint provided. Checking for invite.");
