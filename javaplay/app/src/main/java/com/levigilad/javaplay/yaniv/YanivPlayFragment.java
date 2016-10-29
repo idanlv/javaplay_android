@@ -152,7 +152,7 @@ public class YanivPlayFragment extends PlayFragment {
         // Set attributes
         mInstructionsTV.setTextColor(GLOBAL_TEXT_COLOR);
 
-        // Set listeners
+        // Set mListeners
         mDeckIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,7 +192,7 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     /**
-     * Show the cards in the players hand and set the listeners for the cards
+     * Show the cards in the players hand and set the mListeners for the cards
      */
     private void updatePlayerHandView(){
         // Clear all cards from view
@@ -258,7 +258,7 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     /**
-     * Show the available discarded cards and set the listeners
+     * Show the available discarded cards and set the mListeners
      */
     private void updateAvailableDiscardView(){
         PlayingCard playingCard;

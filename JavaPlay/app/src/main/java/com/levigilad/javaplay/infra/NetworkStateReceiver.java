@@ -9,56 +9,88 @@ import android.net.NetworkInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class implements network change alerts
+ */
 public class NetworkStateReceiver extends BroadcastReceiver {
+    /**
+     * Members
+     */
+    protected List<NetworkStateReceiverListener> mListeners;
+    protected Boolean mConnected;
 
-    protected List<NetworkStateReceiverListener> listeners;
-    protected Boolean connected;
-
+    /**
+     * Constructor
+     */
     public NetworkStateReceiver() {
-        listeners = new ArrayList();
-        connected = null;
+        mListeners = new ArrayList();
+        mConnected = null;
     }
 
+    /**
+     * Handles network change notification
+     * @param context
+     * @param intent
+     */
     public void onReceive(Context context, Intent intent) {
         if (intent == null || intent.getExtras() == null)
             return;
 
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager manager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = manager.getActiveNetworkInfo();
 
         if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
-            connected = true;
+            mConnected = true;
         } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
-            connected = false;
+            mConnected = false;
         }
 
         notifyStateToAll();
     }
 
+    /**
+     * Notifies all listeners
+     */
     private void notifyStateToAll() {
-        for (NetworkStateReceiverListener listener : listeners)
+        for (NetworkStateReceiverListener listener : mListeners)
             notifyState(listener);
     }
 
+    /**
+     * Notifies state to listener
+     * @param listener Current listener
+     */
     private void notifyState(NetworkStateReceiverListener listener) {
-        if (connected == null || listener == null)
+        if (mConnected == null || listener == null)
             return;
 
-        if (connected == true)
+        if (mConnected == true)
             listener.networkAvailable();
         else
             listener.networkUnavailable();
     }
 
-    public void addListener(NetworkStateReceiverListener l) {
-        listeners.add(l);
-        notifyState(l);
+    /**
+     * Adds a new listener and notifies on current state
+     * @param listener New listener
+     */
+    public void addListener(NetworkStateReceiverListener listener) {
+        mListeners.add(listener);
+        notifyState(listener);
     }
 
-    public void removeListener(NetworkStateReceiverListener l) {
-        listeners.remove(l);
+    /**
+     * Removes a listener
+     * @param listener Listener to remove
+     */
+    public void removeListener(NetworkStateReceiverListener listener) {
+        mListeners.remove(listener);
     }
 
+    /**
+     * Listener interface
+     */
     public interface NetworkStateReceiverListener {
         void networkAvailable();
         void networkUnavailable();

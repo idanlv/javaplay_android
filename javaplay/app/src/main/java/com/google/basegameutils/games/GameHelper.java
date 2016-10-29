@@ -159,19 +159,19 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
     Handler mHandler;
 
     /*
-     * If we got an invitation when we connected to the games client, it's here.
+     * If we got an invitation when we mConnected to the games client, it's here.
      * Otherwise, it's null.
      */
     Invitation mInvitation;
 
     /*
-     * If we got turn-based match when we connected to the games client, it's
+     * If we got turn-based match when we mConnected to the games client, it's
      * here. Otherwise, it's null.
      */
     TurnBasedMatch mTurnBasedMatch;
 
     /*
-     * If we have incoming requests when we connected to the games client, they
+     * If we have incoming requests when we mConnected to the games client, they
      * are here. Otherwise, it's null.
      */
     ArrayList<GameRequest> mRequests;
@@ -374,7 +374,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         if (mConnectOnStart) {
             if (mGoogleApiClient.isConnected()) {
                 Log.w(TAG,
-                        "GameHelper: client was already connected on onStart()");
+                        "GameHelper: client was already mConnected on onStart()");
             } else {
                 debugLog("Connecting client.");
                 mConnecting = true;
@@ -641,7 +641,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
 
         if (mGoogleApiClient.isConnected()) {
             // nothing to do
-            logWarn("beginUserInitiatedSignIn() called when already connected. "
+            logWarn("beginUserInitiatedSignIn() called when already mConnected. "
                     + "Calling listener directly to notify of success.");
             notifyListener(true);
             return;
@@ -679,7 +679,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
 
     void connect() {
         if (mGoogleApiClient.isConnected()) {
-            debugLog("Already connected.");
+            debugLog("Already mConnected.");
             return;
         }
         debugLog("Starting connection.");
@@ -694,7 +694,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
      */
     public void reconnectClient() {
         if (!mGoogleApiClient.isConnected()) {
-            Log.w(TAG, "reconnectClient() called when client is not connected.");
+            Log.w(TAG, "reconnectClient() called when client is not mConnected.");
             // interpret it as a request to connect
             connect();
         } else {
@@ -706,7 +706,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
     /** Called when we successfully obtain a connection to a client. */
     @Override
     public void onConnected(Bundle connectionHint) {
-        debugLog("onConnected: connected!");
+        debugLog("onConnected: mConnected!");
 
         if (connectionHint != null) {
             debugLog("onConnected: connection hint provided. Checking for invite.");
