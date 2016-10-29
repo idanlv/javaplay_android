@@ -337,9 +337,9 @@ public class YanivPlayFragment extends PlayFragment {
      * Play the end of turn of the player
      */
     private void finishTurn(){
-        Log.i(TAG,"Turn Ended");
         super.finishTurn(getNextParticipantId());
         mInstructionsTV.setText(R.string.games_waiting_for_other_player_turn);
+        Log.i(TAG,"Turn Ended");
     }
 
 

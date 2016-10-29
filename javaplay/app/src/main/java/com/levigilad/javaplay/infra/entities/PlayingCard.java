@@ -18,6 +18,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     public static final String CARD_VALUE = "card_value";
     public static final String CARD_SYMBOL = "card_symbol";
     private static final String CARD_FORMAT = "(%s , %s)";
+    private static final String CARD_STATE = "card_state";
 
     /**
      * Members
@@ -30,7 +31,6 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
      * Empty constructor
      */
     public PlayingCard() {
-
     }
 
     /**
@@ -110,6 +110,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
         JSONObject cardObject = new JSONObject();
         cardObject.put(CARD_VALUE, this.mRank);
         cardObject.put(CARD_SYMBOL, this.mSuit);
+        cardObject.put(CARD_STATE, this.mState);
 
         return cardObject;
     }
@@ -123,6 +124,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     public void fromJson(JSONObject jsonObject) throws JSONException {
         this.mRank = PlayingCardRanks.valueOf(jsonObject.getString(CARD_VALUE));
         this.mSuit = PlayingCardSuits.valueOf(jsonObject.getString(CARD_SYMBOL));
+        this.mState = PlayingCardState.valueOf(jsonObject.getString(CARD_STATE));
     }
 
     /**
