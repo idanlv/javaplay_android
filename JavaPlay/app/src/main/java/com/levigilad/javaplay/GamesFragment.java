@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.levigilad.javaplay.infra.adapters.GamesRecyclerViewAdapter;
 import com.levigilad.javaplay.infra.entities.Game;
@@ -44,7 +43,7 @@ public class GamesFragment extends Fragment implements OnItemClickListener {
         return fragment;
     }
 
-    /**
+    /** TODO Comment
      * On Create View
      * @param inflater
      * @param container
@@ -88,7 +87,7 @@ public class GamesFragment extends Fragment implements OnItemClickListener {
 
     /**
      * On Attach
-     * @param context
+     * @param context The app Context
      */
     @Override
     public void onAttach(Context context) {

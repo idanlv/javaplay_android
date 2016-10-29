@@ -1,6 +1,5 @@
 package com.levigilad.javaplay.infra.entities;
 
-import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import com.levigilad.javaplay.infra.interfaces.IJsonSerializable;
 
 import org.json.JSONArray;
@@ -19,7 +18,7 @@ public class DeckOfCards implements IJsonSerializable {
      * Constants
      */
     private static final String DECK = "deck";
-    private static final String CARDS_SEPERATOR = ",";
+    private static final String CARDS_SEPARATOR = ",";
 
     /**
      * Members
@@ -211,7 +210,7 @@ public class DeckOfCards implements IJsonSerializable {
 
         for (PlayingCard card : mCards) {
             builder.append(card.toString());
-            builder.append(CARDS_SEPERATOR);
+            builder.append(CARDS_SEPARATOR);
         }
 
         String str = builder.toString();
@@ -245,7 +244,7 @@ public class DeckOfCards implements IJsonSerializable {
 
     /**
      * Draws cards from beginning of deck according to requested amount
-     * @param numberOfCards
+     * @param numberOfCards Number of cards to draw
      * @return Deck with requested amount of cards
      */
     public DeckOfCards drawCards(int numberOfCards) {
@@ -280,7 +279,7 @@ public class DeckOfCards implements IJsonSerializable {
 
     /**
      * Draws the last card in deck and removes it
-     * @return
+     * @return The last playing card
      */
     public PlayingCard drawLastCard() {
         return mCards.removeLast();

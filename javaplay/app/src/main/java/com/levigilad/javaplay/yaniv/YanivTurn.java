@@ -3,11 +3,9 @@ package com.levigilad.javaplay.yaniv;
 import com.levigilad.javaplay.infra.entities.Turn;
 import com.levigilad.javaplay.infra.entities.DeckOfCards;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.Key;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -65,7 +63,7 @@ public class YanivTurn extends Turn {
         return gameData;
     }
 
-    /** TODO
+    /** TODO comment
      * Update data according to Json value
      * @param jsonObject turn data
      * @throws JSONException

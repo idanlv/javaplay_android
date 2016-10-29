@@ -1,8 +1,6 @@
 package com.levigilad.javaplay.infra.enums;
 
-/**
- * Created by User on 25/10/2016.
- */
+// TODO Comments
 
 public enum PlayingCardState {
     AVAILABLE,

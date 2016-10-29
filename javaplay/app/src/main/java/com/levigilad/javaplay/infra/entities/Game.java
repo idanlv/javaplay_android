@@ -28,7 +28,7 @@ public abstract class Game implements Serializable {
      * @param description The description for the game
      * @param leaderboardId The id of the leaderboard in google play services
      * @param maxNumberOfPlayers Maximum number of players in match
-     * @param allowAutoMatch
+     * @param allowAutoMatch as boolean to allow auto matching or not
      */
     public Game(String gameId, String description, String leaderboardId,
                 int maxNumberOfPlayers, boolean allowAutoMatch) {
@@ -40,7 +40,7 @@ public abstract class Game implements Serializable {
      * @param gameId The game name (used as id)
      * @param description The description for the game
      * @param leaderboardId The id of the leaderboard in google play services
-     * @param minNumberOfPlayers
+     * @param minNumberOfPlayers Minimum number of players in match
      * @param maxNumberOfPlayers Maximum number of players in match
      */
     public Game(String gameId, String description, String leaderboardId,
@@ -50,10 +50,10 @@ public abstract class Game implements Serializable {
 
     /**
      * Constructor: Creates a game object
- * @param gameId The game name (used as id)
+     * @param gameId The game name (used as id)
      * @param description The description for the game
- * @param leaderboardId The id of the leaderboard in google play services
- * @param maxNumberOfPlayers Maximum number of players in match
+     * @param leaderboardId The id of the leaderboard in google play services
+     * @param maxNumberOfPlayers Maximum number of players in match
      */
     public Game(String gameId, String description, String leaderboardId,
                 int maxNumberOfPlayers) {
@@ -65,7 +65,7 @@ public abstract class Game implements Serializable {
      * @param gameId The game name (used as id)
      * @param description The description for the game
      * @param leaderboardId The id of the leaderboard in google play services
-     * @param minNumberOfPlayers
+     * @param minNumberOfPlayers Minimum number of players in match
      * @param maxNumberOfPlayers Maximum number of players in match
      */
     public Game(String gameId, String description, String leaderboardId,

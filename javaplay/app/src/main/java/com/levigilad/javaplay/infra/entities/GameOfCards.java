@@ -3,8 +3,6 @@ package com.levigilad.javaplay.infra.entities;
 import com.levigilad.javaplay.infra.enums.PlayingCardSuits;
 import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 
-import java.util.LinkedList;
-
 /**
  * This class represents basic card game logic
  */

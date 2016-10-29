@@ -23,11 +23,11 @@ public class NetworkStateReceiver extends BroadcastReceiver {
      * Constructor
      */
     public NetworkStateReceiver() {
-        mListeners = new ArrayList();
+        mListeners = new ArrayList(); //TODO: Resolve unchecked assignment
         mConnected = null;
     }
 
-    /**
+    /** TODO : Comment
      * Handles network change notification
      * @param context
      * @param intent
@@ -70,7 +70,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (mConnected == true) {
+        if (mConnected) {
             listener.networkAvailable();
         } else {
             listener.networkUnavailable();
