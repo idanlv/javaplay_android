@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ResultCallback;
@@ -346,49 +347,35 @@ public abstract class PlayFragment extends BaseGameFragment implements OnTurnBas
                 updateView();
             }
 
-            // Checks if the user can ask for a rematch.
-            // This can only happen when the game is completed
-            if (mMatch.canRematch()) {
-                askForRematch();
-            }
-
-            // Start my turn
-            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                mListener.onFragmentInteraction(getString(R.string.games_play_your_turn));
-                mTurnData.increaseTurnCounter();
-                startTurn();
+            if (mMatch.getStatus() == TurnBasedMatch.MATCH_STATUS_COMPLETE) {
+                if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                    finishMatch(null);
+                } else {
+                    MatchResultsDialog dialog = new MatchResultsDialog(
+                            this.getActivity(),
+                            getCurrentParticipantId(),
+                            mMatch.getParticipants(),
+                            mMatch.canRematch());
+                    dialog.setRematchOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            rematch();
+                        }
+                    });
+                    dialog.show();
+                }
+            } else {
+                // Start my turn
+                if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                    mListener.onFragmentInteraction(getString(R.string.games_play_your_turn));
+                    mTurnData.increaseTurnCounter();
+                    startTurn();
+                }
             }
         } catch (JSONException e) {
             // This shouldn't be reached on production version
             Log.e(TAG, e.getMessage());
         }
-    }
-
-    /**
-     * Asks the player if he wants to rematch and start rematch if user agrees
-     */
-    private void askForRematch() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
-
-        alertDialogBuilder.setMessage(getString(R.string.rematch_question));
-
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.rematch_yes),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                rematch();
-                            }
-                        })
-                .setNegativeButton(getString(R.string.rematch_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
-
-        alertDialogBuilder.show();
     }
 
     /**

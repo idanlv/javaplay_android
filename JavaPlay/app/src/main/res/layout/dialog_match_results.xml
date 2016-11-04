@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
     <TextView
@@ -12,15 +12,17 @@
         android:textAllCaps="true"
         android:layout_gravity="center_horizontal"/>
 
-    <TextView
-        android:text="TextView"
+    <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/participant_result_in_match" />
+        android:id="@+id/match_results_table_layout">
+
+    </TableLayout>
 
     <Button
         android:text="@string/rematch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/rematch_button" />
+        android:id="@+id/rematch_button"
+        android:layout_gravity="center_horizontal"/>
 </LinearLayout>
