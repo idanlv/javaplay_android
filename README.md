@@ -1,4 +1,4 @@
-# JavaPlay Readme
+# JavaPlay
 Welcome to JavePlay an android playing app using google api by :  
 Idan Levi and Maya Gilad
 
