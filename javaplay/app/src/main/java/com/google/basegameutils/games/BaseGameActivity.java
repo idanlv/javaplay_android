@@ -136,11 +136,11 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
         return mHelper.isSignedIn();
     }
 
-    protected void beginUserInitiatedSignIn() {
+    public void beginUserInitiatedSignIn() {
         mHelper.beginUserInitiatedSignIn();
     }
 
-    protected void signOut() {
+    public void signOut() {
         mHelper.signOut();
     }
 

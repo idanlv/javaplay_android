@@ -16,7 +16,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
@@ -40,21 +43,22 @@ import java.util.ArrayList;
 public class MainActivity extends BaseGameActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         OnGameSelectedListener,
-        OnFragmentInteractionListener, NetworkStateReceiver.NetworkStateReceiverListener {
+        OnFragmentInteractionListener, NetworkStateReceiver.NetworkStateReceiverListener, View.OnClickListener {
     /**
      * Constants
      */
+    private static final String TAG = "MainActivity";
     private static final int RC_SELECT_PLAYERS = 5001;
     private final static int RC_LOOK_AT_MATCHES = 10001;
     private static final int RC_LOOK_AT_LEADERBOARD = 11001;
     private static final int RC_LOOK_AT_ACHIEVEMENTS = 12001;
-    private static final String TAG = "MainActivity";
 
     /**
      * Members
      */
     private String mGameId;
     private NetworkStateReceiver mNetworkStateReceiver;
+    private TurnBasedMatch mMatch;
 
     /**
      * Designer
@@ -65,14 +69,24 @@ public class MainActivity extends BaseGameActivity implements
     private DrawerLayout mDrawerLayout;
     private CoordinatorLayout mCoordinatorLayour;
     private Dialog mNetworStatusDialog;
+    private ImageView mExpandImageView;
+    private ImageView mCollapseImageView;
+    private TextView mUsernameTextView;
+    private TextView mEmailTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            showLogin();
+        Intent intent = getIntent();
+
+        if (intent != null) {
+            Bundle bundle = intent.getExtras();
+
+            if (bundle != null) {
+                mMatch =  (TurnBasedMatch) bundle.getParcelable("MATCH");
+            }
         }
 
         mNetworkStateReceiver = new NetworkStateReceiver();
@@ -101,6 +115,20 @@ public class MainActivity extends BaseGameActivity implements
         mNavigationView.setNavigationItemSelectedListener(this);
 
         mCoordinatorLayour = (CoordinatorLayout)findViewById(R.id.app_coordinator_layout);
+
+        View header = mNavigationView.getHeaderView(0);
+
+        mExpandImageView = (ImageView) header.findViewById(R.id.expand_button);
+        mExpandImageView.setOnClickListener(this);
+
+        mCollapseImageView = (ImageView) header.findViewById(R.id.collapse_button);
+        mCollapseImageView.setOnClickListener(this);
+
+        mUsernameTextView = (TextView) header.findViewById(R.id.username);
+        mUsernameTextView.setVisibility(View.GONE);
+
+        mEmailTextView = (TextView) header.findViewById(R.id.email);
+        mEmailTextView.setVisibility(View.GONE);
     }
 
     @Override
@@ -108,6 +136,8 @@ public class MainActivity extends BaseGameActivity implements
         if (isSignedIn()) {
             Games.TurnBasedMultiplayer.unregisterMatchUpdateListener(getApiClient());
         }
+
+        this.unregisterReceiver(mNetworkStateReceiver);
 
         super.onStop();
     }
@@ -159,6 +189,11 @@ public class MainActivity extends BaseGameActivity implements
             }
             case R.id.nav_new_match: {
                 showGameOptions();
+                break;
+            }
+            case R.id.nav_sign_out: {
+                finish();
+                break;
             }
         }
 
@@ -172,7 +207,6 @@ public class MainActivity extends BaseGameActivity implements
             startActivityForResult(intent, RC_LOOK_AT_LEADERBOARD);
         } else {
             BaseGameUtils.makeSimpleDialog(this, getString(R.string.leaderboards_not_available)).show();
-            showLogin();
         }
     }
 
@@ -182,7 +216,6 @@ public class MainActivity extends BaseGameActivity implements
             startActivityForResult(intent, RC_LOOK_AT_ACHIEVEMENTS);
         } else {
             BaseGameUtils.makeSimpleDialog(this, getString(R.string.achievements_not_available)).show();
-            showLogin();
         }
     }
 
@@ -192,7 +225,6 @@ public class MainActivity extends BaseGameActivity implements
             startActivityForResult(intent, RC_LOOK_AT_MATCHES);
         } else {
             BaseGameUtils.makeSimpleDialog(this, getString(R.string.inbox_not_available)).show();
-            showLogin();
         }
     }
 
@@ -233,10 +265,14 @@ public class MainActivity extends BaseGameActivity implements
     @Override
     public void onSignInSucceeded() {
         Log.d(TAG, "Entered onSignInSucceeded()");
+
         Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
 
         if (getGameHelper().hasTurnBasedMatch()) {
             loadExistingMatch(getGameHelper().getTurnBasedMatch());
+        } else if (mMatch != null) {
+            loadExistingMatch(mMatch);
+            mMatch = null;
         }
 
         Log.d(TAG, "Exited onSignInSucceeded()");
@@ -327,12 +363,6 @@ public class MainActivity extends BaseGameActivity implements
         replaceFragment(fragment);
     }
 
-    private void showLogin() {
-        LoginFragment fragment = LoginFragment.newInstance();
-        setTitle(getString(R.string.app_name));
-        replaceFragment(fragment);
-    }
-
     @Override
     public void networkAvailable() {
         Log.d(TAG, "Entered networkAvailable");
@@ -347,5 +377,29 @@ public class MainActivity extends BaseGameActivity implements
         Log.d(TAG, "Entered networkUnavailable");
 
         mNetworStatusDialog.show();
+    }
+
+    /**
+     * This method handles on click events
+     * @param view Viewer which was clicked on
+     */
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.expand_button: {
+                mNavigationView.getMenu().setGroupVisible(R.id.google_play_services_menu, true);
+                mNavigationView.getMenu().setGroupVisible(R.id.games_menu, false);
+                mExpandImageView.setVisibility(View.GONE);
+                mCollapseImageView.setVisibility(View.VISIBLE);
+                break;
+            }
+            case R.id.collapse_button: {
+                mNavigationView.getMenu().setGroupVisible(R.id.google_play_services_menu, false);
+                mNavigationView.getMenu().setGroupVisible(R.id.games_menu, true);
+                mExpandImageView.setVisibility(View.VISIBLE);
+                mCollapseImageView.setVisibility(View.GONE);
+                break;
+            }
+        }
     }
 }
