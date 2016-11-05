@@ -1,16 +1,15 @@
 package com.levigilad.javaplay.infra;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
@@ -32,7 +31,7 @@ import java.util.List;
 /**
  * This class represents a fragment of a game
  */
-public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchReceivedListener {
+public abstract class PlayFragment extends BaseGameFragment implements OnTurnBasedMatchReceivedListener {
     /**
      * Constants
      */
@@ -41,7 +40,6 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTO_MATCH";
     protected static final String MATCH_ID = "MATCH_ID";
-    private static final String GAME_ID = "GameId";
 
     /**
      * Members
@@ -52,7 +50,6 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
     protected TurnBasedMatch mMatch;
     protected Turn mTurnData;
     protected BaseGameActivity mAppContext;
-    private String mGameId;
 
     /**
      * Constructor: Creates a game fragment
@@ -60,7 +57,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
      * @param screenOrientation
      */
     public PlayFragment(Turn turnData, int screenOrientation) {
-        super();
+        super(REQUESTED_CLIENTS);
         mTurnData = turnData;
         mScreenOrientation = screenOrientation;
     }
@@ -97,22 +94,23 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
             Bundle bundle = getArguments();
 
             mMatch = bundle.getParcelable(MATCH_ID);
-            mGameId = bundle.getString(GAME_ID);
 
             if (mMatch== null) {
-                mInvitees = bundle.getStringArrayList(INVITEES);
-                mAutoMatchCriteria = bundle.getBundle(AUTO_MATCH);
+                mInvitees = getArguments().getStringArrayList(INVITEES);
+                mAutoMatchCriteria = getArguments().getBundle(AUTO_MATCH);
             }
         }
 
-        mAppContext.setTitle(mGameId);
+        mAppContext.setTitle(getGameId());
 
         Log.d(TAG, "Exited onCreate()");
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+    /**
+     * Performs actions after a successful sign in
+     */
+    public void onSignInSucceeded() {
+        Log.d(TAG, "Entered onSignInSucceeded()");
 
         // We're starting a new match
         if (mMatch == null) {
@@ -137,6 +135,8 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
             mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
             handleMatchUpdate();
         }
+
+        Log.d(TAG, "Exited onSignInSucceeded()");
     }
 
     /**
@@ -347,48 +347,35 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
                 updateView();
             }
 
-            // Checks if the user can ask for a rematch.
-            // This can only happen when the game is completed
-            if (mMatch.canRematch()) {
-                askForRematch();
-            }
-
-            // Start my turn
-            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                mTurnData.increaseTurnCounter();
-                startTurn();
+            if (mMatch.getStatus() == TurnBasedMatch.MATCH_STATUS_COMPLETE) {
+                if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                    finishMatch(null);
+                } else {
+                    MatchResultsDialog dialog = new MatchResultsDialog(
+                            this.getActivity(),
+                            getCurrentParticipantId(),
+                            mMatch.getParticipants(),
+                            mMatch.canRematch());
+                    dialog.setRematchOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            rematch();
+                        }
+                    });
+                    dialog.show();
+                }
+            } else {
+                // Start my turn
+                if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                    mListener.onFragmentInteraction(getString(R.string.games_play_your_turn));
+                    mTurnData.increaseTurnCounter();
+                    startTurn();
+                }
             }
         } catch (JSONException e) {
             // This shouldn't be reached on production version
             Log.e(TAG, e.getMessage());
         }
-    }
-
-    /**
-     * Asks the player if he wants to rematch and start rematch if user agrees
-     */
-    private void askForRematch() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.getActivity());
-
-        alertDialogBuilder.setMessage(getString(R.string.rematch_question));
-
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.rematch_yes),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                rematch();
-                            }
-                        })
-                .setNegativeButton(getString(R.string.rematch_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
-
-        alertDialogBuilder.show();
     }
 
     /**
@@ -421,46 +408,4 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
      * Updates player's view according to turn data
      */
     protected abstract void updateView();
-
-    public GoogleApiClient getApiClient() {
-        return mAppContext.getGameHelper().getApiClient();
-    }
-
-    /**
-     * Shows an error message
-     * @param statusCode Status code of the error
-     * @param stringId The resource id for the message
-     */
-    protected void showErrorMessage(int statusCode, int stringId) {
-        showWarning("Warning", getResources().getString(stringId));
-    }
-
-    /**
-     * Shows a warning
-     * @param title Warning's title
-     * @param message Warning' message
-     */
-    protected void showWarning(String title, String message) {
-        AlertDialog.Builder alertDialogBuilder =
-                new AlertDialog.Builder(this.getActivity());
-
-        // Set title
-        alertDialogBuilder.setTitle(title).setMessage(message);
-
-        // Set dialog message
-        alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // If this button is clicked, close
-                        // current activity
-                    }
-                });
-
-        // create alert dialog
-        AlertDialog dialog = alertDialogBuilder.create();
-
-        // show it
-        dialog.show();
-    }
 }

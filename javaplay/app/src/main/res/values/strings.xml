@@ -79,5 +79,6 @@
     <string name="match_error_locally_modified">This match has locally-modified data.  This operation cannot be performed until the match is sent to the server.</string>
     <string name="network_status">NETWORK STATUS</string>
     <string name="network_status_solution">JavaPlay requires an active network connection.\nPlease check your network connection.</string>
-
+    <string name="match_over">MATCH OVER</string>
+    <string name="rematch">Start rematch</string>
 </resources>
