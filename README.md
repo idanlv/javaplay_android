@@ -1,5 +1,6 @@
 # JavaPlay Readme
-Welcome to JavePlay an android playing app using google api
+Welcome to JavePlay an android playing app using google api by :  
+Idan Levi and Maya Gilad
 
 ## Instructions
   - Git clone the repository
