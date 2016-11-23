@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +39,14 @@ import com.levigilad.javaplay.yaniv.YanivPlayFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends BaseGameActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -59,6 +67,8 @@ public class MainActivity extends BaseGameActivity implements
     private String mGameId;
     private NetworkStateReceiver mNetworkStateReceiver;
     private TurnBasedMatch mMatch;
+    private String mIMEI;
+    private Thread mThread;
 
     /**
      * Designer
@@ -74,6 +84,7 @@ public class MainActivity extends BaseGameActivity implements
     private TextView mUsernameTextView;
     private TextView mEmailTextView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +99,59 @@ public class MainActivity extends BaseGameActivity implements
                 mMatch =  (TurnBasedMatch) bundle.getParcelable("MATCH");
             }
         }
+
+        TelephonyManager mngr =
+                (TelephonyManager) this.getApplicationContext().getSystemService(
+                        this.getApplicationContext().TELEPHONY_SERVICE  );
+
+        mIMEI = mngr.getDeviceId();
+
+        mThread = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                URL url;
+                HttpURLConnection client = null;
+                try {
+                    //url = new URL("http://104.196.210.3:8080/JavaPlay/rest/login/audit");
+                    url = new URL("http://192.168.66.3:8080/JavaPlay/rest/login/audit");
+                    client = (HttpURLConnection) url.openConnection();
+                    client.setDoOutput(true);
+                    client.setRequestMethod("POST");
+                    client.setRequestProperty("Content-Type", "application/json");
+
+                    OutputStream outputPost = new BufferedOutputStream(client.getOutputStream());
+
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                    Date now = new Date();
+                    String reportDate = df.format(now);
+
+                    String loginPost =
+                            String.format("{\"login\": \"%s\", \"IMEI\": \"%s\" }", reportDate, mIMEI);
+
+                    outputPost.write(loginPost.getBytes());
+
+                    outputPost.flush();
+                    outputPost.close();
+
+                    int responseCode = client.getResponseCode();
+
+                    if  (responseCode != 200) {
+
+                    }
+
+                    //client.setFixedLengthStreamingMode(outputPost.getBytes().length);
+                    //client.setChunkedStreamingMode(0);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    // Make sure the connection is not null.
+                    if(client != null) {
+                        client.disconnect();
+                    }
+                }
+            }
+        });
 
         mNetworkStateReceiver = new NetworkStateReceiver();
         mNetworkStateReceiver.addListener(this);
@@ -140,6 +204,14 @@ public class MainActivity extends BaseGameActivity implements
         this.unregisterReceiver(mNetworkStateReceiver);
 
         super.onStop();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (!mThread.isAlive()) {
+            mThread.start();
+        }
     }
 
     @Override

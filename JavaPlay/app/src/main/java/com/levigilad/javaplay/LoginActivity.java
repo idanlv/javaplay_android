@@ -1,17 +1,19 @@
 package com.levigilad.javaplay;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
-
 
 /**
  * A simple {@link BaseGameActivity} subclass.
@@ -19,13 +21,16 @@ import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
  * {@link OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class LoginActivity extends BaseGameActivity implements View.OnClickListener {
+public class LoginActivity extends BaseGameActivity implements
+        View.OnClickListener,
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
     /**
      * Constants
      */
     private static final String TAG = "LoginActivity";
     private static final int RC_SIGN_OUT = 6001;
+    private static final int REQUEST_READ_PHONE_STATE = 4001;
 
     /**
      * Designer
@@ -36,10 +41,45 @@ public class LoginActivity extends BaseGameActivity implements View.OnClickListe
     private Button mSignOutButton;
 
     /**
+     * Members
+     */
+    private Thread mThread;
+    private String mIMEI;
+
+    /**
      * Constructor
      */
     public LoginActivity() {
         // Required empty public constructor
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        int permissionCheck =
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                    REQUEST_READ_PHONE_STATE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_READ_PHONE_STATE:
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // TODO
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 
     @Override
@@ -107,7 +147,7 @@ public class LoginActivity extends BaseGameActivity implements View.OnClickListe
 
         if (getGameHelper().hasTurnBasedMatch()) {
             Bundle bundle = new Bundle();
-            bundle.putParcelable("MATCH", getGameHelper().getTurnBasedMatch());
+            bundle.putParcelable(getString(R.string.loaded_match), getGameHelper().getTurnBasedMatch());
             intent.putExtras(bundle);
         }
 

@@ -17,6 +17,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.leaderboard.Leaderboards;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
@@ -357,6 +359,8 @@ public class YanivPlayFragment extends PlayFragment {
         if (winnerID.equals(getCurrentParticipantId())) {
             mInstructionsTV.setText(R.string.games_you_win);
             Toast.makeText(mAppContext, R.string.games_you_win, Toast.LENGTH_LONG).show();
+            Games.Achievements.unlockImmediate(getApiClient(),
+                    getString(R.string.achievement_first_yaniv_win));
         } else {
             Toast.makeText(mAppContext, R.string.games_you_lose, Toast.LENGTH_SHORT).show();
             mInstructionsTV.setText(R.string.games_you_lose);
@@ -376,6 +380,8 @@ public class YanivPlayFragment extends PlayFragment {
                 winnerParticipantId, ParticipantResult.MATCH_RESULT_WIN,
                 ParticipantResult.PLACING_UNINITIALIZED));
 
+        YanivTurn yanivTurn = (YanivTurn)mTurnData;
+
         // Create lose result for other participants
         for (String participantId : mMatch.getParticipantIds()) {
             if (!participantId.equals(winnerParticipantId)) {
@@ -383,6 +389,10 @@ public class YanivPlayFragment extends PlayFragment {
                         participantId, ParticipantResult.MATCH_RESULT_LOSS,
                         ParticipantResult.PLACING_UNINITIALIZED));
             }
+
+            Games.Leaderboards.submitScoreImmediate(getApiClient(),
+                    getString(R.string.yaniv_leaderboard_id),
+                    YanivGame.calculateDeckScore(yanivTurn.getPlayerHand(participantId)));
         }
 
         finishMatch(results);
