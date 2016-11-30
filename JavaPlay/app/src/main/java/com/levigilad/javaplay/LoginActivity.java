@@ -58,18 +58,6 @@ public class LoginActivity extends BaseGameActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-
-        // Check if application has permission for checking IMEI
-        int permissionCheck =
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
-
-        // Request permission if needed
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{android.Manifest.permission.READ_PHONE_STATE},
-                    REQUEST_READ_PHONE_STATE);
-        }
     }
 
     /**
@@ -87,6 +75,7 @@ public class LoginActivity extends BaseGameActivity implements
                 } else {
                     Log.d(TAG, "Permission not granted");
                 }
+                startMainActivity();
                 break;
 
             default:
@@ -175,6 +164,25 @@ public class LoginActivity extends BaseGameActivity implements
      */
     @Override
     public void onSignInSucceeded() {
+        // Check if application has permission for checking IMEI
+        int permissionCheck =
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE);
+
+        // Request permission if needed
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                    REQUEST_READ_PHONE_STATE);
+        } else {
+            startMainActivity();
+        }
+    }
+
+    /**
+     * Switches activity to MainActivity
+     */
+    private void startMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
 
         // Checks if application was opened with a connection hint
