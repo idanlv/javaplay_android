@@ -16,8 +16,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
     /**
      * Members
      */
-    protected List<NetworkStateReceiverListener> mListeners;
-    protected Boolean mConnected;
+    private List<NetworkStateReceiverListener> mListeners;
+    private Boolean mConnected;
 
     /**
      * Constructor
@@ -41,9 +41,12 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = manager.getActiveNetworkInfo();
 
+        // Network services are connected
         if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
             mConnected = true;
-        } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
+        }
+        // No connectivity found
+        else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
             mConnected = false;
         }
 

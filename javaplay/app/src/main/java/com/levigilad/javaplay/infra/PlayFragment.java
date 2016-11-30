@@ -37,7 +37,6 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
      * Constants
      */
     private static final String TAG = "PlayFragment";
-    private static final int REQUESTED_CLIENTS = GameHelper.CLIENT_GAMES;
     protected static final String INVITEES = "INVITEES";
     protected static final String AUTO_MATCH = "AUTO_MATCH";
     protected static final String MATCH_ID = "MATCH_ID";
@@ -65,7 +64,6 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
         mScreenOrientation = screenOrientation;
     }
 
-
     /**
      * Set the caller Activity as context
      * @param context Activity or fragment that current fragment was attached to
@@ -77,6 +75,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
 
         try {
             mAppContext = (BaseGameActivity)context;
+            // Change application orientation according to game specifications
             mAppContext.setRequestedOrientation(mScreenOrientation);
         } catch (Exception ex) {
             throw new RuntimeException("Activity must be sub class of BaseGameActivity");
@@ -93,13 +92,14 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
         Log.d(TAG, "Entered onCreate()");
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            Bundle bundle = getArguments();
-
+        Bundle bundle = getArguments();
+        // Extract arguments from the fragment
+        if (bundle != null) {
             mMatch = bundle.getParcelable(MATCH_ID);
             mGameId = bundle.getString(GAME_ID);
 
-            if (mMatch== null) {
+            // A new match will be initiated
+            if (mMatch == null) {
                 mInvitees = bundle.getStringArrayList(INVITEES);
                 mAutoMatchCriteria = bundle.getBundle(AUTO_MATCH);
             }
@@ -189,14 +189,20 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
         return false;
     }
 
+    /**
+     * OnDetach
+     * Handles event of fragment detaching from activity
+     */
     @Override
-    public void onDetach() {
+    public void onDetach() {;
+        // Don't get more game updates
         mAppContext.removeListenerForMatchUpdates(this);
 
+        // Allow user to change screen orientation
         mAppContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
 
+        // Continue with normal detach process
         super.onDetach();
-
     }
 
     /**
@@ -287,12 +293,10 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
      * This is not a requirement; players can go in any order. However, you can
      * take turns in any order.
      *
-     * @return participantId of next player, or null if automatching
+     * @return participantId of next player, or null if auto-matching
      */
     public String getNextParticipantId() {
-
-        String playerId = Games.Players.getCurrentPlayerId(getApiClient());
-        String myParticipantId = mMatch.getParticipantId(playerId);
+        String myParticipantId = getCurrentParticipantId();
 
         ArrayList<String> participantIds = mMatch.getParticipantIds();
 
