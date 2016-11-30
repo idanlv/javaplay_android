@@ -56,13 +56,10 @@ public class YanivPlayFragment extends PlayFragment {
     private static final float DIMMED_IMAGE_VIEW_ALPHA = 0.6f;
     private static final int MARKED_IMAGE_BACKGROUND = Color.BLUE;
     private static final int GLOBAL_TEXT_COLOR = Color.BLACK;
-    private static final String PLAYER_SCORE_FORMAT = "%s: %d";
 
     /**
      * Members
      */
-    private YanivGame mGame;
-    private DeckOfCards mPlayersMarkedCards;
     private boolean mDrawCard;
 
     /**
@@ -114,8 +111,8 @@ public class YanivPlayFragment extends PlayFragment {
         return fragment;
     }
 
-    /** TODO:
-     *  Fragment creation - (Like onCreate in Activity)
+    /**
+     * onCreateView: Initializes the fragment
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -137,8 +134,6 @@ public class YanivPlayFragment extends PlayFragment {
      */
     private void initializeView(View parentView) {
         // Set members
-        mGame = new YanivGame();
-        mPlayersMarkedCards = new DeckOfCards();
         mDrawCard = false;
 
         // Hook id's
@@ -211,6 +206,11 @@ public class YanivPlayFragment extends PlayFragment {
         mScoreTV.setText(String.valueOf(YanivGame.calculateDeckScore(getCurrPlayersHand())));
     }
 
+    /**
+     * Creates a view of a playing card
+     * @param playingCard playing card to create image from
+     * @return A new image view
+     */
     private ImageView createImageView(PlayingCard playingCard) {
         ImageView img = new ImageView(mAppContext);
 
@@ -266,7 +266,6 @@ public class YanivPlayFragment extends PlayFragment {
         PlayingCard playingCard;
         Drawable drawable;
         ImageView img;
-        int i = 0;
 
         // Clear all cards from view
         mDiscardedCardsLL.removeAllViews();
@@ -308,7 +307,6 @@ public class YanivPlayFragment extends PlayFragment {
      * @param v as the clicked view (card)
      */
     private void drawCardFromDiscardedDeck(View v) {
-        PlayingCard playingCard;
         if (mDrawCard) {
             ActivityUtils.setEnabledRecursively(mDiscardedCardsLL, false);
             mDeckIV.setEnabled(false);
@@ -397,12 +395,14 @@ public class YanivPlayFragment extends PlayFragment {
 
         finishMatch(results);
 
-        /* Unlock Achievements
+        //  Unlock Achievements
         Games.Achievements.unlockImmediate(getApiClient(),
-                getString(R.string.achievement_first_win));
-        */
+                getString(R.string.achievement_first_yaniv_win));
     }
 
+    /**
+     * Display players' card count
+     */
     private void showPlayersCardCount() {
         HashMap<String, DeckOfCards> users = getPlayersHands();
         mPlayersCardsCountTBLL.removeAllViews();
@@ -516,22 +516,6 @@ public class YanivPlayFragment extends PlayFragment {
      */
     private DeckOfCards getAvailableDiscardedCards() {
         return ((YanivTurn)mTurnData).getAvailableDiscardedCards();
-    }
-
-    /**
-     * Get discarded cards from YanivTurn
-     * @return get discarded cards as DeckOfCards from YanivTurn
-     */
-    private DeckOfCards getDiscardedCards() {
-        return ((YanivTurn)mTurnData).getDiscardedCards();
-    }
-
-    /**
-     * Get global card deck from YanivTurn
-     * @return get global card deck as DeckOfCards from YanivTurn
-     */
-    private DeckOfCards getGlobalCardDeck() {
-        return ((YanivTurn)mTurnData).getGlobalCardDeck();
     }
 
     /**

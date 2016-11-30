@@ -33,6 +33,9 @@ public class YanivTurn extends Turn {
     private HashMap <String,DeckOfCards> mPlayersHands;
     private DeckOfCards mTurnDiscardedDeck;
 
+    /**
+     * Constructor
+     */
     public YanivTurn() {
         super(GAME_NAME);
 
@@ -42,7 +45,7 @@ public class YanivTurn extends Turn {
         mPlayersHands = new HashMap<>();
     }
 
-    /** TODO
+    /**
      * Retrieve Json representation of object
      * @return Json
      * @throws JSONException
@@ -65,7 +68,7 @@ public class YanivTurn extends Turn {
         return gameData;
     }
 
-    /** TODO
+    /**
      * Update data according to Json value
      * @param jsonObject turn data
      * @throws JSONException
@@ -125,26 +128,52 @@ public class YanivTurn extends Turn {
         return mGlobalCardDeck;
     }
 
+    /**
+     * Adds a new deck to turn data
+     * @param participantId participant which the deck belongs to
+     * @param deck new deck
+     */
     public void addParticipantDeck(String participantId, DeckOfCards deck) {
         mPlayersHands.put(participantId, deck);
     }
 
+    /**
+     * Setter
+     * @param globalDeck global deck
+     */
     public void setGlobalDeck(DeckOfCards globalDeck) {
         this.mGlobalCardDeck = globalDeck;
     }
 
+    /**
+     * Setter
+     * @param availableDiscardedDeck Available for discard deck
+     */
     public void setAvailableDiscardedDeck(DeckOfCards availableDiscardedDeck) {
         this.mAvailableDiscardedCards = availableDiscardedDeck;
     }
 
+    /**
+     * Getter
+     * @param participantId participant's id
+     * @return deck of participant
+     */
     public DeckOfCards getPlayerHand(String participantId) {
         return mPlayersHands.get(participantId);
     }
 
+    /**
+     * Setter
+     * @param turnDiscardedDeck discarded deck in current turn
+     */
     public void setTurnDiscardedDeck(DeckOfCards turnDiscardedDeck) {
         this.mTurnDiscardedDeck = turnDiscardedDeck;
     }
 
+    /**
+     * Getter
+     * @return True if cards were already discarded in this turn, otherwise False
+     */
     public boolean hasTurnDiscardedDeck() {
         return this.mTurnDiscardedDeck != null;
     }

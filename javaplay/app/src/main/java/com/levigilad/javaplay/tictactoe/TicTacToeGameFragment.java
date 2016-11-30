@@ -22,9 +22,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This class implements TicTacToe game fragment which can be injected inside an Activity
+ */
 public class TicTacToeGameFragment extends PlayFragment implements View.OnClickListener {
+    /**
+     * Constants
+     */
     private static final String TAG = "TicTacToeGameFragment";
 
+    /**
+     * Members
+     */
     private TicTacToeSymbol mCurrentPlayerSymbol;
 
     /**
@@ -33,6 +42,9 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     private TableLayout mTableLayoutBoard;
     private TextView mInstructionsTextView;
 
+    /**
+     * Constructor
+     */
     public TicTacToeGameFragment() {
         super(new TicTacToeTurn(), ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
     }
@@ -69,7 +81,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     /**
-     * On Create View
+     * On Create View: Creates the fragment
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -164,6 +176,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
 
                 String text;
 
+                // Determine the text to display on board cell
                 switch (board.getPlayerOnBoard(i, j)) {
                     case X: {
                         text = TicTacToeSymbol.X.name();
@@ -195,7 +208,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 break;
             }
             case R.id.button2: {
-                btnCell_OnClick(0, 1);
+                btnCell_OnClick(0, 1);;
                 break;
             }
             case R.id.button3: {
@@ -238,13 +251,18 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         try {
             ((TicTacToeTurn)mTurnData).getBoard().placePlayerOnBoard(mCurrentPlayerSymbol, row, column);
 
+            // Disable all buttons in board
             setEnabledRecursively(mTableLayoutBoard, false);
 
+            // Checks if the user won
             if (TicTacToeGame.isWin(((TicTacToeTurn)mTurnData).getBoard(), mCurrentPlayerSymbol)) {
                 processWin();
-            } else if (TicTacToeGame.isTie(((TicTacToeTurn)mTurnData).getBoard())) {
+            }
+            // Checks if the user tied the game
+            else if (TicTacToeGame.isTie(((TicTacToeTurn)mTurnData).getBoard())) {
                 processTie();
             } else {
+                // Let next player play its' turn
                 finishTurn(getNextParticipantId());
                 mInstructionsTextView.setText(getString(R.string.games_waiting_for_other_player_turn));
             }
@@ -269,8 +287,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
         finishMatch(results);
 
         // Unlock first tie
-        Games.Achievements.unlockImmediate(getApiClient(),
-                getString(R.string.achievement_first_tic_tac_toe_tie));
+        Games.Achievements.unlockImmediate(getApiClient(), getString(R.string.achievement_first_tic_tac_toe_tie));
     }
 
     /**
