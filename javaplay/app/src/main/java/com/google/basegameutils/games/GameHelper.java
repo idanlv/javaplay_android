@@ -30,6 +30,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -276,7 +277,13 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         }
 
         if (0 != (mRequestedClients & CLIENT_PLUS)) {
-            builder.addApi(Auth.GOOGLE_SIGN_IN_API);
+            GoogleSignInOptions gso =
+                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .requestProfile()
+                    .build();
+
+            builder.addApi(Auth.GOOGLE_SIGN_IN_API, gso);
             // http://android-developers.blogspot.co.il/2016/01/play-games-permissions-are-changing-in.html
             // Removed the following Deprecated code :
             //builder.addScope(Plus.SCOPE_PLUS_LOGIN);
@@ -778,9 +785,9 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
     /** Handles a connection failure. */
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        // save connection result for later reference
         debugLog("onConnectionFailed");
 
+        // save connection result for later reference
         mConnectionResult = result;
         debugLog("Connection failure:");
         debugLog("   - code: "

@@ -5,6 +5,12 @@ package com.levigilad.javaplay.infra.enums;
  */
 
 public enum PlayingCardState {
+    /**
+     * Card is available for discard
+     */
     AVAILABLE,
+    /**
+     * Card is discarded
+     */
     DISCARDED
 }

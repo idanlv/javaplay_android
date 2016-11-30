@@ -27,6 +27,12 @@ public enum PlayingCardRanks implements Serializable {
     private int mNumericValue;
     private String mName;
 ;
+
+    /**
+     * Constructor
+     * @param numbericValue value of card rank
+     * @param name name of card suit
+     */
     PlayingCardRanks(int numbericValue, String name) {
         this.mNumericValue = numbericValue;
         this.mName = name;

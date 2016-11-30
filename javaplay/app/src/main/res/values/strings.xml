@@ -81,4 +81,6 @@
     <string name="network_status_solution">JavaPlay requires an active network connection.\nPlease check your network connection.</string>
     <string name="match_over">MATCH OVER</string>
     <string name="rematch">Start rematch</string>
+    <string name="loaded_match">MATCH</string>
+
 </resources>

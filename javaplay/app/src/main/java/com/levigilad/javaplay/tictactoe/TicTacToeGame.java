@@ -9,7 +9,6 @@ public class TicTacToeGame extends Game {
     /**
      * Constants
      */
-    private static String TAG = "TicTacToeGame";
     private static String GAME = "Tic Tac Toe";
     private static String DESCRIPTION = "Description for game";
     private static String LEADERBOARD_ID = "CgkIyuG_9qMQEAIQDA";

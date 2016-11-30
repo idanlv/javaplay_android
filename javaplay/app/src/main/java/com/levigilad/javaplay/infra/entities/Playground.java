@@ -6,14 +6,9 @@ import com.levigilad.javaplay.yaniv.YanivGame;
 import java.util.ArrayList;
 
 /**
- * This class represents a Singleton of a Playground
+ * This class represents a Singleton (Design Pattern) of a Playground
  */
 public class Playground {
-    /**
-     * Constant
-     */
-    private static final String TAG = Playground.class.getName();
-
     /**
      * Members
      */
@@ -49,7 +44,7 @@ public class Playground {
 
     /**
      * Getter
-     * @return
+     * @return Games in playground
      */
     public ArrayList<Game> getGames() {
         return this.mGames;

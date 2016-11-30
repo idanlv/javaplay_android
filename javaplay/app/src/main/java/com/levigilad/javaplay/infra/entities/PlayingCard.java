@@ -27,7 +27,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
     private PlayingCardSuits mSuit;
     private PlayingCardState mState;
 
-    /**
+    /**;
      * Empty constructor
      */
     public PlayingCard() {
@@ -146,12 +146,18 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
         return String.format(CARD_FORMAT, getRank(), getSuit());
     }
 
+    /**
+     * Checks whether two playing cards are equal
+     * @param obj playing card
+     * @return True if equal, otherwise False
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PlayingCard) {
             PlayingCard otherCard = (PlayingCard) obj;
-            return (mRank.equals(otherCard.mRank) && mSuit.equals(otherCard.mSuit) &&
-                    mState.equals(otherCard.mState));
+            return (mRank.equals(otherCard.mRank)
+                    && mSuit.equals(otherCard.mSuit)
+                    && mState.equals(otherCard.mState));
         }
 
         return false;

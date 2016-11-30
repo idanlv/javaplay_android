@@ -25,6 +25,9 @@ public class TicTacToeTurn extends Turn {
     private Board mBoard;
     private HashMap<TicTacToeSymbol, String> mParticipants;
 
+    /**
+     * Constructor
+     */
     public TicTacToeTurn() {
         super("Tic Tac Toe");
 
@@ -34,20 +37,40 @@ public class TicTacToeTurn extends Turn {
         mParticipants.put(TicTacToeSymbol.O, NO_PARTICIPANT);
     }
 
+    /**
+     * Setter
+     * @param updatedBoard new board
+     */
     public void setBoard(Board updatedBoard) {
         mBoard = updatedBoard;
     }
 
+    /**
+     * Getter
+     * @return current board
+     */
     public Board getBoard() {
         return this.mBoard;
     }
 
+    /**
+     * Adds a new participant to the game
+     * @param participantId participant's id
+     * @return Participant's game symbol
+     */
     public TicTacToeSymbol addParticipant(String participantId) {
         TicTacToeSymbol participantSymbol = TicTacToeSymbol.NONE;
 
+        /**
+         * First participant joining the game
+         */
         if (mParticipants.get(TicTacToeSymbol.X).equals(NO_PARTICIPANT)) {
             participantSymbol = TicTacToeSymbol.X;
-        } else if (mParticipants.get(TicTacToeSymbol.O).equals(NO_PARTICIPANT)) {
+        }
+        /**
+         * Second participant joining the game
+         */
+        else if (mParticipants.get(TicTacToeSymbol.O).equals(NO_PARTICIPANT)) {
             participantSymbol = TicTacToeSymbol.O;
         }
 
@@ -56,6 +79,11 @@ public class TicTacToeTurn extends Turn {
         return participantSymbol;
     }
 
+    /**
+     * Get participant game symbol
+     * @param participantId participant id
+     * @return participant's game symbol
+     */
     public TicTacToeSymbol getParticipantSymbol(String participantId) {
         for (TicTacToeSymbol symbol : mParticipants.keySet()) {
             if (mParticipants.get(symbol).equals(participantId)) {
@@ -107,6 +135,5 @@ public class TicTacToeTurn extends Turn {
         }
 
         this.mBoard.fromJson(jsonObject.getJSONObject(BOARD));
-
     }
 }

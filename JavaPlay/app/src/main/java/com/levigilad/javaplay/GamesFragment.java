@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.levigilad.javaplay.infra.adapters.GamesRecyclerViewAdapter;
 import com.levigilad.javaplay.infra.entities.Game;
@@ -21,11 +20,6 @@ import com.levigilad.javaplay.infra.interfaces.OnItemClickListener;
  * This activity is the viewer for picking a game
  */
 public class GamesFragment extends Fragment implements OnItemClickListener {
-    /**
-     * Constants
-     */
-    private static final String TAG = "GamesFragment";
-
     /**
      * Designer
      */

@@ -1,6 +1,5 @@
 package com.levigilad.javaplay.infra.entities;
 
-import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import com.levigilad.javaplay.infra.interfaces.IJsonSerializable;
 
 import org.json.JSONArray;
@@ -286,6 +285,11 @@ public class DeckOfCards implements IJsonSerializable {
         return mCards.removeLast();
     }
 
+    /**
+     * Checks if two deck of cards are equal
+     * @param obj deck of cards
+     * @return True if equal, otherwise False
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof DeckOfCards) {

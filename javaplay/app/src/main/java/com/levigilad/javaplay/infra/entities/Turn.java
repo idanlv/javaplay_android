@@ -14,7 +14,6 @@ public abstract class Turn implements IJsonSerializable {
     /**
      * Constants
      */
-    private static final String TAG = "Turn";
     private static final String TURN_COUNTER = "turn_counter";
     private static final String GAME_ID = "game_id";
     private static final String JSON_ENCODING = "UTF-8";

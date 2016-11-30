@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/games_menu">
         <item android:id="@+id/nav_inbox" android:icon="@drawable/ic_menu_inbox"
             android:title="Inbox" />
         <item android:id="@+id/nav_new_match" android:icon="@drawable/ic_menu_new_match"
@@ -10,6 +12,14 @@
             android:title="Leader Boards" />
         <item android:id="@+id/nav_achievements" android:icon="@drawable/ic_menu_achievement"
             android:title="Achievements" />
+    </group>
+
+    <group
+        android:checkableBehavior="single"
+        android:visible="false"
+        android:id="@+id/google_play_services_menu">
+        <item android:id="@+id/nav_sign_out" android:icon="@drawable/ic_sign_out"
+            android:title="Sign out" />
     </group>
 
 </menu>

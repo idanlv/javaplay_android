@@ -21,11 +21,6 @@ import java.util.ArrayList;
 public class GamesRecyclerViewAdapter extends
         RecyclerView.Adapter<GamesRecyclerViewAdapter.GameHolder> {
     /**
-     * Constants
-     */
-    private static final String TAG = "GamePossibilityView";
-
-    /**
      * Members
      */
     private ArrayList<Game> mGames;
@@ -42,7 +37,6 @@ public class GamesRecyclerViewAdapter extends
         private TextView mDescriptionTextView;
         private FloatingActionButton mPlayFloatingActionButton;
         private CardView mCardView;
-        private Game tag;
 
         /**
          * Constructor
@@ -50,14 +44,11 @@ public class GamesRecyclerViewAdapter extends
          */
         public GameHolder(View itemView) {
             super(itemView);
-            mCardView = (CardView) itemView.findViewById(R.id.game_card_view);
 
             mNameTextView = (TextView) itemView.findViewById(R.id.game_name_text_view);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.game_description_text_view);
-            mPlayFloatingActionButton =
-                    (FloatingActionButton) itemView.findViewById(R.id.game_start_new_match_action_button);
 
-
+            mCardView = (CardView) itemView.findViewById(R.id.game_card_view);
             mCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -66,6 +57,8 @@ public class GamesRecyclerViewAdapter extends
                 }
             });
 
+            mPlayFloatingActionButton =
+                    (FloatingActionButton) itemView.findViewById(R.id.game_start_new_match_action_button);
             mPlayFloatingActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
