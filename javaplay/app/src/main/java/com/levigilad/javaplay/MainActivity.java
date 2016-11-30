@@ -358,7 +358,7 @@ public class MainActivity extends BaseGameActivity implements
                 getApiClient(),
                 game.getMinNumberOfPlayers() - 1,
                 game.getMaxNumberOfPlayers() - 1,
-                game.getmAllowAutoMatch());
+                game.getAllowAutoMatch());
         startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 

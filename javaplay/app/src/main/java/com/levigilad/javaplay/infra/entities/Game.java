@@ -3,7 +3,7 @@ package com.levigilad.javaplay.infra.entities;
 import java.io.Serializable;
 
 /**
- * This abstract provides minimal Game functionality
+ * This abstract class provides minimal Game functionality
  */
 public abstract class Game implements Serializable {
     /**
@@ -40,7 +40,7 @@ public abstract class Game implements Serializable {
      * @param gameId The game name (used as id)
      * @param description The description for the game
      * @param leaderboardId The id of the leaderboard in google play services
-     * @param minNumberOfPlayers
+     * @param minNumberOfPlayers Minimum number of players in match
      * @param maxNumberOfPlayers Maximum number of players in match
      */
     public Game(String gameId, String description, String leaderboardId,
@@ -50,13 +50,12 @@ public abstract class Game implements Serializable {
 
     /**
      * Constructor: Creates a game object
- * @param gameId The game name (used as id)
+     * @param gameId The game name (used as id)
      * @param description The description for the game
- * @param leaderboardId The id of the leaderboard in google play services
- * @param maxNumberOfPlayers Maximum number of players in match
+     * @param leaderboardId The id of the leaderboard in google play services
+     * @param maxNumberOfPlayers Maximum number of players in match
      */
-    public Game(String gameId, String description, String leaderboardId,
-                int maxNumberOfPlayers) {
+    public Game(String gameId, String description, String leaderboardId, int maxNumberOfPlayers) {
         this(gameId, description, leaderboardId, DEFAULT_MIN_NUM_PLAYERS, maxNumberOfPlayers, DEFAULT_AUTO_MATCH);
     }
 
@@ -65,7 +64,7 @@ public abstract class Game implements Serializable {
      * @param gameId The game name (used as id)
      * @param description The description for the game
      * @param leaderboardId The id of the leaderboard in google play services
-     * @param minNumberOfPlayers
+     * @param minNumberOfPlayers Minimum number of players in match
      * @param maxNumberOfPlayers Maximum number of players in match
      */
     public Game(String gameId, String description, String leaderboardId,
@@ -110,10 +109,18 @@ public abstract class Game implements Serializable {
         return mGameId;
     }
 
-    public boolean getmAllowAutoMatch() {
+    /**
+     * Getter
+     * @return Is auto match allowed
+     */
+    public boolean getAllowAutoMatch() {
         return mAllowAutoMatch;
     }
 
+    /**
+     * Getter
+     * @return Minimum number of players in match
+     */
     public int getMinNumberOfPlayers() {
         return mMinNumberOfPlayers;
     }

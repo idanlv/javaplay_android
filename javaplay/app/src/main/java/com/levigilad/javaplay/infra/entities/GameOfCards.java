@@ -6,7 +6,7 @@ import com.levigilad.javaplay.infra.enums.PlayingCardRanks;
 import java.util.LinkedList;
 
 /**
- * This class represents basic card game logic
+ * This abstract class represents basic card game logic
  */
 public abstract class GameOfCards extends Game {
 
@@ -43,10 +43,12 @@ public abstract class GameOfCards extends Game {
             // Create a single game deck
             for (PlayingCardSuits symbol : PlayingCardSuits.values()) {
                 if (symbol == PlayingCardSuits.NONE) {
+                    // Skip Suit
                     continue;
                 }
                 for (PlayingCardRanks value : PlayingCardRanks.values()) {
                     if (value == PlayingCardRanks.JOKER) {
+                        // Skip Joker
                         continue;
                     }
                     deck.addCardToTop(new PlayingCard(value,symbol));
@@ -54,7 +56,7 @@ public abstract class GameOfCards extends Game {
             }
         }
 
-        // Add the jokers to the deck
+        // Add jokers to the deck
         for (int i = 0; i < numberOfJokers; i++) {
             deck.addCardToTop(new PlayingCard(PlayingCardRanks.JOKER, PlayingCardSuits.NONE));
         }
