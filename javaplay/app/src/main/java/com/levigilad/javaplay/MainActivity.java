@@ -112,8 +112,7 @@ public class MainActivity extends BaseGameActivity implements
                 URL url;
                 HttpURLConnection client = null;
                 try {
-                    //url = new URL("http://104.196.210.3:8080/JavaPlay/rest/login/audit");
-                    url = new URL("http://192.168.66.3:8080/JavaPlay/rest/login/audit");
+                    url = new URL("http://104.196.210.3:8080/JavaPlay/rest/login/audit");
                     client = (HttpURLConnection) url.openConnection();
                     client.setDoOutput(true);
                     client.setRequestMethod("POST");
