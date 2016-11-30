@@ -137,7 +137,7 @@ public class MainActivity extends BaseGameActivity implements
 
                     if  (responseCode != 200) {
                         Log.e(TAG, "An error occurred while posting to rest, statuc code "
-                                + responseCode))
+                                + responseCode);
                     }
 
                 } catch (Exception e) {
