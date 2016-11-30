@@ -178,6 +178,10 @@ public class YanivTurn extends Turn {
         return this.mTurnDiscardedDeck != null;
     }
 
+    /**
+     * Getter
+     * @return Deck of discarded playing cards
+     */
     public DeckOfCards getTurnDiscardedDeck() {
         return mTurnDiscardedDeck;
     }
