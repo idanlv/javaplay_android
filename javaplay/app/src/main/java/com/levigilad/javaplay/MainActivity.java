@@ -136,11 +136,9 @@ public class MainActivity extends BaseGameActivity implements
                     int responseCode = client.getResponseCode();
 
                     if  (responseCode != 200) {
-
+                        Log.e(TAG, "An error occurred while posting to rest, statuc code "
+                                + responseCode))
                     }
-
-                    //client.setFixedLengthStreamingMode(outputPost.getBytes().length);
-                    //client.setChunkedStreamingMode(0);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -195,34 +193,57 @@ public class MainActivity extends BaseGameActivity implements
         mEmailTextView.setVisibility(View.GONE);
     }
 
+    /**
+     * onStop: Handles activity stop event
+     */
     @Override
     protected void onStop() {
         if (isSignedIn()) {
             Games.TurnBasedMultiplayer.unregisterMatchUpdateListener(getApiClient());
         }
 
-        this.unregisterReceiver(mNetworkStateReceiver);
+        if (mNetworkStateReceiver != null) {
+            this.unregisterReceiver(mNetworkStateReceiver);
+        }
 
+        // Continue with normal onStop process
         super.onStop();
     }
+
+    /**
+     * onStart: Handles on activity start event
+     */
     @Override
     protected void onStart() {
         super.onStart();
 
+        // Starts new thread for login posting in case it wasn't opened by now
         if (!mThread.isAlive()) {
             mThread.start();
         }
     }
 
+    /**
+     * Handles on back button pressed
+     */
     @Override
     public void onBackPressed() {
+        // If drawer is open - close drawer
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        // Go back to previous activity
+        else {
             super.onBackPressed();
         }
     }
 ;
+
+    /**
+     * onCreateOptionsMenu: Creates the activity's menu
+     * @param menu The menu of the activity
+     * @return True
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -230,6 +251,11 @@ public class MainActivity extends BaseGameActivity implements
         return true;
     }
 
+    /**
+     * onOptionsItemsSelected: Handles selection of a menu item
+     * @param item selected item in menu
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -240,6 +266,11 @@ public class MainActivity extends BaseGameActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * onNavigationItemSelected: Handles selection of an item in navigation bar
+     * @param item Selected item
+     * @return True
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -273,6 +304,9 @@ public class MainActivity extends BaseGameActivity implements
         return true;
     }
 
+    /**
+     * Shows leaderboards activity
+     */
     private void showLeaderboards() {
         if (isSignedIn()) {
             Intent intent = Games.Leaderboards.getAllLeaderboardsIntent(getApiClient());
@@ -282,6 +316,9 @@ public class MainActivity extends BaseGameActivity implements
         }
     }
 
+    /**
+     * Shows achievements activity
+     */
     private void showAchievements() {
         if (isSignedIn()) {
             Intent intent = Games.Achievements.getAchievementsIntent(getApiClient());
@@ -291,6 +328,9 @@ public class MainActivity extends BaseGameActivity implements
         }
     }
 
+    /**
+     * Shows inbox activity
+     */
     private void showInbox() {
         if (isSignedIn()) {
             Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
@@ -300,6 +340,12 @@ public class MainActivity extends BaseGameActivity implements
         }
     }
 
+    /**
+     * onActivityResult: Handles results returned after an activity is closed
+     * @param request activity's request code
+     * @param response activity's response
+     * @param data
+     */
     @Override
     public void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
@@ -329,20 +375,29 @@ public class MainActivity extends BaseGameActivity implements
         }
     }
 
+    /**
+     * Handles sign in failures
+     */
     @Override
     public void onSignInFailed() {
         reconnectClient();
     }
 
+    /**
+     * Handles sign in success
+     */
     @Override
     public void onSignInSucceeded() {
         Log.d(TAG, "Entered onSignInSucceeded()");
 
         Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(), this);
 
+        // Checks connection hint if a match exists
         if (getGameHelper().hasTurnBasedMatch()) {
             loadExistingMatch(getGameHelper().getTurnBasedMatch());
-        } else if (mMatch != null) {
+        }
+        // Check if a match was loaded in previous activity
+        else if (mMatch != null) {
             loadExistingMatch(mMatch);
             mMatch = null;
         }
@@ -350,6 +405,10 @@ public class MainActivity extends BaseGameActivity implements
         Log.d(TAG, "Exited onSignInSucceeded()");
     }
 
+    /**
+     * onGameSelected: Handles game selection
+     * @param game The id of the game
+     */
     @Override
     public void onGameSelected(Game game) {
         mGameId = game.getGameId();
@@ -362,11 +421,15 @@ public class MainActivity extends BaseGameActivity implements
         startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 
+    /**
+     * Starts a new match
+     * @param data
+     */
     private void startNewMatch(Intent data) {
         // Get the invitee list.
         final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
 
-        // Get auto-match criteria.
+        // Get auto-match criteria that was chosen in activity
         Bundle autoMatchCriteria = null;
         int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
         int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
@@ -388,39 +451,56 @@ public class MainActivity extends BaseGameActivity implements
         replaceFragment(fragment);
     }
 
+    /**
+     * Handles fragment interaction events
+     * @param message
+     */
     @Override
     public void onFragmentInteraction(String message) {
-        
+       // Does nothing.
     }
 
+    /**
+     * Loads an existing match
+     * @param match
+     */
     private void loadExistingMatch(TurnBasedMatch match) {
         if (match != null) {
+            byte[] data;
+
+            // Checks if the match had already begun
             if (match.getData() != null) {
-                try {
-                    JSONObject turnData = new JSONObject(new String(match.getData()));
-                    mGameId = turnData.getString("game_id");
-
-                    PlayFragment fragment = null;
-
-                    if (mGameId.equals(getString(R.string.yaniv_game_id))) {
-                        fragment = YanivPlayFragment.newInstance(match);
-                    } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
-                        fragment = TicTacToeGameFragment.newInstance(match);
-                    }
-
-                    replaceFragment(fragment);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                data = match.getData();
             } else {
+                data = match.getPreviousMatchData();
+            }
 
-                // TODO: rematch?
+            try {
+                // Checks which game was played
+                JSONObject turnData = new JSONObject(new String(data));
+                mGameId = turnData.getString("game_id");
+
+                PlayFragment fragment = null;
+
+                if (mGameId.equals(getString(R.string.yaniv_game_id))) {
+                    fragment = YanivPlayFragment.newInstance(match);
+                } else if (mGameId.equals(getString(R.string.tictactoe_game_id))) {
+                    fragment = TicTacToeGameFragment.newInstance(match);
+                }
+
+                replaceFragment(fragment);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
         Log.d(TAG, "Match = " + match);
     }
 
+    /**
+     * Replaces a fragment in activity
+     * @param fragment new fragment
+     */
     private void replaceFragment(Fragment fragment) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
@@ -430,11 +510,17 @@ public class MainActivity extends BaseGameActivity implements
                 .commit();
     }
 
+    /**
+     * Displays game options
+     */
     private void showGameOptions() {
         GamesFragment fragment = GamesFragment.newInstance();
         replaceFragment(fragment);
     }
 
+    /**
+     * Handles network availability
+     */
     @Override
     public void networkAvailable() {
         Log.d(TAG, "Entered networkAvailable");
@@ -444,6 +530,9 @@ public class MainActivity extends BaseGameActivity implements
         }
     }
 
+    /**
+     * Handles network unavailability
+     */
     @Override
     public void networkUnavailable() {
         Log.d(TAG, "Entered networkUnavailable");
