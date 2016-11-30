@@ -192,7 +192,7 @@ public abstract class BaseGameActivity extends AppCompatActivity implements
 
     @Override
     public void onTurnBasedMatchRemoved(String s) {
-        // TODO: do something
+        // No need to handle this event
     }
 
     @Override

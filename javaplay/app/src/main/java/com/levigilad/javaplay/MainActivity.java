@@ -364,13 +364,12 @@ public class MainActivity extends BaseGameActivity implements
                 return;
             }
 
-            // TODO: Does this handle rematch?
             loadExistingMatch(
                     (TurnBasedMatch) data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH));
         } else if (request == RC_LOOK_AT_LEADERBOARD) {
-            // TODO: Handle errors
+            // No need to handle this request
         } else if (request == RC_LOOK_AT_ACHIEVEMENTS) {
-            // TODO: Handle errors
+            // No need to handle this request
         }
     }
 
