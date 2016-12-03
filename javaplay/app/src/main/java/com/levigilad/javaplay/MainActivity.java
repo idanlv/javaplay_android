@@ -77,7 +77,7 @@ public class MainActivity extends BaseGameActivity implements
     private NavigationView mNavigationView = null;
     private Toolbar mToolBar = null;
     private DrawerLayout mDrawerLayout;
-    private CoordinatorLayout mCoordinatorLayour;
+    private CoordinatorLayout mCoordinatorLayout;
     private Dialog mNetworkStatusDialog;
     private ImageView mExpandImageView;
     private ImageView mCollapseImageView;
@@ -172,7 +172,7 @@ public class MainActivity extends BaseGameActivity implements
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        mCoordinatorLayour = (CoordinatorLayout)findViewById(R.id.app_coordinator_layout);
+        mCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.app_coordinator_layout);
 
         View header = mNavigationView.getHeaderView(0);
 
@@ -252,7 +252,7 @@ public class MainActivity extends BaseGameActivity implements
     /**
      * onOptionsItemsSelected: Handles selection of a menu item
      * @param item selected item in menu
-     * @return
+     * @return True if Item is selected
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -342,7 +342,7 @@ public class MainActivity extends BaseGameActivity implements
      * onActivityResult: Handles results returned after an activity is closed
      * @param request activity's request code
      * @param response activity's response
-     * @param data
+     * @param data as intent data
      */
     @Override
     public void onActivityResult(int request, int response, Intent data) {
@@ -420,7 +420,7 @@ public class MainActivity extends BaseGameActivity implements
 
     /**
      * Starts a new match
-     * @param data
+     * @param data as intent data
      */
     private void startNewMatch(Intent data) {
         // Get the invitee list.
@@ -450,7 +450,7 @@ public class MainActivity extends BaseGameActivity implements
 
     /**
      * Handles fragment interaction events
-     * @param message
+     * @param message as intent data
      */
     @Override
     public void onFragmentInteraction(String message) {
@@ -459,7 +459,7 @@ public class MainActivity extends BaseGameActivity implements
 
     /**
      * Loads an existing match
-     * @param match
+     * @param match as the match to play
      */
     private void loadExistingMatch(TurnBasedMatch match) {
         if (match != null) {

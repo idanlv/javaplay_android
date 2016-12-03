@@ -429,7 +429,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         if (!mGoogleApiClient.isConnected()) {
             Log.w(TAG,
                     "Warning: getInvitationId() should only be called when signed in, "
-                            + "that is, after getting onSignInSuceeded()");
+                            + "that is, after getting onSignInSucceeded()");
         }
         return mInvitation == null ? null : mInvitation.getInvitationId();
     }
@@ -447,7 +447,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         if (!mGoogleApiClient.isConnected()) {
             Log.w(TAG,
                     "Warning: getInvitation() should only be called when signed in, "
-                            + "that is, after getting onSignInSuceeded()");
+                            + "that is, after getting onSignInSucceeded()");
         }
         return mInvitation;
     }
@@ -488,7 +488,7 @@ public class GameHelper implements GoogleApiClient.ConnectionCallbacks,
         if (!mGoogleApiClient.isConnected()) {
             Log.w(TAG,
                     "Warning: getTurnBasedMatch() should only be called when signed in, "
-                            + "that is, after getting onSignInSuceeded()");
+                            + "that is, after getting onSignInSucceeded()");
         }
         return mTurnBasedMatch;
     }

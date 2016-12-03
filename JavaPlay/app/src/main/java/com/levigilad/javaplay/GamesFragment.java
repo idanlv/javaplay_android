@@ -39,11 +39,11 @@ public class GamesFragment extends Fragment implements OnItemClickListener {
     }
 
     /**
-     * On Create View
+     * onCreateView: Initializes the fragment
      * @param inflater as inflater layout
      * @param container as ViewGroup of views
      * @param savedInstanceState Saved Bundle state
-     * @return the created view
+     * @return the created fragment view
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,7 +82,7 @@ public class GamesFragment extends Fragment implements OnItemClickListener {
 
     /**
      * On Attach
-     * @param context
+     * @param context as application context
      */
     @Override
     public void onAttach(Context context) {

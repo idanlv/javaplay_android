@@ -28,7 +28,7 @@ public abstract class Game implements Serializable {
      * @param description The description for the game
      * @param leaderboardId The id of the leaderboard in google play services
      * @param maxNumberOfPlayers Maximum number of players in match
-     * @param allowAutoMatch
+     * @param allowAutoMatch True to allow auto match, False otherwise
      */
     public Game(String gameId, String description, String leaderboardId,
                 int maxNumberOfPlayers, boolean allowAutoMatch) {

@@ -113,10 +113,10 @@ public class YanivPlayFragment extends PlayFragment {
 
     /**
      * onCreateView: Initializes the fragment
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return the fragment view
+     * @param inflater as inflater layout
+     * @param container as ViewGroup of views
+     * @param savedInstanceState Saved Bundle state
+     * @return the created fragment view
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

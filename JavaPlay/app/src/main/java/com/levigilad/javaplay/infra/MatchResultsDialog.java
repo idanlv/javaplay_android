@@ -30,7 +30,7 @@ public class MatchResultsDialog extends Dialog {
 
     /**
      * Constructor
-     * @param context
+     * @param context as the application context
      */
     public MatchResultsDialog(Context context, String participantId,
                               ArrayList<Participant> participantsData,

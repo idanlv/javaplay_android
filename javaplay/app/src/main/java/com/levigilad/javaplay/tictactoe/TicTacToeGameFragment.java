@@ -81,11 +81,11 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     /**
-     * On Create View: Creates the fragment
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * onCreateView: Initializes the fragment
+     * @param inflater as inflater layout
+     * @param container as ViewGroup of views
+     * @param savedInstanceState Saved Bundle state
+     * @return the created fragment view
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
