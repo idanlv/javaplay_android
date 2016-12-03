@@ -378,17 +378,19 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
                 updateView();
             }
 
+            if (mMatch.getStatus() != TurnBasedMatch.MATCH_STATUS_COMPLETE) {
+                notifyParticipantResult(mMatch.getParticipant(getCurrentParticipantId()).getResult());
+            }
+
             // Start my turn
             if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
                 if (mMatch.getStatus() != TurnBasedMatch.MATCH_STATUS_COMPLETE) {
                     mTurnData.increaseTurnCounter();
                     startTurn();
                 } else {
-                    notifyParticipantResult(mMatch.getParticipant(getCurrentParticipantId()).getResult());
                     finishMatch();
                 }
             } else {
-                notifyParticipantResult(mMatch.getParticipant(getCurrentParticipantId()).getResult());
                 // Checks if the user can ask for a rematch.
                 // This can only happen when the game is completed
                 if (mMatch.canRematch()) {
