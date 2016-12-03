@@ -12,6 +12,8 @@
             android:title="@string/nav_leader_boards" />
         <item android:id="@+id/nav_achievements" android:icon="@drawable/ic_menu_achievement"
             android:title="@string/nav_achievements" />
+        <item android:id="@+id/nav_about" android:icon="@drawable/ic_menu_about"
+            android:title="@string/nav_about" />
     </group>
 
     <group

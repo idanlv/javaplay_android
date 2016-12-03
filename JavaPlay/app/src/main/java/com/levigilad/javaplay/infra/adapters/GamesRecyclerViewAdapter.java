@@ -48,7 +48,7 @@ public class GamesRecyclerViewAdapter extends
             mNameTextView = (TextView) itemView.findViewById(R.id.game_name_text_view);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.game_description_text_view);
 
-            mCardView = (CardView) itemView.findViewById(R.id.game_card_view);
+            mCardView = (CardView) itemView.findViewById(R.id.fragement_game_possibility);
             mCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

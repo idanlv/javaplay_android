@@ -12,13 +12,9 @@ import android.widget.LinearLayout;
 
 import com.google.android.gms.common.SignInButton;
 import com.google.basegameutils.games.BaseGameActivity;
-import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
 
 /**
  * A simple {@link BaseGameActivity} subclass.
- * Activities that contain this fragment must implement the
- * {@link OnFragmentInteractionListener} interface
- * to handle interaction events.
  */
 public class LoginActivity extends BaseGameActivity implements
         View.OnClickListener,

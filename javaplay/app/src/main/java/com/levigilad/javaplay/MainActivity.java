@@ -353,7 +353,7 @@ public class MainActivity extends BaseGameActivity implements
         if (isSignedIn()) {
             mPausedMatch = null;
             mMatch = null;
-
+    
             Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
             startActivityForResult(intent, RC_LOOK_AT_MATCHES);
         } else {
