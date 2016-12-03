@@ -153,8 +153,6 @@ public class MainActivity extends BaseGameActivity implements
 
         mNetworkStateReceiver = new NetworkStateReceiver();
         mNetworkStateReceiver.addListener(this);
-        this.registerReceiver(mNetworkStateReceiver,
-                new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 
         mNetworStatusDialog = new Dialog(this);
         mNetworStatusDialog.setContentView(R.layout.dialog_network_status);
@@ -216,11 +214,14 @@ public class MainActivity extends BaseGameActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        //TODO: Crash on resume screen shut to no shut
+
         // Starts new thread for login posting in case it wasn't opened by now
-        if (!mThread.isAlive()) {
+        if ((mThread != null) && (mThread.getState() == Thread.State.NEW)) {
             mThread.start();
         }
+
+        this.registerReceiver(mNetworkStateReceiver,
+                new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     /**
