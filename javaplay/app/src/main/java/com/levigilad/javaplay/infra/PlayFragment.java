@@ -234,6 +234,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
         // This indicates that the game data is uninitialized because no player has taken a turn yet
         // Therefore, current player is the first one to take a turn in the match
         if (mMatch.getData() == null) {
+            mTurnData = null;
             startMatch();
 
             String nextParticipantId = getNextParticipantId();

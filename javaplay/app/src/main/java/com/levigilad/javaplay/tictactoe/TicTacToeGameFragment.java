@@ -129,8 +129,9 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     @Override
     protected void startMatch() {
         try {
-            mCurrentPlayerSymbol =
-                    ((TicTacToeTurn)mTurnData).addParticipant(getCurrentParticipantId());
+            TicTacToeTurn turnData = new TicTacToeTurn();
+            mTurnData = turnData;
+            mCurrentPlayerSymbol = turnData.addParticipant(getCurrentParticipantId());
 
             mInstructionsTextView.setText(getString(R.string.games_waiting_for_other_player_turn));
         } catch (Exception ex) {
