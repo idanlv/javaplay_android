@@ -124,22 +124,6 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
     }
 
     /**
-     * Prepare GUI for new match
-     */
-    @Override
-    protected void prepareNewMatch() {
-        for (int i = 0; i < Board.ROWS; i++) {
-            TableRow row = (TableRow) mTableLayoutBoard.getChildAt(i);
-
-            for (int j = 0; j < Board.COLUMNS; j++) {
-                Button cell = (Button) row.getChildAt(j);
-
-                cell.setText(getString(R.string.tictactoe_empty_cell));
-            }
-        }
-    }
-
-    /**
      * Starts a match
      */
     @Override

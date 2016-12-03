@@ -472,14 +472,6 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     /**
-     * Prepare GUI for new match
-     */
-    @Override
-    protected void prepareNewMatch() {
-        updateView();
-    }
-
-    /**
      * Start of match
      */
     @Override
