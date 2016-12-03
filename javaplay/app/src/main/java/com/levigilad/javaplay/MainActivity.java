@@ -238,7 +238,6 @@ public class MainActivity extends BaseGameActivity implements
             super.onBackPressed();
         }
     }
-;
 
     /**
      * onCreateOptionsMenu: Creates the activity's menu

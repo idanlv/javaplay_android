@@ -19,7 +19,6 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.basegameutils.games.BaseGameActivity;
-import com.google.basegameutils.games.GameHelper;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.Turn;
 import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
@@ -194,7 +193,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
      * Handles event of fragment detaching from activity
      */
     @Override
-    public void onDetach() {;
+    public void onDetach() {
         // Don't get more game updates
         mAppContext.removeListenerForMatchUpdates(this);
 

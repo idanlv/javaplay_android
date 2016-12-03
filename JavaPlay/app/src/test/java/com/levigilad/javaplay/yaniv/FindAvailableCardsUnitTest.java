@@ -10,7 +10,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Created by User on 26/10/2016.
+ * Available cards unit testing
  */
 
 public class FindAvailableCardsUnitTest {

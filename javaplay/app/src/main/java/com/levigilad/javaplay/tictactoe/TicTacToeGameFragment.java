@@ -208,7 +208,7 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
                 break;
             }
             case R.id.button2: {
-                btnCell_OnClick(0, 1);;
+                btnCell_OnClick(0, 1);
                 break;
             }
             case R.id.button3: {

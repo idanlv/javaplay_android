@@ -40,10 +40,10 @@ public class GamesFragment extends Fragment implements OnItemClickListener {
 
     /**
      * On Create View
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater as inflater layout
+     * @param container as ViewGroup of views
+     * @param savedInstanceState Saved Bundle state
+     * @return the created view
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

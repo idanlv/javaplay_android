@@ -23,14 +23,14 @@ public class NetworkStateReceiver extends BroadcastReceiver {
      * Constructor
      */
     public NetworkStateReceiver() {
-        mListeners = new ArrayList();
+        mListeners = new ArrayList<>();
         mConnected = null;
     }
 
     /**
      * Handles network change notification
-     * @param context
-     * @param intent
+     * @param context as application context
+     * @param intent as the received intent
      */
     public void onReceive(Context context, Intent intent) {
         if (intent == null || intent.getExtras() == null) {
@@ -73,7 +73,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (mConnected == true) {
+        if (mConnected) {
             listener.networkAvailable();
         } else {
             listener.networkUnavailable();

@@ -26,7 +26,6 @@ public enum PlayingCardRanks implements Serializable {
      */
     private int mNumericValue;
     private String mName;
-;
 
     /**
      * Constructor
