@@ -85,6 +85,6 @@
 
     <!-- REST -->
     <string name="audit_url">http://104.196.210.3:8080/JavaPlay/rest/login/audit</string>
-    <string name="date_format">yyyy-MM-dd'T'HH:mm:ss.SSSZ</string>
+    <string name="date_format">yyyy-MM-dd\'T\'HH:mm:ss.SSSZ</string>
 
 </resources>

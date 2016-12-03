@@ -84,8 +84,6 @@ public class MainActivity extends BaseGameActivity implements
     private TextView mUsernameTextView;
     private TextView mEmailTextView;
 
-    //TODO: convert to consts
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +95,7 @@ public class MainActivity extends BaseGameActivity implements
             Bundle bundle = intent.getExtras();
 
             if (bundle != null) {
-                mMatch =  (TurnBasedMatch) bundle.getParcelable("MATCH");
+                mMatch = bundle.getParcelable(getString(R.string.loaded_match));
             }
         }
 
