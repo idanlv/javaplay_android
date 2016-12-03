@@ -217,11 +217,12 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
     public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         mMatch = result.getMatch();
 
-        mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
-
         if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
             return;
         }
+
+
+        mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
 
         handleMatchStart();
     }
@@ -376,8 +377,6 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
                 updateView();
             }
 
-
-
             // Start my turn
             if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
                 if (mMatch.getStatus() != TurnBasedMatch.MATCH_STATUS_COMPLETE) {
@@ -386,12 +385,12 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
                 } else {
                     finishMatch();
                 }
-            }
-
-            // Checks if the user can ask for a rematch.
-            // This can only happen when the game is completed
-            if (mMatch.canRematch()) {
-                askForRematch();
+            } else {
+                // Checks if the user can ask for a rematch.
+                // This can only happen when the game is completed
+                if (mMatch.canRematch()) {
+                    askForRematch();
+                }
             }
         } catch (JSONException e) {
             // This shouldn't be reached on production version
