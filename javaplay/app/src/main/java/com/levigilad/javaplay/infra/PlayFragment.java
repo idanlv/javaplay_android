@@ -225,6 +225,9 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
         handleMatchStart();
     }
 
+    /**
+     * Handles match start
+     */
     private void handleMatchStart() {
         // This indicates that the game data is uninitialized because no player has taken a turn yet
         // Therefore, current player is the first one to take a turn in the match
