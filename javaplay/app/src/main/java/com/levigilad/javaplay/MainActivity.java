@@ -121,7 +121,7 @@ public class MainActivity extends BaseGameActivity implements
 
                     OutputStream outputPost = new BufferedOutputStream(client.getOutputStream());
 
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                    DateFormat df = new SimpleDateFormat(getString(R.string.date_format));
                     Date now = new Date();
                     String reportDate = df.format(now);
 
