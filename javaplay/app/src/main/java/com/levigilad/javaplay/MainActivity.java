@@ -216,7 +216,7 @@ public class MainActivity extends BaseGameActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-
+        //TODO: Crash on resume screen shut to no shut
         // Starts new thread for login posting in case it wasn't opened by now
         if (!mThread.isAlive()) {
             mThread.start();
