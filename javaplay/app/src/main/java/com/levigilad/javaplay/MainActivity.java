@@ -351,6 +351,9 @@ public class MainActivity extends BaseGameActivity implements
      */
     private void showInbox() {
         if (isSignedIn()) {
+            mPausedMatch = null;
+            mMatch = null;
+
             Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(getApiClient());
             startActivityForResult(intent, RC_LOOK_AT_MATCHES);
         } else {
@@ -400,6 +403,9 @@ public class MainActivity extends BaseGameActivity implements
         reconnectClient();
     }
 
+    /**
+     * Handles pausing a game in the middle
+     */
     @Override
     protected void onPause() {
         super.onPause();
