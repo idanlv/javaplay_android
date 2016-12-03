@@ -378,7 +378,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
                 updateView();
             }
 
-            if (mMatch.getStatus() != TurnBasedMatch.MATCH_STATUS_COMPLETE) {
+            if (mMatch.getStatus() == TurnBasedMatch.MATCH_STATUS_COMPLETE) {
                 notifyParticipantResult(mMatch.getParticipant(getCurrentParticipantId()).getResult());
             }
 
