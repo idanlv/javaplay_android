@@ -349,6 +349,10 @@ public class YanivGame extends GameOfCards {
     }
 
     private static void sortDeck(DeckOfCards deck) {
+        if (deck.size() == 0) {
+            return;
+        }
+
         deck.sort();
 
         // Get the joker count and move pass them
@@ -379,9 +383,21 @@ public class YanivGame extends GameOfCards {
             }
         }
 
+        boolean top = true;
+
+        // If first card is ace, add jokers at end of deck
+        if (sortedDeck.get(0).getRank() == PlayingCardRanks.ACE) {
+            top = false;
+        }
+
         // Add remaining jokers in beginning of game
         while (jokersDeck.size() > 0) {
-            sortedDeck.addCardToTop(jokersDeck.drawFirstCard());
+            if (top) {
+                sortedDeck.addCardToTop(jokersDeck.drawFirstCard());
+            } else {
+                sortedDeck.addCardToBottom(jokersDeck.drawFirstCard());
+            }
+
         }
 
         deck.replace(sortedDeck);

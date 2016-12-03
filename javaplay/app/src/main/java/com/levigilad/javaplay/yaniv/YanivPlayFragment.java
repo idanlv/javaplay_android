@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.leaderboard.Leaderboards;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
@@ -61,6 +60,7 @@ public class YanivPlayFragment extends PlayFragment {
      * Members
      */
     private boolean mDrawCard;
+    private int mDiscardCardsCount;
 
     /**
      * Designer
@@ -169,8 +169,7 @@ public class YanivPlayFragment extends PlayFragment {
             }
         });
 
-        // Disable GUI
-        updatePlayStatus(false);
+        disableGui();
     }
 
     /**
@@ -251,12 +250,16 @@ public class YanivPlayFragment extends PlayFragment {
             v.setBackgroundColor(Color.TRANSPARENT);
             v.setActivated(false);
             card.setState(PlayingCardState.AVAILABLE);
+            mDiscardCardsCount--;
         } else {
             v.setAlpha(DIMMED_IMAGE_VIEW_ALPHA);
             v.setBackgroundColor(MARKED_IMAGE_BACKGROUND);
             v.setActivated(true);
             card.setState(PlayingCardState.DISCARDED);
+            mDiscardCardsCount++;
         }
+
+        mDiscardBtn.setEnabled(mDiscardCardsCount > 0);
     }
 
     /**
@@ -329,8 +332,9 @@ public class YanivPlayFragment extends PlayFragment {
             mDeckIV.setEnabled(false);
             YanivGame.onDrawFromGlobalDeck(getCurrentParticipantId(), (YanivTurn) mTurnData);
             mDrawCard = false;
+
+            finishTurn();
         }
-        finishTurn();
     }
 
     /**
@@ -349,7 +353,7 @@ public class YanivPlayFragment extends PlayFragment {
     private void declareYaniv() {
         String winnerID;
 
-        updatePlayStatus(false);
+        disableGui();
         winnerID = YanivGame.declareYanivWinner(
                 getCurrentParticipantId(),getCurrPlayersHand(),getPlayersHands());
 
@@ -456,17 +460,16 @@ public class YanivPlayFragment extends PlayFragment {
     }
 
     /**
-     * Enable/Disable playing gui between turns
-     * @param enabled as to Enable/Disable game play
+     * Disable playing gui between turns
      */
-    private void updatePlayStatus(boolean enabled) {
-        ActivityUtils.setEnabledRecursively(mHandLL, enabled);
+    private void disableGui() {
+        ActivityUtils.setEnabledRecursively(mHandLL, false);
+        ActivityUtils.setEnabledRecursively(mDiscardedCardsLL, false);
 
-        mDeckIV.setEnabled(enabled);
-        mDiscardBtn.setEnabled(enabled);
+        mDeckIV.setEnabled(false);
+        mDiscardBtn.setEnabled(false);
 
-        // Set enabled only if yaniv is allowed and this is player's turn
-        mYanivBtn.setEnabled(enabled && YanivGame.canYaniv(getCurrPlayersHand()));
+        mYanivBtn.setEnabled(false);
     }
 
     /**
@@ -476,8 +479,11 @@ public class YanivPlayFragment extends PlayFragment {
     protected void startMatch() {
         Log.d(TAG,"Match Started");
 
+        mDiscardCardsCount = 0;
+
         mTurnData = YanivGame.initiateMatch(mMatch.getParticipantIds());
         mInstructionsTV.setText(getString(R.string.games_waiting_for_other_player_turn));
+
         Toast.makeText(mAppContext, R.string.games_waiting_for_other_player_turn, Toast.LENGTH_LONG).show();
     }
 
@@ -487,9 +493,14 @@ public class YanivPlayFragment extends PlayFragment {
     @Override
     protected void startTurn() {
         Log.i(TAG,"Start of Turn");
-        updatePlayStatus(true);
+        mYanivBtn.setEnabled(YanivGame.canYaniv(getCurrPlayersHand()));
+        ActivityUtils.setEnabledRecursively(mHandLL, true);
+
+        mDiscardCardsCount = 0;
+
         mInstructionsTV.setText(getString(R.string.games_play_your_turn));
         Toast.makeText(mAppContext, R.string.games_play_your_turn, Toast.LENGTH_LONG).show();
+
     }
 
     /**

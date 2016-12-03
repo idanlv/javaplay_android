@@ -121,7 +121,7 @@ public class MainActivity extends BaseGameActivity implements
 
                     OutputStream outputPost = new BufferedOutputStream(client.getOutputStream());
 
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                    DateFormat df = new SimpleDateFormat(getString(R.string.date_format));
                     Date now = new Date();
                     String reportDate = df.format(now);
 
@@ -153,8 +153,6 @@ public class MainActivity extends BaseGameActivity implements
 
         mNetworkStateReceiver = new NetworkStateReceiver();
         mNetworkStateReceiver.addListener(this);
-        this.registerReceiver(mNetworkStateReceiver,
-                new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 
         mNetworkStatusDialog = new Dialog(this);
         mNetworkStatusDialog.setContentView(R.layout.dialog_network_status);
@@ -216,11 +214,14 @@ public class MainActivity extends BaseGameActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        //TODO: Crash on resume screen shut to no shut
+
         // Starts new thread for login posting in case it wasn't opened by now
-        if (!mThread.isAlive()) {
+        if ((mThread != null) && (mThread.getState() == Thread.State.NEW)) {
             mThread.start();
         }
+
+        this.registerReceiver(mNetworkStateReceiver,
+                new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     /**
