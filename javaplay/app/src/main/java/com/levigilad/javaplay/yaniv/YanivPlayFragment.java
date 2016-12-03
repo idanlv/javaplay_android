@@ -471,9 +471,13 @@ public class YanivPlayFragment extends PlayFragment {
         mYanivBtn.setEnabled(false);
     }
 
+    /**
+     * Notify user on its' result
+     * @param participantResult result
+     */
     @Override
-    protected void notifyParticipantResult(ParticipantResult participantStatus) {
-        if (participantStatus.getResult() == ParticipantResult.MATCH_RESULT_LOSS) {
+    protected void notifyParticipantResult(ParticipantResult participantResult) {
+        if (participantResult.getResult() == ParticipantResult.MATCH_RESULT_LOSS) {
             mInstructionsTV.setText(R.string.games_you_lose);
         } else {
             mInstructionsTV.setText(R.string.games_you_win);

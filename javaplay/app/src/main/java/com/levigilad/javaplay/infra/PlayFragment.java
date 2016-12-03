@@ -399,7 +399,11 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
         }
     }
 
-    protected abstract void notifyParticipantResult(ParticipantResult participantStatus);
+    /**
+     * Notify user on its' result
+     * @param participantResult result
+     */
+    protected abstract void notifyParticipantResult(ParticipantResult participantResult);
 
     /**
      * Asks the player if he wants to rematch and start rematch if user agrees
