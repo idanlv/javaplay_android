@@ -216,6 +216,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
      */
     public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         mMatch = result.getMatch();
+
         mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
 
         if (!checkStatusCode(mMatch, result.getStatus().getStatusCode())) {
@@ -300,6 +301,18 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
     }
 
     /**
+     * Finishes a match and update Google Games
+     */
+    private void finishMatch() {
+        Games.TurnBasedMultiplayer.finishMatch(getApiClient(), mMatch.getMatchId()).setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+            @Override
+            public void onResult(@NonNull TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
+                processResult(updateMatchResult);
+            }
+        });
+    }
+
+    /**
      * Get the next participant. In this function, we assume that we are
      * round-robin, with all known players going before all automatch players.
      * This is not a requirement; players can go in any order. However, you can
@@ -363,16 +376,22 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
                 updateView();
             }
 
+
+
+            // Start my turn
+            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                if (mMatch.getStatus() != TurnBasedMatch.MATCH_STATUS_COMPLETE) {
+                    mTurnData.increaseTurnCounter();
+                    startTurn();
+                } else {
+                    finishMatch();
+                }
+            }
+
             // Checks if the user can ask for a rematch.
             // This can only happen when the game is completed
             if (mMatch.canRematch()) {
                 askForRematch();
-            }
-
-            // Start my turn
-            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                mTurnData.increaseTurnCounter();
-                startTurn();
             }
         } catch (JSONException e) {
             // This shouldn't be reached on production version
