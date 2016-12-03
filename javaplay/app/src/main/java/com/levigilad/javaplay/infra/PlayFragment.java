@@ -21,6 +21,7 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.levigilad.javaplay.R;
 import com.levigilad.javaplay.infra.entities.Turn;
+import com.levigilad.javaplay.infra.interfaces.OnMatchInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnTurnBasedMatchReceivedListener;
 
 import org.json.JSONException;
@@ -51,6 +52,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
     protected Turn mTurnData;
     protected BaseGameActivity mAppContext;
     private String mGameId;
+    private OnMatchInteractionListener mMatchListener;
 
     /**
      * Constructor: Creates a game fragment
@@ -74,6 +76,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
 
         try {
             mAppContext = (BaseGameActivity)context;
+            mMatchListener = (OnMatchInteractionListener)context;
             // Change application orientation according to game specifications
             mAppContext.setRequestedOrientation(mScreenOrientation);
         } catch (Exception ex) {
@@ -134,6 +137,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
         else {
             Log.d(TAG, "Run match load");
             mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
+            mMatchListener.onMatchLoaded(mMatch);
 
             // This is a rematch
             if (mMatch.getData() == null) {
@@ -221,6 +225,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
             return;
         }
 
+        mMatchListener.onMatchLoaded(mMatch);
 
         mAppContext.addListenerForMatchUpdates(this, mMatch.getMatchId());
 

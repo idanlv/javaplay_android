@@ -23,16 +23,19 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.basegameutils.games.BaseGameActivity;
 import com.google.basegameutils.games.BaseGameUtils;
 import com.levigilad.javaplay.infra.NetworkStateReceiver;
 import com.levigilad.javaplay.infra.PlayFragment;
 import com.levigilad.javaplay.infra.entities.Game;
-import com.levigilad.javaplay.infra.interfaces.OnFragmentInteractionListener;
+import com.levigilad.javaplay.infra.interfaces.OnMatchInteractionListener;
 import com.levigilad.javaplay.infra.interfaces.OnGameSelectedListener;
 import com.levigilad.javaplay.tictactoe.TicTacToeGameFragment;
 import com.levigilad.javaplay.yaniv.YanivPlayFragment;
@@ -53,7 +56,7 @@ import java.util.Locale;
 public class MainActivity extends BaseGameActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         OnGameSelectedListener,
-        OnFragmentInteractionListener, NetworkStateReceiver.NetworkStateReceiverListener, View.OnClickListener {
+        OnMatchInteractionListener, NetworkStateReceiver.NetworkStateReceiverListener, View.OnClickListener {
     /**
      * Constants
      */
@@ -69,6 +72,7 @@ public class MainActivity extends BaseGameActivity implements
     private String mGameId;
     private NetworkStateReceiver mNetworkStateReceiver;
     private TurnBasedMatch mMatch;
+    private TurnBasedMatch mPausedMatch;
     private String mIMEI;
     private Thread mThread;
 
@@ -303,10 +307,19 @@ public class MainActivity extends BaseGameActivity implements
                 finish();
                 break;
             }
+            case R.id.nav_about: {
+                showAbout();
+                break;
+            }
         }
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showAbout() {
+        AboutFragment fragment = AboutFragment.newInstance();
+        replaceFragment(fragment);
     }
 
     /**
@@ -387,6 +400,15 @@ public class MainActivity extends BaseGameActivity implements
         reconnectClient();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        showAbout();
+
+        mPausedMatch = mMatch;
+        mMatch = null;
+    }
+
     /**
      * Handles sign in success
      */
@@ -404,6 +426,17 @@ public class MainActivity extends BaseGameActivity implements
         else if (mMatch != null) {
             loadExistingMatch(mMatch);
             mMatch = null;
+        } else if (mPausedMatch != null) {
+            Games.TurnBasedMultiplayer.loadMatch(getApiClient(), mPausedMatch.getMatchId())
+                    .setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
+                        @Override
+                        public void onResult(TurnBasedMultiplayer.LoadMatchResult result) {
+                            if (result.getStatus().getStatusCode() == GamesStatusCodes.STATUS_OK) {
+                                loadExistingMatch(result.getMatch());
+                                mPausedMatch = null;
+                            }
+                        }
+                    });
         }
 
         Log.d(TAG, "Exited onSignInSucceeded()");
@@ -456,12 +489,12 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     /**
-     * Handles fragment interaction events
-     * @param message as intent data
+     * Handles match updates
+     * @param match Current match
      */
     @Override
-    public void onFragmentInteraction(String message) {
-       // Does nothing.
+    public void onMatchLoaded(TurnBasedMatch match) {
+       mMatch = match;
     }
 
     /**

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    android:id="@+id/game_card_view"
+    android:id="@+id/fragement_game_possibility"
     card_view:cardCornerRadius="10dp">
 
     <LinearLayout
