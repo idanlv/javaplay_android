@@ -341,12 +341,10 @@ public class YanivPlayFragment extends PlayFragment {
      * Play the end of turn of the player
      */
     private void finishTurn(){
-        super.finishTurn(getNextParticipantId());
         mInstructionsTV.setText(R.string.games_waiting_for_other_player_turn);
-        disableGui();
+        finishTurn(getNextParticipantId());
         Log.i(TAG,"Turn Ended");
     }
-
 
     /**
      * Declare Yaniv and finish game session
@@ -524,6 +522,8 @@ public class YanivPlayFragment extends PlayFragment {
         updateAvailableDiscardView();
         updatePlayerHandView();
         showPlayersCardCount();
+
+        disableGui();
     }
 
     /**
