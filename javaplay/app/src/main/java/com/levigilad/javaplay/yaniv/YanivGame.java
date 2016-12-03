@@ -154,7 +154,6 @@ public class YanivGame extends GameOfCards {
      * @return True or False
      */
     public static boolean isSequence(DeckOfCards cardSeries) {
-        PlayingCard playingCard = null;
         int previousValue;
         PlayingCardSuits suit;
 
@@ -165,7 +164,7 @@ public class YanivGame extends GameOfCards {
         Iterator<PlayingCard> it = cardSeries.iterator();
 
         // Since we've checked for minimal size, next will certainly return a value
-        playingCard = it.next();
+        PlayingCard playingCard = it.next();
         suit = playingCard.getSuit();
         previousValue = playingCard.getRank().getNumericValue();
 
@@ -360,7 +359,7 @@ public class YanivGame extends GameOfCards {
 
         DeckOfCards sortedDeck = new DeckOfCards();
         DeckOfCards jokersDeck = new DeckOfCards();
-        PlayingCard playingCard = null;
+        PlayingCard playingCard;
 
         int previousValue = -1;
         while (iterator.hasNext()) {

@@ -455,7 +455,6 @@ public class YanivPlayFragment extends PlayFragment {
      * Generate the playing deck's
      */
     private void dealCards() {
-        ArrayList<String> participantIds = mMatch.getParticipantIds();
         mTurnData = YanivGame.initiateMatch(mMatch.getParticipantIds());
     }
 

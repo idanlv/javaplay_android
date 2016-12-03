@@ -86,5 +86,17 @@
     <!-- REST -->
     <string name="audit_url">http://104.196.210.3:8080/JavaPlay/rest/login/audit</string>
     <string name="date_format">yyyy-MM-dd\'T\'HH:mm:ss.SSSZ</string>
+    <string name="nav_inbox">Inbox</string>
+    <string name="nav_new_match">New Match</string>
+    <string name="nav_leader_boards">Leader Boards</string>
+    <string name="nav_achievements">Achievements</string>
+    <string name="drawer_sign_out">Sign out</string>
+    <string name="possibility_game_name">Game Name</string>
+    <string name="nav_header_my_user_name">My User Name</string>
+    <string name="nav_header_example_email">user@host.com</string>
+    <string name="match_result_win">WIN</string>
+    <string name="match_result_tie">TIE</string>
+    <string name="match_result_loss">LOSS</string>
+    <string name="match_result_unknown">UNKNOWN</string>
 
 </resources>

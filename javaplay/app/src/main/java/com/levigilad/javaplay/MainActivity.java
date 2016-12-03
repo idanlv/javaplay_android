@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends BaseGameActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -119,7 +121,7 @@ public class MainActivity extends BaseGameActivity implements
 
                     OutputStream outputPost = new BufferedOutputStream(client.getOutputStream());
 
-                    DateFormat df = new SimpleDateFormat(getString(R.string.date_format));
+                    DateFormat df = new SimpleDateFormat(getString(R.string.date_format), Locale.US);
                     Date now = new Date();
                     String reportDate = df.format(now);
 
@@ -154,7 +156,12 @@ public class MainActivity extends BaseGameActivity implements
 
         mNetworkStatusDialog = new Dialog(this);
         mNetworkStatusDialog.setContentView(R.layout.dialog_network_status);
-        mNetworkStatusDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+        Window currentWindow = mNetworkStatusDialog.getWindow();
+
+        if (currentWindow != null) {
+            currentWindow.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
         mNetworkStatusDialog.setCanceledOnTouchOutside(false);
         mNetworkStatusDialog.setCancelable(false);
 
