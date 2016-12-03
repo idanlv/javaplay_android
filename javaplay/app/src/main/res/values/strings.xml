@@ -83,4 +83,7 @@
     <string name="rematch">Start rematch</string>
     <string name="loaded_match">MATCH</string>
 
+    <!-- REST -->
+    <string name="audit_url">http://104.196.210.3:8080/JavaPlay/rest/login/audit</string>
+
 </resources>
