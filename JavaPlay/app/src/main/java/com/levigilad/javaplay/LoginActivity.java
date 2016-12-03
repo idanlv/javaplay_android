@@ -14,7 +14,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.basegameutils.games.BaseGameActivity;
 
 /**
- * A simple {@link BaseGameActivity} subclass.
+ * This class handles user login into application
  */
 public class LoginActivity extends BaseGameActivity implements
         View.OnClickListener,
