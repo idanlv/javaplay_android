@@ -73,7 +73,9 @@ public class LoginActivity extends BaseGameActivity implements
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     Log.d(TAG, "Permission granted");
                 } else {
-                    Log.d(TAG, "Permission not granted");
+                    Log.d(TAG, "Permission not granted, Quiting...");
+                    finish();
+                    System.exit(0);
                 }
                 startMainActivity();
                 break;
@@ -85,7 +87,7 @@ public class LoginActivity extends BaseGameActivity implements
 
     /**
      * onCreate: initializes layout
-     * @param bundle
+     * @param bundle as aoo bundle
      */
     @Override
     protected void onCreate(Bundle bundle) {
@@ -116,7 +118,7 @@ public class LoginActivity extends BaseGameActivity implements
      * Handles results returned from another activity
      * @param request activity request code
      * @param response activity's response
-     * @param data
+     * @param data activity intent
      */
     @Override
     protected void onActivityResult(int request, int response, Intent data) {
@@ -133,7 +135,7 @@ public class LoginActivity extends BaseGameActivity implements
 
     /**
      * Handles clicking on viewer
-     * @param view
+     * @param view as the clicked view
      */
     @Override
     public void onClick(View view) {

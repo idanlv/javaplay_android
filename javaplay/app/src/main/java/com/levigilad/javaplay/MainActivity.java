@@ -84,6 +84,7 @@ public class MainActivity extends BaseGameActivity implements
     private TextView mUsernameTextView;
     private TextView mEmailTextView;
 
+    //TODO: convert to consts
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
