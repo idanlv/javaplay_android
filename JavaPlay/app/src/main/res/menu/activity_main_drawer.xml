@@ -5,13 +5,13 @@
         android:checkableBehavior="single"
         android:id="@+id/games_menu">
         <item android:id="@+id/nav_inbox" android:icon="@drawable/ic_menu_inbox"
-            android:title="Inbox" />
+            android:title="@string/nav_inbox" />
         <item android:id="@+id/nav_new_match" android:icon="@drawable/ic_menu_new_match"
-            android:title="New Match" />
+            android:title="@string/nav_new_match" />
         <item android:id="@+id/nav_leaderboards" android:icon="@drawable/ic_menu_leaderboards"
-            android:title="Leader Boards" />
+            android:title="@string/nav_leader_boards" />
         <item android:id="@+id/nav_achievements" android:icon="@drawable/ic_menu_achievement"
-            android:title="Achievements" />
+            android:title="@string/nav_achievements" />
     </group>
 
     <group
@@ -19,7 +19,7 @@
         android:visible="false"
         android:id="@+id/google_play_services_menu">
         <item android:id="@+id/nav_sign_out" android:icon="@drawable/ic_sign_out"
-            android:title="Sign out" />
+            android:title="@string/drawer_sign_out" />
     </group>
 
 </menu>

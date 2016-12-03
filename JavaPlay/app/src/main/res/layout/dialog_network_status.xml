@@ -19,11 +19,13 @@
         android:layout_height="wrap_content"
         android:text="@string/network_status_solution"
         android:layout_gravity="center_horizontal"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:contentDescription="@string/network_status_solution"/>
 
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
         app:srcCompat="@drawable/ic_transfer"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="Internet icon"/>
 </LinearLayout>

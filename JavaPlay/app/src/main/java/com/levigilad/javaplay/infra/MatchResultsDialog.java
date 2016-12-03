@@ -79,19 +79,19 @@ public class MatchResultsDialog extends Dialog {
 
             switch (participant.getResult().getResult()) {
                 case ParticipantResult.MATCH_RESULT_WIN: {
-                    resultTextView.setText("WIN");
+                    resultTextView.setText(R.string.match_result_win);
                     break;
                 }
                 case ParticipantResult.MATCH_RESULT_TIE: {
-                    resultTextView.setText("TIE");
+                    resultTextView.setText(R.string.match_result_tie);
                     break;
                 }
                 case ParticipantResult.MATCH_RESULT_LOSS: {
-                    resultTextView.setText("LOSS");
+                    resultTextView.setText(R.string.match_result_loss);
                     break;
                 }
                 default: {
-                    resultTextView.setText("UNKNOWN");
+                    resultTextView.setText(R.string.match_result_unknown);
                     break;
                 }
             }
