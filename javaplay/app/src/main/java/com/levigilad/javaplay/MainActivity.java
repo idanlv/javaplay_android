@@ -112,7 +112,7 @@ public class MainActivity extends BaseGameActivity implements
                 URL url;
                 HttpURLConnection client = null;
                 try {
-                    url = new URL("http://104.196.210.3:8080/JavaPlay/rest/login/audit");
+                    url = new URL(getString(R.string.audit_url));
                     client = (HttpURLConnection) url.openConnection();
                     client.setDoOutput(true);
                     client.setRequestMethod("POST");
@@ -135,7 +135,7 @@ public class MainActivity extends BaseGameActivity implements
                     int responseCode = client.getResponseCode();
 
                     if  (responseCode != 200) {
-                        Log.e(TAG, "An error occurred while posting to rest, statuc code "
+                        Log.e(TAG, "An error occurred while posting to rest, status code "
                                 + responseCode);
                     }
 
