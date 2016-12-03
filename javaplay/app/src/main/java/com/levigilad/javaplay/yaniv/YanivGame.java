@@ -26,7 +26,7 @@ public class YanivGame extends GameOfCards {
     private static final int MIN_DISCARDED_CARDS = 1;
     private static final int MIN_DUPLICATES_LENGTH = 2;
     private static final String YANIV = "Yaniv";
-    private static final String DESCRIPTION = "Description for yaniv";
+    private static final String DESCRIPTION = "This is Yaniv game. Based on a game played by backpackers in India.";
     private static final String LEADERBOARD_ID = "CgkIyuG_9qMQEAIQCA";
     private static final int DEFAULT_NUMBER_OF_DECKS = 2;
     private static final int DEFAULT_NUMBER_OF_JOKERS = 2;

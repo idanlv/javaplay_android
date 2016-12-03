@@ -10,7 +10,7 @@ public class TicTacToeGame extends Game {
      * Constants
      */
     private static String GAME = "Tic Tac Toe";
-    private static String DESCRIPTION = "Description for game";
+    private static String DESCRIPTION = "This is a board game for two players";
     private static String LEADERBOARD_ID = "CgkIyuG_9qMQEAIQDA";
     private static int MAX_NUM_OF_PLAYERS = 2;
 
