@@ -297,7 +297,7 @@ public class YanivGame extends GameOfCards {
     }
 
     /**
-     * Updates available discarded deck according to participant's disacrded deck
+     * Updates available discarded deck according to participant's discarded deck
      * @param turnData Turn data
      */
     static void updateAvailableDiscardedDeck(YanivTurn turnData) {

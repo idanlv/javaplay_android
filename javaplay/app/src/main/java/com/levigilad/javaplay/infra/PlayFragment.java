@@ -55,7 +55,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
     /**
      * Constructor: Creates a game fragment
      * @param turnData A turn data to start with
-     * @param screenOrientation
+     * @param screenOrientation as screen orientation
      */
     public PlayFragment(Turn turnData, int screenOrientation) {
         super();

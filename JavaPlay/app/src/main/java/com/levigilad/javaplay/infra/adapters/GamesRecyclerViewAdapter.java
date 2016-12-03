@@ -109,7 +109,7 @@ public class GamesRecyclerViewAdapter extends
     /**
      * This method creates the GameHolder view and attaches it to the parent view
      * @param parent parent view
-     * @param viewType
+     * @param viewType ViewType
      * @return GameHolder view
      */
     @Override
@@ -165,7 +165,7 @@ public class GamesRecyclerViewAdapter extends
 
     /**
      * Retrieves the number of items
-     * @return Numebr of game objects
+     * @return Number of game objects
      */
     @Override
     public int getItemCount() {

@@ -73,7 +73,7 @@ public class PlayingCard implements IJsonSerializable, Comparable<PlayingCard> {
 
     /**
      * Checks if the card is discarded
-     * @return
+     * @return True if playing card state is discarded
      */
     public boolean isDiscarded() {
         return mState == PlayingCardState.DISCARDED;

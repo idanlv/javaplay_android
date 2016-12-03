@@ -29,11 +29,11 @@ public enum PlayingCardRanks implements Serializable {
 
     /**
      * Constructor
-     * @param numbericValue value of card rank
+     * @param numericValue value of card rank
      * @param name name of card suit
      */
-    PlayingCardRanks(int numbericValue, String name) {
-        this.mNumericValue = numbericValue;
+    PlayingCardRanks(int numericValue, String name) {
+        this.mNumericValue = numericValue;
         this.mName = name;
     }
 
@@ -47,7 +47,7 @@ public enum PlayingCardRanks implements Serializable {
 
     /**
      * Getter
-     * @return; Returns the name of the rank
+     * @return Returns the name of the rank
      */
     public String getName() {
         return this.mName;
