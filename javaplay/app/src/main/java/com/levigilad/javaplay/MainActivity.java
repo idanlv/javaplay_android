@@ -78,7 +78,7 @@ public class MainActivity extends BaseGameActivity implements
     private Toolbar mToolBar = null;
     private DrawerLayout mDrawerLayout;
     private CoordinatorLayout mCoordinatorLayour;
-    private Dialog mNetworStatusDialog;
+    private Dialog mNetworkStatusDialog;
     private ImageView mExpandImageView;
     private ImageView mCollapseImageView;
     private TextView mUsernameTextView;
@@ -154,11 +154,11 @@ public class MainActivity extends BaseGameActivity implements
         mNetworkStateReceiver = new NetworkStateReceiver();
         mNetworkStateReceiver.addListener(this);
 
-        mNetworStatusDialog = new Dialog(this);
-        mNetworStatusDialog.setContentView(R.layout.dialog_network_status);
-        mNetworStatusDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        mNetworStatusDialog.setCanceledOnTouchOutside(false);
-        mNetworStatusDialog.setCancelable(false);
+        mNetworkStatusDialog = new Dialog(this);
+        mNetworkStatusDialog.setContentView(R.layout.dialog_network_status);
+        mNetworkStatusDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        mNetworkStatusDialog.setCanceledOnTouchOutside(false);
+        mNetworkStatusDialog.setCancelable(false);
 
         mToolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
@@ -523,8 +523,8 @@ public class MainActivity extends BaseGameActivity implements
     @Override
     public void networkAvailable() {
         Log.d(TAG, "Entered networkAvailable");
-        if (mNetworStatusDialog.isShowing()) {
-            mNetworStatusDialog.dismiss();
+        if (mNetworkStatusDialog.isShowing()) {
+            mNetworkStatusDialog.dismiss();
             reconnectClient();
         }
     }
@@ -536,7 +536,7 @@ public class MainActivity extends BaseGameActivity implements
     public void networkUnavailable() {
         Log.d(TAG, "Entered networkUnavailable");
 
-        mNetworStatusDialog.show();
+        mNetworkStatusDialog.show();
     }
 
     /**
