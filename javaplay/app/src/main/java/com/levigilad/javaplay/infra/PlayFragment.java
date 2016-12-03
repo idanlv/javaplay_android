@@ -383,6 +383,7 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
                     mTurnData.increaseTurnCounter();
                     startTurn();
                 } else {
+                    notifyParticipantResult(mMatch.getParticipant(getCurrentParticipantId()).getResult());
                     finishMatch();
                 }
             } else {
@@ -397,6 +398,8 @@ public abstract class PlayFragment extends Fragment implements OnTurnBasedMatchR
             Log.e(TAG, e.getMessage());
         }
     }
+
+    protected abstract void notifyParticipantResult(ParticipantResult participantStatus);
 
     /**
      * Asks the player if he wants to rematch and start rematch if user agrees

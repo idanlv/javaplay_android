@@ -347,4 +347,22 @@ public class TicTacToeGameFragment extends PlayFragment implements View.OnClickL
             }
         }
     }
+
+    @Override
+    protected void notifyParticipantResult(ParticipantResult participantStatus) {
+        switch (participantStatus.getResult()) {
+            case ParticipantResult.MATCH_RESULT_LOSS: {
+                mInstructionsTextView.setText(R.string.games_you_lose);
+                break;
+            }
+            case ParticipantResult.MATCH_RESULT_TIE: {
+                mInstructionsTextView.setText(R.string.games_you_tie);
+                break;
+            }
+            case ParticipantResult.MATCH_RESULT_WIN: {
+                mInstructionsTextView.setText(R.string.games_you_win);
+                break;
+            }
+        }
+    }
 }

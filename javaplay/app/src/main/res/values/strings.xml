@@ -98,5 +98,6 @@
     <string name="match_result_tie">TIE</string>
     <string name="match_result_loss">LOSS</string>
     <string name="match_result_unknown">UNKNOWN</string>
+    <string name="games_you_tie">You tied</string>
 
 </resources>
